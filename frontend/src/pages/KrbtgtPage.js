@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Flame, Zap, Skull, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Flame, Zap, Skull, AlertTriangle, Monitor } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function KrbtgtPage() {
@@ -8,8 +8,54 @@ export default function KrbtgtPage() {
   const [showGlitch, setShowGlitch] = useState(false);
   const [showRoastedEffect, setShowRoastedEffect] = useState(false);
   const [allLinesShown, setAllLinesShown] = useState(false);
+  const [browserInfo, setBrowserInfo] = useState({});
+
+  // Browser detection function
+  const detectBrowser = () => {
+    const userAgent = navigator.userAgent;
+    let browser = 'unknown';
+    let message = "Nice try. Unknown browser detected. Still not Burp.";
+    let icon = "🌐";
+
+    if (userAgent.includes('Chrome') && !userAgent.includes('Edge') && !userAgent.includes('OPR')) {
+      if (userAgent.includes('Brave')) {
+        browser = 'Brave';
+        message = "Brave? More like 'please-Google-don't-look' mode.";
+        icon = "🦁";
+      } else {
+        browser = 'Chrome';
+        message = "Your telemetry has already been sent to Mountain View. You're basically livestreaming your attack.";
+        icon = "🌈";
+      }
+    } else if (userAgent.includes('Firefox')) {
+      browser = 'Firefox';
+      message = "You think you're safe with Firefox? Please, Mozillians are watching.";
+      icon = "🦊";
+    } else if (userAgent.includes('Edge')) {
+      browser = 'Edge';
+      message = "Edge user detected. We called Clippy and he's disappointed.";
+      icon = "📎";
+    } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+      browser = 'Safari';
+      message = "Welcome, iOS pentester. You've already lost.";
+      icon = "🍎";
+    } else if (userAgent.includes('OPR') || userAgent.includes('Opera')) {
+      browser = 'Opera';
+      message = "Opera GX? Cyberpunk isn't a browser theme, dude.";
+      icon = "🎭";
+    }
+
+    return { browser, message, icon };
+  };
 
   const lines = [
+    { text: '[!] Initiating browser security check...', delay: 800, type: 'warning' },
+    { text: `[!] Browser check: ${browserInfo.browser} detected ${browserInfo.icon}`, delay: 1000, type: 'warning' },
+    { text: `[x] ${browserInfo.message}`, delay: 1500, type: 'error' },
+    { text: '[x] Error: Burp Suite browser not detected', delay: 1000, type: 'error' },
+    { text: '[!] Only Burp\'s Chromium-based browser can bypass surveillance', delay: 1200, type: 'warning' },
+    { text: '', delay: 500, type: 'blank' }, // Separator
+    { text: '[*] Proceeding anyway... (YOLO mode activated)', delay: 1000, type: 'info' },
     { text: '[*] Initiating Kerberoasting...', delay: 1000, type: 'info' },
     { text: '[*] Target: krbtgt@NEBULAHOST.TECH', delay: 800, type: 'info' },
     { text: '[*] Dumping service ticket...', delay: 1200, type: 'info' },
@@ -24,6 +70,11 @@ export default function KrbtgtPage() {
   ];
 
   const roastedPattern = Array(50).fill('#ROASTED').join(' ');
+
+  useEffect(() => {
+    // Initialize browser detection
+    setBrowserInfo(detectBrowser());
+  }, []);
 
   useEffect(() => {
     if (currentLine < lines.length) {
@@ -65,6 +116,7 @@ export default function KrbtgtPage() {
     switch (type) {
       case 'error': return <AlertTriangle className="w-4 h-4 inline mr-2" />;
       case 'fatal': return <Skull className="w-4 h-4 inline mr-2 animate-bounce" />;
+      case 'warning': return <Monitor className="w-4 h-4 inline mr-2" />;
       default: return null;
     }
   };
@@ -121,6 +173,7 @@ export default function KrbtgtPage() {
               </div>
             )}
             <div className="text-gray-400">
+              Browser: <span className="text-yellow-400">{browserInfo.browser}</span> |
               Target: <span className="text-red-400">krbtgt@NEBULAHOST.TECH</span>
             </div>
           </div>
@@ -149,7 +202,7 @@ export default function KrbtgtPage() {
                 <span className="text-white">:</span>
                 <span className="text-blue-500">~/attacks/active-directory</span>
                 <span className="text-white">$ </span>
-                <span className="text-yellow-400">python3 kerberoast.py --target krbtgt</span>
+                <span className="text-yellow-400">python3 kerberoast.py --target krbtgt --stealth-mode</span>
               </div>
 
               {/* Animated logs */}
@@ -168,7 +221,7 @@ export default function KrbtgtPage() {
               ))}
 
               {/* System verification pause animation */}
-              {currentLine > 5 && currentLine < 7 && (
+              {currentLine > 12 && currentLine < 14 && (
                 <div className="my-4 flex items-center text-yellow-400">
                   <span>Scanning system environment</span>
                   <div className="ml-2 flex space-x-1">
@@ -188,6 +241,9 @@ export default function KrbtgtPage() {
                     </div>
                     <div className="text-lg animate-bounce">
                       💀 KRBTGT.EXE HAS STOPPED WORKING 💀
+                    </div>
+                    <div className="text-sm mt-2 text-red-400">
+                      {browserInfo.icon} Browser: {browserInfo.browser} | Status: COMPROMISED
                     </div>
                   </div>
                 </div>
@@ -220,6 +276,7 @@ export default function KrbtgtPage() {
                       </div>
                       
                       <div className="text-gray-400 text-sm space-y-2">
+                        <div>{browserInfo.icon} <strong>Browser Issue:</strong> {browserInfo.browser} detected - major OPSEC fail</div>
                         <div>🎯 <strong>Skill Issue Detected:</strong> Maybe try HackTheBox first?</div>
                         <div>📚 <strong>Certification Missing:</strong> AZ-900 required for krbtgt access</div>
                         <div>🐧 <strong>OS Recommendation:</strong> Tails Linux or GTFO</div>
@@ -228,7 +285,7 @@ export default function KrbtgtPage() {
 
                       <div className="border-t border-gray-700 pt-4 text-xs text-gray-500 italic">
                         "In Soviet Russia, krbtgt roasts YOU!"<br/>
-                        - Fenrir's Pentesting Fails, Volume 404
+                        - Fenrir's Pentesting Fails, Volume 404: "{browserInfo.browser} Edition"
                       </div>
                       
                       <div className="pt-4 space-y-3">
@@ -243,7 +300,7 @@ export default function KrbtgtPage() {
                         </button>
                         
                         <div className="text-xs text-gray-500">
-                          Pro tip: Next time, don't roast the Domain Controller's favorite account 🤡
+                          Pro tip: Next time, use Burp's browser or switch to Tails OS 🤡
                         </div>
                       </div>
                     </div>
