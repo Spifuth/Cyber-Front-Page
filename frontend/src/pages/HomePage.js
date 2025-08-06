@@ -30,7 +30,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-green-400 relative overflow-hidden">
       {/* Cyber Maze Background with toggle */}
-      <CyberMaze isEnabled={isMazeEnabled} color={mazeColor} opacity={mazeOpacity} />
+      <CyberMaze 
+        key={`${isMazeEnabled}-${mazeColor}-${mazeOpacity}`}
+        isEnabled={isMazeEnabled} 
+        color={mazeColor} 
+        opacity={mazeOpacity} 
+      />
       
       {/* Maze Control Panel */}
       <div className="fixed top-8 right-8 z-50 flex flex-col gap-2">
