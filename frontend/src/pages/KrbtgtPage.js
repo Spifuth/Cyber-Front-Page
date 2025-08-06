@@ -1,44 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Flame, Zap } from 'lucide-react';
+import { ArrowLeft, Flame, Zap, Skull, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function KrbtgtPage() {
   const navigate = useNavigate();
   const [currentLine, setCurrentLine] = useState(0);
-  const [showFire, setShowFire] = useState(false);
-  const [showExplosion, setShowExplosion] = useState(false);
+  const [showGlitch, setShowGlitch] = useState(false);
+  const [showRoastedEffect, setShowRoastedEffect] = useState(false);
   const [allLinesShown, setAllLinesShown] = useState(false);
 
   const lines = [
     { text: '[*] Initiating Kerberoasting...', delay: 1000, type: 'info' },
     { text: '[*] Target: krbtgt@NEBULAHOST.TECH', delay: 800, type: 'info' },
-    { text: '[*] Dumping ticket...', delay: 1200, type: 'info' },
-    { text: '[!] Warning: Ticket smells like barbecue', delay: 1000, type: 'warning' },
-    { text: '[!] AES256-SHA1 not supported on toaster', delay: 1200, type: 'warning' },
-    { text: '[x] Fail: Ticket has gone stale', delay: 800, type: 'error' },
-    { text: '[x] Error: krbtgt roasted... too hard. It\'s now burnt.', delay: 1000, type: 'error' },
-    { text: '[!] SYSTEM: 🧯 Emergency detected. Launching fire suppression...', delay: 1500, type: 'critical' }
+    { text: '[*] Dumping service ticket...', delay: 1200, type: 'info' },
+    { text: '[!] Warning: AES256 encryption not supported on this toaster', delay: 1000, type: 'warning' },
+    { text: '[x] Error: krbtgt has detected impure intentions', delay: 1200, type: 'error' },
+    { text: '[!] SYSTEM CHECK: Verifying environment...', delay: 1500, type: 'warning' },
+    { text: '', delay: 800, type: 'blank' }, // Pause animée
+    { text: '[x] Error: You do not possess the AZ-900 certification', delay: 1000, type: 'error' },
+    { text: '[x] Error: Tails OS not detected — operation aborted', delay: 1000, type: 'error' },
+    { text: '[!] Security Tip: Real pentesters use Tails. Not this... thing.', delay: 1500, type: 'warning' },
+    { text: '[💀] Fatal: krbtgt roasted... too hard. It\'s now a charcoal blob.', delay: 2000, type: 'fatal' }
   ];
 
-  const explosionASCII = `
-         .-"-.
-        /     \\
-       | () () |
-        \\  ^  /
-         |||||
-         |||||
-    `;
-
-  const fireASCII = `
-       (  )   (   )  )
-        ) (  (  (  ( (
-       ( )  )   ) )  )
-      (  (   (  (   ) )
-       ) )  ) (  )  (
-        (  ( (   ) ) 
-      ^^^^^^^^^^^^^^^^^^^
-      🔥 KRBTGT OVERCOOKED 🔥
-    `;
+  const roastedPattern = Array(50).fill('#ROASTED').join(' ');
 
   useEffect(() => {
     if (currentLine < lines.length) {
@@ -48,17 +33,20 @@ export default function KrbtgtPage() {
       
       return () => clearTimeout(timer);
     } else {
-      // Tous les lignes sont affichées, déclencher les effets
-      const fireTimer = setTimeout(() => {
-        setShowFire(true);
-        setShowExplosion(true);
+      // Tous les lignes sont affichées, déclencher les effets finaux
+      const glitchTimer = setTimeout(() => {
+        setShowGlitch(true);
         
         setTimeout(() => {
-          setAllLinesShown(true);
-        }, 3000);
+          setShowRoastedEffect(true);
+          
+          setTimeout(() => {
+            setAllLinesShown(true);
+          }, 4000);
+        }, 2000);
       }, 1000);
       
-      return () => clearTimeout(fireTimer);
+      return () => clearTimeout(glitchTimer);
     }
   }, [currentLine, lines]);
 
@@ -67,8 +55,17 @@ export default function KrbtgtPage() {
       case 'info': return 'text-green-400';
       case 'warning': return 'text-yellow-400';
       case 'error': return 'text-red-400';
-      case 'critical': return 'text-red-500 animate-pulse';
+      case 'fatal': return 'text-red-500 animate-pulse font-bold';
+      case 'blank': return 'text-transparent';
       default: return 'text-green-400';
+    }
+  };
+
+  const getLineIcon = (type) => {
+    switch (type) {
+      case 'error': return <AlertTriangle className="w-4 h-4 inline mr-2" />;
+      case 'fatal': return <Skull className="w-4 h-4 inline mr-2 animate-bounce" />;
+      default: return null;
     }
   };
 
@@ -78,19 +75,28 @@ export default function KrbtgtPage() {
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 via-black to-orange-900/10"></div>
         
-        {/* Glitch scanlines when fire starts */}
-        {showFire && (
+        {/* Glitch scanlines intensifiées */}
+        {showGlitch && (
           <div className="absolute inset-0">
-            {[...Array(15)].map((_, i) => (
+            {[...Array(25)].map((_, i) => (
               <div
                 key={i}
-                className="absolute w-full h-px bg-red-500/30 animate-pulse"
+                className="absolute w-full h-px bg-red-500/50 animate-pulse"
                 style={{
-                  top: `${i * 7}%`,
-                  animation: `scanline 1.5s linear infinite ${i * 0.1}s`
+                  top: `${i * 4}%`,
+                  animation: `scanline 1s linear infinite ${i * 0.05}s, glitch 2s ease-in-out infinite ${i * 0.1}s`
                 }}
               />
             ))}
+          </div>
+        )}
+
+        {/* Roasted effect overlay */}
+        {showRoastedEffect && (
+          <div className="absolute inset-0 bg-red-900/30 animate-pulse">
+            <div className="absolute inset-0 opacity-20 text-red-500 text-xs leading-none overflow-hidden whitespace-nowrap animate-bounce">
+              {Array(20).fill(roastedPattern).join(' ')}
+            </div>
           </div>
         )}
       </div>
@@ -106,89 +112,139 @@ export default function KrbtgtPage() {
             <span className="font-mono">exit_kerberoasting</span>
           </button>
           
-          {showFire && (
-            <div className="flex items-center space-x-2 text-red-500 animate-bounce">
-              <Flame className="w-6 h-6" />
-              <span className="font-mono text-sm">OVERHEATING</span>
-              <Zap className="w-6 h-6" />
+          <div className="flex items-center space-x-4 text-sm font-mono">
+            {showGlitch && (
+              <div className="flex items-center space-x-2 text-red-500 animate-pulse">
+                <Flame className="w-5 h-5" />
+                <span>SYSTEM_OVERLOAD</span>
+                <Zap className="w-5 h-5" />
+              </div>
+            )}
+            <div className="text-gray-400">
+              Target: <span className="text-red-400">krbtgt@NEBULAHOST.TECH</span>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Terminal Window */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gray-900/90 border border-green-500/30 rounded-lg overflow-hidden backdrop-blur-sm">
+        <div className={`max-w-5xl mx-auto ${showGlitch ? 'animate-shake' : ''}`}>
+          <div className="bg-gray-900/95 border border-green-500/30 rounded-lg overflow-hidden backdrop-blur-sm">
             {/* Terminal Header */}
             <div className="bg-gray-800 px-4 py-2 border-b border-green-500/30 flex items-center justify-between">
-              <span className="font-mono text-green-400">fenrir@kerberoasting:~/attack$</span>
+              <span className="font-mono text-green-400">
+                root@kerberoasting-lab:~/attacks/active-directory$
+              </span>
               <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${showFire ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`}></div>
-                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                <div className={`w-2 h-2 rounded-full ${showGlitch ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${showGlitch ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
                 <div className="w-2 h-2 bg-red-500 rounded-full"></div>
               </div>
             </div>
 
             {/* Terminal Content */}
-            <div className="p-6 min-h-[400px] font-mono text-sm">
+            <div className="p-6 min-h-[500px] font-mono text-sm">
+              {/* Command prompt */}
+              <div className="mb-4 text-blue-400">
+                <span className="text-green-400">root@kerberoasting-lab</span>
+                <span className="text-white">:</span>
+                <span className="text-blue-500">~/attacks/active-directory</span>
+                <span className="text-white">$ </span>
+                <span className="text-yellow-400">python3 kerberoast.py --target krbtgt</span>
+              </div>
+
+              {/* Animated logs */}
               {lines.slice(0, currentLine).map((line, index) => (
                 <div
                   key={index}
-                  className={`mb-2 ${getLineColor(line.type)} animate-fade-in`}
+                  className={`mb-2 ${getLineColor(line.type)} animate-fade-in flex items-center`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
+                  {getLineIcon(line.type)}
                   <span className="opacity-90">{line.text}</span>
-                  {index === currentLine - 1 && <span className="animate-pulse">_</span>}
+                  {index === currentLine - 1 && line.type !== 'blank' && (
+                    <span className="animate-pulse ml-1">_</span>
+                  )}
                 </div>
               ))}
 
-              {/* Fire Animation */}
-              {showFire && (
-                <div className="mt-8 text-center">
-                  <div className="text-red-500 animate-bounce">
-                    <pre className="text-xs leading-tight whitespace-pre">
-                      {fireASCII}
-                    </pre>
+              {/* System verification pause animation */}
+              {currentLine > 5 && currentLine < 7 && (
+                <div className="my-4 flex items-center text-yellow-400">
+                  <span>Scanning system environment</span>
+                  <div className="ml-2 flex space-x-1">
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
                   </div>
                 </div>
               )}
 
-              {/* Explosion Effect */}
-              {showExplosion && (
-                <div className="mt-4 text-center">
-                  <div className="text-yellow-400 animate-pulse">
-                    <pre className="text-sm leading-tight whitespace-pre">
-                      {explosionASCII}
-                    </pre>
-                  </div>
-                  <div className="mt-4 text-red-400 animate-bounce">
-                    <p className="text-lg font-bold">💥 BOOM! 💥</p>
+              {/* Glitch Effect when roasted */}
+              {showGlitch && (
+                <div className="mt-6 space-y-2">
+                  <div className="text-red-500 animate-pulse text-center">
+                    <div className="text-2xl font-bold glitch-text mb-4">
+                      SYSTEM FAILURE
+                    </div>
+                    <div className="text-lg animate-bounce">
+                      💀 KRBTGT.EXE HAS STOPPED WORKING 💀
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* Final Message */}
+              {/* Roasted flood effect */}
+              {showRoastedEffect && (
+                <div className="mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded">
+                  <div className="text-red-400 text-center animate-pulse">
+                    <div className="text-6xl mb-4">🔥</div>
+                    <div className="text-xl font-bold mb-2">ROASTED STATUS: MAXIMUM</div>
+                    <div className="text-sm opacity-75 overflow-hidden">
+                      {Array(10).fill('#ROASTED #BURNT #OVERCOOKED ').join('')}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Final HackTheBox style message */}
               {allLinesShown && (
-                <div className="mt-8 space-y-4 animate-fade-in">
-                  <div className="border-t border-gray-700 pt-6">
+                <div className="mt-8 space-y-6 animate-fade-in">
+                  <div className="border border-red-500/30 bg-red-900/10 rounded-lg p-6">
                     <div className="text-center space-y-4">
-                      <div className="text-yellow-400 text-lg font-mono">
-                        "Lesson learned: Never roast the krbtgt unsupervised."
+                      <div className="text-red-400 text-2xl font-bold font-mono">
+                        MISSION FAILED
                       </div>
                       
-                      <div className="text-gray-400 text-sm italic">
-                        - Fenrir's Security Cookbook, Chapter 404: "How NOT to Kerberoast"
+                      <div className="text-yellow-400 text-lg">
+                        Try harder.
                       </div>
                       
-                      <div className="pt-4">
+                      <div className="text-gray-400 text-sm space-y-2">
+                        <div>🎯 <strong>Skill Issue Detected:</strong> Maybe try HackTheBox first?</div>
+                        <div>📚 <strong>Certification Missing:</strong> AZ-900 required for krbtgt access</div>
+                        <div>🐧 <strong>OS Recommendation:</strong> Tails Linux or GTFO</div>
+                        <div>🔥 <strong>Result:</strong> krbtgt is now a BBQ snack</div>
+                      </div>
+
+                      <div className="border-t border-gray-700 pt-4 text-xs text-gray-500 italic">
+                        "In Soviet Russia, krbtgt roasts YOU!"<br/>
+                        - Fenrir's Pentesting Fails, Volume 404
+                      </div>
+                      
+                      <div className="pt-4 space-y-3">
                         <button
                           onClick={() => navigate('/')}
-                          className="px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-green-400 font-mono border border-green-500/30 rounded-lg hover:border-green-400/50 hover:from-green-900/20 hover:to-blue-900/20 transition-all duration-300 group"
+                          className="w-full px-6 py-3 bg-gradient-to-r from-red-800 to-red-700 text-white font-mono border border-red-500/30 rounded-lg hover:border-red-400/50 hover:from-red-700 hover:to-red-600 transition-all duration-300 group"
                         >
-                          <span className="flex items-center space-x-2">
+                          <span className="flex items-center justify-center space-x-2">
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
-                            <span>Retourner au terminal</span>
+                            <span>Retour au terminal (avec la queue entre les jambes)</span>
                           </span>
                         </button>
+                        
+                        <div className="text-xs text-gray-500">
+                          Pro tip: Next time, don't roast the Domain Controller's favorite account 🤡
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -199,21 +255,52 @@ export default function KrbtgtPage() {
         </div>
       </div>
 
-      {/* Screen shake effect when explosion happens */}
+      {/* Enhanced CSS animations */}
       <style jsx>{`
-        ${showExplosion ? `
-          @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-          }
-          .animate-shake {
-            animation: shake 0.5s ease-in-out 3;
-          }
-        ` : ''}
+        @keyframes glitch {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-2px); }
+          40% { transform: translateX(2px); }
+          60% { transform: translateX(-1px); }
+          80% { transform: translateX(1px); }
+        }
+        
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-3px); }
+          75% { transform: translateX(3px); }
+        }
+        
+        .animate-shake {
+          animation: shake 0.3s ease-in-out infinite;
+        }
+        
+        .glitch-text {
+          position: relative;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+          content: 'SYSTEM FAILURE';
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+        }
+        
+        .glitch-text::before {
+          color: #ff0000;
+          animation: glitch 0.3s infinite;
+          clip-path: rect(0, 900px, 0, 0);
+        }
+        
+        .glitch-text::after {
+          color: #00ff00;
+          animation: glitch 0.3s infinite reverse;
+          clip-path: rect(0, 900px, 0, 0);
+        }
       `}</style>
-      
-      <div className={`fixed inset-0 pointer-events-none ${showExplosion ? 'animate-shake' : ''}`}></div>
     </div>
   );
 }
