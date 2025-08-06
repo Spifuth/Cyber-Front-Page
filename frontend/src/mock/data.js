@@ -74,7 +74,7 @@ export const mockData = {
   terminalCommands: {
     whoami: 'fenrir',
     pwd: '/home/fenrir/portfolio',
-    ls: ['projects/', 'tools/', 'underground/', '.secrets/', 'selfdestruct.exe', 'memes.gif', 'krbtgt_roasted.txt'],
+    ls: ['projects/', 'tools/', 'underground/', '.secrets/', 'selfdestruct.exe', 'memes.gif', 'krbtgt_roasted.txt', 'secrets.txt'],
     'cd underground': 'Access granted. Redirecting to secure zone...',
     'curl ittools.nebulahost.tech': 'Connecting to IT Tools Suite...\n> Response: 200 OK\n> Redirecting...',
     'krbtgt roasting': 'Initializing Kerberoasting attack... Redirecting to secure terminal...',
@@ -85,7 +85,7 @@ export const mockData = {
     'nmap nebulahost.tech': 'nmap_scan',
     help: 'help_formatted',
     clear: '',
-    exit: 'Connection terminated. Au revoir!'
+    exit: 'Connection terminated. Goodbye!'
   },
 
   fileSystem: {
