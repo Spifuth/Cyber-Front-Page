@@ -272,17 +272,27 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
-    if (trimmedCmd === 'curl ittools.nebulahost.tech') {
-      typeWriter('Connecting to IT Tools Suite...', () => {
-        setTimeout(() => {
-          setHistory(prev => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '> Content-Type: application/json' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '> Redirecting...' }]);
+    if (trimmedCmd.startsWith('curl ')) {
+      const url = trimmedCmd.substring(5).trim();
+      if (url.includes('ittools.nebulahost.tech')) {
+        typeWriter('Connecting to IT Tools Suite...', () => {
           setTimeout(() => {
-            window.open('https://ittools.nebulahost.tech', '_blank');
-          }, 1500);
-        }, 1000);
-      });
+            setHistory(prev => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
+            setHistory(prev => [...prev, { type: 'output', content: '> Content-Type: application/json' }]);
+            setHistory(prev => [...prev, { type: 'output', content: '> Redirecting...' }]);
+            setTimeout(() => {
+              window.open('https://ittools.nebulahost.tech', '_blank');
+            }, 1500);
+          }, 1000);
+        });
+      } else {
+        typeWriter(`Connecting to ${url}...`, () => {
+          setTimeout(() => {
+            setHistory(prev => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
+            setHistory(prev => [...prev, { type: 'output', content: '> Connection successful' }]);
+          }, 500);
+        });
+      }
       return;
     }
 
