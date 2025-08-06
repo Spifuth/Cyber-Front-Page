@@ -99,19 +99,25 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
 
   const executeHelp = () => {
     const commands = [
-      ['help', 'about'],
-      ['whoami', 'pwd'],
-      ['ls', 'cd'],
-      ['cat', 'nmap'],
-      ['projects', 'krbtgt roasting'],
-      ['tools', 'selfdestruct'],
-      ['neofetch', 'clear'],
-      ['curl', 'exit']
+      ['help', 'Show this help message'],
+      ['whoami', 'Display current user'],
+      ['pwd', 'Show current directory'],
+      ['ls', 'List directory contents'],
+      ['cd <dir>', 'Change directory'],
+      ['cat <file>', 'Display file contents'],
+      ['nmap <host>', 'Scan for open ports'],
+      ['neofetch', 'Display system information'],
+      ['curl <url>', 'Make HTTP request'],
+      ['krbtgt roasting', 'Launch Kerberos attack'],
+      ['selfdestruct', 'Trigger system meltdown'],
+      ['clear', 'Clear terminal screen'],
+      ['exit', 'Close terminal session']
     ];
     
     let helpText = 'Available commands:\n\n';
-    commands.forEach(pair => {
-      helpText += `${pair[0].padEnd(15)} ${pair[1]}\n`;
+    commands.forEach(([cmd, desc]) => {
+      const paddedCmd = cmd.padEnd(16);
+      helpText += `${paddedCmd} ${desc}\n`;
     });
     
     setHistory(prev => [...prev, { type: 'output', content: helpText }]);
