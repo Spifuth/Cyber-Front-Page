@@ -1,9 +1,30 @@
-import React from 'react';
-import { ExternalLink, Code, Server, Activity, Shield } from 'lucide-react';
-import { mockData } from '../mock/data';
+import React, { useState, useEffect } from 'react';
+import { ExternalLink, Code, Server, Activity, Shield, Github } from 'lucide-react';
 
 export default function Projects() {
-  const { projects } = mockData;
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/data/projects.json');
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects');
+        }
+        const data = await response.json();
+        setProjects(data.projects);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading projects:', err);
+        setError('Failed to load projects');
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -21,6 +42,42 @@ export default function Projects() {
     if (title.includes('proxy')) return Shield;
     return Code;
   };
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 relative" id="projects">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-mono font-bold mb-4 text-green-400">
+              <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+                ./projects
+              </span>
+            </h2>
+            <div className="w-24 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mb-4"></div>
+            <p className="text-gray-400 font-mono"># Loading projects...</p>
+          </div>
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-400"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-20 px-4 relative" id="projects">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <h2 className="text-4xl font-mono font-bold mb-4 text-red-400">
+              ./projects --error
+            </h2>
+            <p className="text-red-400 font-mono"># {error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 px-4 relative" id="projects">
@@ -83,12 +140,37 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  {/* Action Button */}
-                  <div className="pt-4">
-                    <button className="w-full flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-green-400 font-mono text-sm border border-green-500/30 rounded-lg hover:border-green-400/50 hover:from-green-900/20 hover:to-blue-900/20 transition-all duration-300 group-hover:text-blue-400">
-                      <ExternalLink className="w-4 h-4" />
-                      <span>view_project</span>
-                    </button>
+                  {/* Action Buttons */}
+                  <div className="pt-4 flex space-x-2">
+                    {project.link && project.link !== '#' && (
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-green-400 font-mono text-sm border border-green-500/30 rounded-lg hover:border-green-400/50 hover:from-green-900/20 hover:to-blue-900/20 transition-all duration-300"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        <span>view_live</span>
+                      </a>
+                    )}
+                    
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-violet-400 font-mono text-sm border border-violet-500/30 rounded-lg hover:border-violet-400/50 hover:from-violet-900/20 hover:to-blue-900/20 transition-all duration-300"
+                      >
+                        <Github className="w-4 h-4" />
+                      </a>
+                    )}
+                    
+                    {(!project.link || project.link === '#') && !project.github && (
+                      <button className="w-full flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-gray-500 font-mono text-sm border border-gray-500/30 rounded-lg cursor-not-allowed">
+                        <Code className="w-4 h-4" />
+                        <span>in_development</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
