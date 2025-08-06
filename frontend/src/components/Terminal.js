@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { mockData } from '../mock/data';
 
 export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, onNavigateToSelfDestruct }) {
+  const navigate = useNavigate();
   const [history, setHistory] = useState([]);
   const [currentCommand, setCurrentCommand] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [currentDir, setCurrentDir] = useState('/home/fenrir');
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [filesystem, setFilesystem] = useState(null);
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
 
