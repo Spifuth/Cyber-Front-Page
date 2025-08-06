@@ -77,7 +77,8 @@ export const mockData = {
     ls: ['projects/', 'tools/', 'underground/', '.secrets/'],
     'cd underground': 'Access granted. Redirecting to secure zone...',
     'curl ittools.nebulaost.tech': 'Connecting to IT Tools Suite...\n> Response: 200 OK\n> Redirecting...',
-    help: 'Available commands: whoami, pwd, ls, cd underground, neofetch, curl ittools.nebulaost.tech, clear, exit',
+    'krbtgt roasting': 'Initializing Kerberoasting attack... Redirecting to secure terminal...',
+    help: 'Available commands: whoami, pwd, ls, cd underground, krbtgt roasting, neofetch, curl ittools.nebulaost.tech, clear, exit',
     clear: '',
     exit: 'Connection terminated. Au revoir!'
   }
