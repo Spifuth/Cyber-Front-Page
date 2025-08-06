@@ -172,6 +172,14 @@ const ContactPage = () => {
             </p>
             
             <form onSubmit={handleFormSubmit} className="space-y-4">
+              {formSubmitted && (
+                <div className="border border-green-400 bg-green-900 bg-opacity-30 p-4 rounded-lg mb-4">
+                  <p className="text-green-400 font-bold">🔒 Message Sent Successfully!</p>
+                  <p className="text-gray-300 text-sm">Secure message queued for transmission via encrypted channel</p>
+                  <p className="text-gray-300 text-sm">Response expected within 24-48 hours</p>
+                </div>
+              )}
+              
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-green-400 mb-2">Name*</label>
