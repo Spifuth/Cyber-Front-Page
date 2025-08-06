@@ -5,6 +5,14 @@ import HomePage from "./pages/HomePage";
 import UndergroundPage from "./pages/UndergroundPage";
 import KrbtgtPage from "./pages/KrbtgtPage";
 import SelfDestructPage from "./pages/SelfDestructPage";
+import ResumePage from "./pages/ResumePage";
+import TimelinePage from "./pages/TimelinePage";
+import StackPage from "./pages/StackPage";
+import InfraPage from "./pages/InfraPage";
+import CertsPage from "./pages/CertsPage";
+import ContactPage from "./pages/ContactPage";
+import LearningPage from "./pages/LearningPage";
+import LogsPage from "./pages/LogsPage";
 import "./App.css";
 
 function App() {
