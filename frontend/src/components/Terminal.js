@@ -108,7 +108,9 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt }
     if (trimmedCmd === 'krbtgt roasting') {
       typeWriter('Initializing Kerberoasting attack... Redirecting to secure terminal...', () => {
         setTimeout(() => {
-          window.location.href = '/krbtgt';
+          if (onNavigateToKrbtgt) {
+            onNavigateToKrbtgt();
+          }
         }, 1000);
       });
       return;
