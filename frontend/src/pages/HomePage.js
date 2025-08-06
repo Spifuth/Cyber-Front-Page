@@ -6,6 +6,7 @@ import Projects from '../components/Projects';
 import Terminal from '../components/Terminal';
 import GitHubLink from '../components/GitHubLink';
 import ToolsLink from '../components/ToolsLink';
+import CyberMaze from '../components/CyberMaze';
 import { Terminal as TerminalIcon, X } from 'lucide-react';
 
 export default function HomePage() {
@@ -14,6 +15,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black text-green-400 relative overflow-hidden">
+      {/* Cyber Maze Background */}
+      <CyberMaze />
+      
       {/* Animated background elements */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/20 via-blue-900/10 to-violet-900/20"></div>
