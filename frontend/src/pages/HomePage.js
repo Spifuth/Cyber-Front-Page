@@ -7,16 +7,32 @@ import Terminal from '../components/Terminal';
 import GitHubLink from '../components/GitHubLink';
 import ToolsLink from '../components/ToolsLink';
 import CyberMaze from '../components/CyberMaze';
-import { Terminal as TerminalIcon, X } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Eye, EyeOff } from 'lucide-react';
 
 export default function HomePage() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isMazeEnabled, setIsMazeEnabled] = useState(true);
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-black text-green-400 relative overflow-hidden">
-      {/* Cyber Maze Background */}
-      <CyberMaze />
+      {/* Cyber Maze Background with toggle */}
+      <CyberMaze isEnabled={isMazeEnabled} />
+      
+      {/* Maze Toggle Button */}
+      <div className="fixed top-8 right-8 z-50">
+        <button
+          onClick={() => setIsMazeEnabled(!isMazeEnabled)}
+          className="bg-gray-900/90 border border-blue-500/50 text-blue-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-blue-400 transition-all duration-300 backdrop-blur-sm group"
+          title={`${isMazeEnabled ? 'Disable' : 'Enable'} Cyber Maze`}
+        >
+          {isMazeEnabled ? (
+            <EyeOff className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+          ) : (
+            <Eye className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+          )}
+        </button>
+      </div>
       
       {/* Animated background elements */}
       <div className="fixed inset-0 pointer-events-none">
@@ -62,6 +78,13 @@ export default function HomePage() {
                 onNavigateToKrbtgt={() => {
                   setIsTerminalOpen(false);
                   navigate('/krbtgt');
+                }}
+                onNavigateToSelfDestruct={() => {
+                  setIsTerminalOpen(false);
+                  navigate('/selfdestruct');
+                }}
+                onToggleMaze={() => {
+                  setIsMazeEnabled(!isMazeEnabled);
                 }}
               />
             </div>
