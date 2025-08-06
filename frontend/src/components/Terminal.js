@@ -193,8 +193,34 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     setHistory(prev => [...prev, { type: 'output', content: helpText }]);
   };
 
+  // Security: Input sanitization and validation
+  const sanitizeInput = (input) => {
+    // Remove potentially dangerous characters and limit length
+    return input
+      .replace(/[<>&"']/g, '') // Remove HTML/XML special chars
+      .replace(/\.\./g, '')     // Remove path traversal
+      .slice(0, 200)            // Limit input length
+      .trim();
+  };
+
+  const validateCommand = (cmd) => {
+    const allowedCommands = [
+      'help', 'whoami', 'pwd', 'ls', 'clear', 'exit', 'neofetch',
+      'resume', 'timeline', 'stack', 'infra', 'certs', 'email', 'contact',
+      'learning', 'resources', 'logs', 'hackername', 'music', 'radio',
+      'mirror', 'vault', 'selfdestruct', 'krbtgt roasting'
+    ];
+    
+    const allowedPrefixes = ['cd ', 'cat ', 'nmap ', 'curl ', 'sudo ', 'decrypt '];
+    
+    return allowedCommands.includes(cmd) || 
+           allowedPrefixes.some(prefix => cmd.startsWith(prefix));
+  };
+
   const executeCommand = (cmd) => {
-    const trimmedCmd = cmd.trim().toLowerCase();
+    // Security: Sanitize and validate input
+    const sanitizedCmd = sanitizeInput(cmd);
+    const trimmedCmd = sanitizedCmd.toLowerCase();
     
     // Add command to history
     setHistory(prev => [...prev, { type: 'command', content: `${getPrompt()}${cmd}` }]);
