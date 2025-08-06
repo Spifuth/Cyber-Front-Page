@@ -70,6 +70,14 @@ function App() {
             <Route path="/underground" element={<UndergroundPage />} />
             <Route path="/krbtgt" element={<KrbtgtPage />} />
             <Route path="/selfdestruct" element={<SelfDestructPage />} />
+            <Route path="/resume" element={<ResumePage />} />
+            <Route path="/timeline" element={<TimelinePage />} />
+            <Route path="/stack" element={<StackPage />} />
+            <Route path="/infra" element={<InfraPage />} />
+            <Route path="/certs" element={<CertsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/learning" element={<LearningPage />} />
+            <Route path="/logs" element={<LogsPage />} />
           </Routes>
         </BrowserRouter>
       </div>
