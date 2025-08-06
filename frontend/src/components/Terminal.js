@@ -79,10 +79,10 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
     }, speed);
   };
 
-  const executeNmapScan = () => {
+  const executeNmapScan = (target = 'nebulahost.tech') => {
     const randomPort = Math.floor(Math.random() * 9000) + 1000;
     const nmapOutput = `Starting Nmap 7.93 ( https://nmap.org )
-Nmap scan report for nebulahost.tech (127.0.0.1)
+Nmap scan report for ${target} (127.0.0.1)
 Host is up (0.0010s latency).
 Not shown: 996 closed ports
 
