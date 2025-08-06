@@ -50,7 +50,7 @@ export const mockData = {
 
   tools: {
     name: 'IT Tools Suite',
-    url: 'https://ittools.nebulaost.tech',
+    url: 'https://ittools.nebulahost.tech',
     description: 'Collection d\'outils techniques auto-hébergés'
   },
 
