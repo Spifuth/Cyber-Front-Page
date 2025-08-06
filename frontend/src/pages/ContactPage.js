@@ -41,7 +41,8 @@ const ContactPage = () => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     // In a real implementation, this would send the form data
-    alert('🔒 Secure message queued for transmission via encrypted channel');
+    setHistory(prev => [...prev, { type: 'output', content: '🔒 Secure message queued for transmission via encrypted channel' }]);
+    setHistory(prev => [...prev, { type: 'output', content: '✅ Message will be processed within 24-48 hours' }]);
     setFormData({ name: '', email: '', subject: '', message: '', security: '' });
     setShowSecureForm(false);
   };
