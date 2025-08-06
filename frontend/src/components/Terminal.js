@@ -366,6 +366,214 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
+    // ============ PROFESSIONAL COMMANDS ============
+    
+    if (trimmedCmd === 'resume') {
+      typeWriter('Loading professional resume...', () => {
+        setTimeout(() => navigate('/resume'), 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'timeline') {
+      typeWriter('Accessing career timeline...', () => {
+        setTimeout(() => navigate('/timeline'), 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'stack') {
+      typeWriter('Displaying technology stack...', () => {
+        setTimeout(() => navigate('/stack'), 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'infra') {
+      typeWriter('Loading infrastructure diagram...', () => {
+        setTimeout(() => navigate('/infra'), 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'certs') {
+      typeWriter('Retrieving certification records...', () => {
+        setTimeout(() => navigate('/certs'), 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'email' || trimmedCmd === 'contact') {
+      typeWriter('Opening secure communication channels...', () => {
+        setTimeout(() => navigate('/contact'), 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'learning' || trimmedCmd === 'resources') {
+      typeWriter('Accessing learning resources database...', () => {
+        setTimeout(() => navigate('/learning'), 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'logs') {
+      typeWriter('Tailing system logs... Access granted.', () => {
+        setTimeout(() => navigate('/logs'), 1000);
+      });
+      return;
+    }
+
+    // ============ FUN COMMANDS ============
+    
+    if (trimmedCmd.startsWith('sudo ')) {
+      const sudoCmd = trimmedCmd.substring(5).trim();
+      const jokes = [
+        `fenrir is not in the sudoers file. This incident will be reported to Santa.`,
+        `Sorry ${sudoCmd}, I can't let you do that. *HAL 9000 voice*`,
+        `sudo: password incorrect. Try 'password123' or 'admin'. Just kidding! 😂`,
+        `Access denied. Maybe try saying "please"? No wait, this isn't Canada.`,
+        `${sudoCmd}: command not found. Did you try turning it off and on again?`,
+        `Permission denied. Your security clearance is insufficient for this operation.`
+      ];
+      
+      if (sudoCmd === 'rm -rf /' || sudoCmd === 'rm -rf /*') {
+        typeWriter('🚨 CRITICAL SYSTEM ERROR 🚨\nDetected attempt to delete everything!\nInitiating emergency protocols...', () => {
+          setTimeout(() => {
+            setHistory(prev => [...prev, { type: 'error', content: '❌ Just kidding! No system was harmed in the making of this joke.' }]);
+            setHistory(prev => [...prev, { type: 'output', content: '💡 Pro tip: Never run "sudo rm -rf /" on a real system!' }]);
+          }, 2000);
+        });
+      } else {
+        const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+        setHistory(prev => [...prev, { type: 'error', content: randomJoke }]);
+      }
+      return;
+    }
+
+    if (trimmedCmd === 'hackername') {
+      const prefixes = ['Cyber', 'Dark', 'Neo', 'Zero', 'Phantom', 'Ghost', 'Shadow', 'Digital'];
+      const suffixes = ['Wolf', 'Hawk', 'Fox', 'Viper', 'Reaper', 'Hunter', 'Blade', 'Storm'];
+      const numbers = ['01', '13', '42', '99', '21', '87', '69'];
+      
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+      const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+      const number = numbers[Math.floor(Math.random() * numbers.length)];
+      
+      const hackerName = `${prefix}${suffix}${number}`;
+      
+      typeWriter(`Generating hacker alias...`, () => {
+        setTimeout(() => {
+          setHistory(prev => [...prev, { type: 'output', content: `🎭 Your new hacker name: ${hackerName}` }]);
+          setHistory(prev => [...prev, { type: 'output', content: `Don't forget to wear a black hoodie and type dramatically!` }]);
+        }, 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'music' || trimmedCmd === 'radio') {
+      typeWriter('🎵 Tuning into Synthwave FM...', () => {
+        setTimeout(() => {
+          setHistory(prev => [...prev, { type: 'output', content: '♪ Now Playing: "Neon Dreams" by Cyber Artist' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '🎧 Volume: ████████░░ 80%' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '💡 Tip: Replace stream URL in code for your preferred station' }]);
+          // In a real implementation, you would embed an audio player here
+          setHistory(prev => [...prev, { type: 'output', content: '🔊 [Music player would be embedded here in production]' }]);
+        }, 1500);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'mirror') {
+      const userAgent = navigator.userAgent;
+      let browserInfo = 'Unknown Browser';
+      let sarcasm = '';
+      
+      if (userAgent.includes('Chrome')) {
+        browserInfo = 'Google Chrome (The Data Collector™)';
+        sarcasm = 'Ah, a Chrome user. Google already knows what you had for breakfast.';
+      } else if (userAgent.includes('Firefox')) {
+        browserInfo = 'Mozilla Firefox (The Privacy Advocate)';
+        sarcasm = 'Firefox user detected. You probably use DuckDuckGo too. Respect!';
+      } else if (userAgent.includes('Safari')) {
+        browserInfo = 'Apple Safari (The Walled Garden)';
+        sarcasm = 'Safari user? Let me guess, you also have an iPhone, iPad, and MacBook.';
+      } else if (userAgent.includes('Edge')) {
+        browserInfo = 'Microsoft Edge (The Underdog)';
+        sarcasm = 'Edge? Brave choice! Microsoft thanks you for not using Chrome.';
+      }
+      
+      const platform = navigator.platform;
+      const language = navigator.language;
+      
+      typeWriter('Analyzing your digital reflection...', () => {
+        setTimeout(() => {
+          setHistory(prev => [...prev, { type: 'output', content: '🔍 SYSTEM ANALYSIS COMPLETE' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '━━━━━━━━━━━━━━━━━━━━━━━━━━━' }]);
+          setHistory(prev => [...prev, { type: 'output', content: `Browser: ${browserInfo}` }]);
+          setHistory(prev => [...prev, { type: 'output', content: `Platform: ${platform}` }]);
+          setHistory(prev => [...prev, { type: 'output', content: `Language: ${language}` }]);
+          setHistory(prev => [...prev, { type: 'output', content: `Screen: ${window.screen.width}x${window.screen.height}` }]);
+          setHistory(prev => [...prev, { type: 'output', content: '' }]);
+          setHistory(prev => [...prev, { type: 'output', content: `💬 ${sarcasm}` }]);
+        }, 2000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'vault') {
+      typeWriter('Accessing encrypted vault... Please stand by...', () => {
+        setTimeout(() => {
+          setHistory(prev => [...prev, { type: 'output', content: '🔒 SECURE VAULT ACCESSED' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '━━━━━━━━━━━━━━━━━━━━━━━━━━' }]);
+          setHistory(prev => [...prev, { type: 'output', content: 'Contents:' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '• secret.txt.gpg     [ENCRYPTED]' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '• passwords.kdb      [ENCRYPTED]' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '• nuclear_codes.zip  [ENCRYPTED]' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '• my_diary.txt.enc   [ENCRYPTED]' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '' }]);
+          setHistory(prev => [...prev, { type: 'output', content: '💡 Use "decrypt <filename>" to attempt decryption' }]);
+        }, 2000);
+      });
+      return;
+    }
+
+    if (trimmedCmd.startsWith('decrypt ')) {
+      const filename = trimmedCmd.substring(8).trim();
+      const validFiles = ['secret.txt.gpg', 'passwords.kdb', 'nuclear_codes.zip', 'my_diary.txt.enc'];
+      
+      if (!validFiles.includes(filename)) {
+        setHistory(prev => [...prev, { type: 'error', content: `File not found: ${filename}` }]);
+        return;
+      }
+      
+      typeWriter(`Attempting to decrypt ${filename}...`, () => {
+        setTimeout(() => {
+          if (filename === 'secret.txt.gpg') {
+            setHistory(prev => [...prev, { type: 'output', content: '🔓 DECRYPTION SUCCESSFUL!' }]);
+            setHistory(prev => [...prev, { type: 'output', content: '' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'The secret to happiness is:' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Good friends, good coffee, and good cybersecurity! ☕' }]);
+          } else if (filename === 'nuclear_codes.zip') {
+            setHistory(prev => [...prev, { type: 'error', content: '❌ DECRYPTION FAILED' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Error: Nice try, but these are fake nuclear codes!' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Real code is: 00000000 (it was changed from 12345678)' }]);
+          } else if (filename === 'my_diary.txt.enc') {
+            setHistory(prev => [...prev, { type: 'output', content: '🔓 DECRYPTION SUCCESSFUL!' }]);
+            setHistory(prev => [...prev, { type: 'output', content: '' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Dear Diary,' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Today I successfully prevented 47 cyber attacks.' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Also, I think pineapple on pizza is acceptable. 🍕' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Tomorrow: Learn quantum cryptography.' }]);
+          } else {
+            setHistory(prev => [...prev, { type: 'error', content: '❌ DECRYPTION FAILED' }]);
+            setHistory(prev => [...prev, { type: 'output', content: 'Encryption too strong. Maybe try password "password"? 😏' }]);
+          }
+        }, 3000);
+      });
+      return;
+    }
+
     // Handle other commands
     if (terminalCommands[trimmedCmd]) {
       const output = terminalCommands[trimmedCmd];
