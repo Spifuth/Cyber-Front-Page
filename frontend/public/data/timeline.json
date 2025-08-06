@@ -1,0 +1,86 @@
+{
+  "timeline": [
+    {
+      "id": "timeline_001",
+      "date": "2024-01-15",
+      "title": "Senior SOC Analyst",
+      "organization": "CyberGuard Technologies",
+      "type": "career",
+      "description": "Lead threat hunting operations and incident response for Fortune 500 clients. Implemented advanced SIEM correlation rules reducing false positives by 60%.",
+      "status": "current",
+      "technologies": ["Splunk", "QRadar", "CrowdStrike", "Wireshark", "YARA"]
+    },
+    {
+      "id": "timeline_002",
+      "date": "2022-08-10",
+      "title": "SOC Analyst II",
+      "organization": "SecureNet Solutions",
+      "type": "career",
+      "description": "Specialized in malware analysis and digital forensics. Developed custom Python scripts for threat intelligence automation.",
+      "status": "completed",
+      "technologies": ["ELK Stack", "Volatility", "IDA Pro", "Python", "MISP"]
+    },
+    {
+      "id": "timeline_003",
+      "date": "2021-03-20",
+      "title": "Junior Security Analyst",
+      "organization": "TechShield Corp",
+      "type": "career", 
+      "description": "Started career in cybersecurity with focus on network monitoring and vulnerability assessment.",
+      "status": "completed",
+      "technologies": ["Nessus", "Nmap", "Metasploit", "Burp Suite", "Kali Linux"]
+    },
+    {
+      "id": "timeline_004",
+      "date": "2020-12-15",
+      "title": "M.S. Cybersecurity",
+      "organization": "University of Advanced Technology",
+      "type": "education",
+      "description": "Master's degree focusing on incident response, digital forensics, and threat intelligence. Thesis on AI-driven threat detection.",
+      "status": "completed",
+      "technologies": ["Machine Learning", "Digital Forensics", "Cryptography"]
+    },
+    {
+      "id": "timeline_005",
+      "date": "2018-05-22",
+      "title": "B.S. Computer Science",
+      "organization": "Tech Institute of Excellence",
+      "type": "education",
+      "description": "Bachelor's degree with concentration in cybersecurity. Graduated Summa Cum Laude.",
+      "status": "completed",
+      "technologies": ["C++", "Java", "Network Security", "Database Systems"]
+    },
+    {
+      "id": "timeline_006",
+      "date": "2024-03-01",
+      "title": "NebulaHost Infrastructure",
+      "organization": "Personal Project",
+      "type": "project",
+      "description": "Built self-hosted infrastructure with Debian 12, Docker, Traefik, and comprehensive monitoring stack.",
+      "status": "ongoing",
+      "technologies": ["Debian", "Docker", "Traefik", "Zabbix", "ELK Stack"]
+    },
+    {
+      "id": "timeline_007",
+      "date": "2025-06-01",
+      "title": "SANS FOR508 Training",
+      "organization": "SANS Institute",
+      "type": "training",
+      "description": "Advanced Incident Response, Threat Hunting, and Digital Forensics course - Upcoming",
+      "status": "scheduled",
+      "technologies": ["Digital Forensics", "Memory Analysis", "Timeline Analysis"]
+    }
+  ],
+  "categories": {
+    "career": "Professional Experience",
+    "education": "Education",
+    "project": "Personal Projects", 
+    "training": "Professional Development"
+  },
+  "statusColors": {
+    "current": "#00ff41",
+    "completed": "#0084ff",
+    "ongoing": "#ff9500",
+    "scheduled": "#ff6b35"
+  }
+}
