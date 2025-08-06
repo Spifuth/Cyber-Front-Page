@@ -75,7 +75,7 @@ export default function HomePage() {
         
         {isMazeEnabled && (
           <>
-            <div className="relative">
+            <div className="relative" ref={colorPickerRef}>
               <button
                 onClick={() => setShowColorPicker(!showColorPicker)}
                 className="bg-gray-900/90 border border-violet-500/50 text-violet-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-violet-400 transition-all duration-300 backdrop-blur-sm group"
@@ -86,7 +86,7 @@ export default function HomePage() {
               
               {/* Color Picker Menu */}
               {showColorPicker && (
-                <div className="absolute right-0 top-full mt-2 bg-gray-900/95 border border-violet-500/30 rounded-lg p-3 backdrop-blur-sm min-w-[200px] shadow-lg">
+                <div className="absolute right-0 top-full mt-2 bg-gray-900/95 border border-violet-500/30 rounded-lg p-3 backdrop-blur-sm min-w-[200px] shadow-lg animate-fade-in">
                   <div className="text-violet-400 text-xs font-mono mb-3 text-center">
                     Select Maze Color
                   </div>
