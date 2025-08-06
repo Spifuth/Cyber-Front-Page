@@ -1,0 +1,90 @@
+# =============================================
+# DOCKER COMPOSE FOR PRODUCTION DEPLOYMENT
+# Cyberpunk Portfolio - Secure Configuration
+# =============================================
+
+version: '3.8'
+
+services:
+  cyberpunk-portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    
+    container_name: cyberpunk-portfolio
+    
+    # Security: Run as non-root
+    user: "1001:1001"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Read-only root filesystem (except writable volumes)
+    read_only: true
+    
+    # Temporary filesystem for nginx runtime
+    tmpfs:
+      - /var/run:noexec,nosuid,size=50m
+      - /var/cache/nginx:noexec,nosuid,size=50m
+      - /tmp:noexec,nosuid,size=50m
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Labels for Traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cyberpunk.rule=Host(`nebulahost.tech`)"
+      - "traefik.http.routers.cyberpunk.entrypoints=websecure"
+      - "traefik.http.routers.cyberpunk.tls.certresolver=letsencrypt"
+      - "traefik.http.services.cyberpunk.loadbalancer.server.port=80"
+      
+      # Security headers (additional to nginx)
+      - "traefik.http.middlewares.cyberpunk-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.cyberpunk-headers.headers.framedeny=true"
+      - "traefik.http.middlewares.cyberpunk-headers.headers.contenttypenosniff=true"
+      - "traefik.http.middlewares.cyberpunk-headers.headers.browserxssfilter=true"
+      - "traefik.http.middlewares.cyberpunk-headers.headers.referrerpolicy=strict-origin-when-cross-origin"
+      - "traefik.http.routers.cyberpunk.middlewares=cyberpunk-headers"
+    
+    # Environment variables (minimal for security)
+    environment:
+      - NODE_ENV=production
+      - PORT=80
+    
+    # Networks
+    networks:
+      - traefik
+    
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# External network (should be created by Traefik)
+networks:
+  traefik:
+    external: true
