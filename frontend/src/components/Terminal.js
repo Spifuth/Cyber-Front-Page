@@ -141,8 +141,37 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
-    if (trimmedCmd === 'nmap nebulahost.tech') {
-      executeNmapScan();
+    if (trimmedCmd.startsWith('nmap ')) {
+      const target = trimmedCmd.substring(5).trim();
+      if (target === 'nebulahost.tech' || target === '127.0.0.1' || target) {
+        executeNmapScan(target);
+      } else {
+        setHistory(prev => [...prev, { type: 'error', content: 'nmap: usage: nmap <target>' }]);
+      }
+      return;
+    }
+
+    if (trimmedCmd === 'pwd') {
+      setHistory(prev => [...prev, { type: 'output', content: currentDir }]);
+      return;
+    }
+
+    if (trimmedCmd === 'whoami') {
+      setHistory(prev => [...prev, { type: 'output', content: 'fenrir' }]);
+      return;
+    }
+
+    if (trimmedCmd === 'exit') {
+      typeWriter('Connection terminated. Goodbye!', () => {
+        setTimeout(() => {
+          // Close terminal or navigate away
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = '/';
+          }
+        }, 1000);
+      });
       return;
     }
 
