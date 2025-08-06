@@ -1,9 +1,18 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-export default function CyberMaze({ isEnabled = true }) {
+export default function CyberMaze({ isEnabled = true, color = 'green', opacity = 0.25 }) {
   const canvasRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const mazeRef = useRef(null);
+
+  // Color mappings
+  const colorMap = {
+    green: { primary: '34, 197, 94', secondary: '59, 130, 246', tertiary: '139, 92, 246' },
+    blue: { primary: '59, 130, 246', secondary: '34, 197, 94', tertiary: '139, 92, 246' },
+    purple: { primary: '139, 92, 246', secondary: '59, 130, 246', tertiary: '34, 197, 94' },
+    red: { primary: '239, 68, 68', secondary: '249, 115, 22', tertiary: '245, 158, 11' },
+    yellow: { primary: '245, 158, 11', secondary: '34, 197, 94', tertiary: '59, 130, 246' }
+  };
 
   useEffect(() => {
     if (!isEnabled) return;
@@ -43,19 +52,20 @@ export default function CyberMaze({ isEnabled = true }) {
         // Much slower animation - reduced time multiplier by 5x
         const pulseValue = Math.sin(time * 0.0006 + this.pulseOffset) * 0.2 + 0.3; // Slower pulse
         const proximityGlow = Math.max(0, 1 - mouseDistance / 300); // Larger proximity radius
-        this.glowIntensity = (pulseValue * 0.2 + proximityGlow * 0.4) * this.baseOpacity;
+        this.glowIntensity = (pulseValue * 0.2 + proximityGlow * 0.4) * this.baseOpacity * opacity;
 
-        // Draw walls with softer neon effect
+        // Draw walls with softer neon effect using selected colors
         ctx.lineWidth = 1.5; // Thinner lines
         
+        const currentColors = colorMap[color];
         const colors = [
-          `rgba(34, 197, 94, ${this.glowIntensity * 0.4})`, // green - more transparent
-          `rgba(59, 130, 246, ${this.glowIntensity * 0.3})`, // blue - more transparent
-          `rgba(139, 92, 246, ${this.glowIntensity * 0.2})`, // purple - more transparent
+          `rgba(${currentColors.primary}, ${this.glowIntensity * 0.4})`,
+          `rgba(${currentColors.secondary}, ${this.glowIntensity * 0.3})`,
+          `rgba(${currentColors.tertiary}, ${this.glowIntensity * 0.2})`,
         ];
 
-        colors.forEach((color, index) => {
-          ctx.strokeStyle = color;
+        colors.forEach((colorValue, index) => {
+          ctx.strokeStyle = colorValue;
           ctx.lineWidth = 2 - index * 0.5;
           
           if (this.walls.top) {
@@ -86,7 +96,7 @@ export default function CyberMaze({ isEnabled = true }) {
 
         // Smaller, subtler circuit nodes
         if (this.glowIntensity > 0.3) {
-          ctx.fillStyle = `rgba(34, 197, 94, ${this.glowIntensity * 0.6})`;
+          ctx.fillStyle = `rgba(${currentColors.primary}, ${this.glowIntensity * 0.6})`;
           ctx.beginPath();
           ctx.arc(x + gridSize/2, y + gridSize/2, 1, 0, Math.PI * 2);
           ctx.fill();
@@ -187,14 +197,15 @@ export default function CyberMaze({ isEnabled = true }) {
       animationId = requestAnimationFrame(animate);
     };
 
-    // Fewer, slower data packets
+    // Fewer, slower data packets with color support
+    const currentColors = colorMap[color];
     const dataPackets = Array.from({ length: 4 }, () => ({ // Reduced from 8 to 4
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       dx: (Math.random() - 0.5) * 0.2, // Much slower movement
       dy: (Math.random() - 0.5) * 0.2,
       size: Math.random() * 2 + 0.5, // Smaller particles
-      color: Math.random() > 0.5 ? 'rgba(34, 197, 94, 0.3)' : 'rgba(59, 130, 246, 0.3)', // More transparent
+      color: Math.random() > 0.5 ? `rgba(${currentColors.primary}, 0.3)` : `rgba(${currentColors.secondary}, 0.3)`,
       pulseOffset: Math.random() * Math.PI * 2
     }));
 
@@ -239,7 +250,7 @@ export default function CyberMaze({ isEnabled = true }) {
         cancelAnimationFrame(animationId);
       }
     };
-  }, [mousePos, isEnabled]);
+  }, [mousePos, isEnabled, color, opacity]);
 
   // Mouse tracking (throttled for better performance)
   useEffect(() => {
@@ -270,7 +281,7 @@ export default function CyberMaze({ isEnabled = true }) {
       className="fixed inset-0 pointer-events-none"
       style={{ 
         zIndex: 1,
-        opacity: 0.25, // Reduced from 0.4
+        opacity: opacity,
         mixBlendMode: 'screen',
         filter: 'blur(0.5px)' // Added subtle blur
       }}
