@@ -212,12 +212,9 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus:
-    - "Interactive Terminal component"
-    - "Easter egg pages navigation"
-    - "About and Projects sections visibility"
+  current_focus: []
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
