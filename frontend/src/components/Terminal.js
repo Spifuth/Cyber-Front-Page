@@ -300,9 +300,15 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
 
     if (trimmedCmd.startsWith('cat ')) {
       const filename = trimmedCmd.substring(4).trim();
-      const catCommand = `cat ${filename}`;
-      if (terminalCommands[catCommand]) {
-        setHistory(prev => [...prev, { type: 'output', content: terminalCommands[catCommand] }]);
+      const filePath = filename.startsWith('/') ? filename : currentDir + '/' + filename;
+      
+      // Check new filesystem structure first
+      if (filesystem?.files[filePath]) {
+        const fileContent = filesystem.files[filePath].content;
+        setHistory(prev => [...prev, { type: 'output', content: fileContent }]);
+      } else if (terminalCommands[`cat ${filename}`]) {
+        // Fallback to old system
+        setHistory(prev => [...prev, { type: 'output', content: terminalCommands[`cat ${filename}`] }]);
       } else {
         setHistory(prev => [...prev, { type: 'error', content: `cat: ${filename}: No such file or directory` }]);
       }
