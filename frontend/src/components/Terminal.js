@@ -116,26 +116,79 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
 
   const executeHelp = () => {
     const commands = [
+      // Basic Navigation
       ['help', 'Show this help message'],
       ['whoami', 'Display current user'],
       ['pwd', 'Show current directory'],
       ['ls', 'List directory contents'],
       ['cd <dir>', 'Change directory'],
       ['cat <file>', 'Display file contents'],
-      ['nmap <host>', 'Scan for open ports'],
-      ['neofetch', 'Display system information'],
-      ['curl <url>', 'Make HTTP request'],
-      ['krbtgt roasting', 'Launch Kerberos attack'],
-      ['selfdestruct', 'Trigger system meltdown'],
       ['clear', 'Clear terminal screen'],
-      ['exit', 'Close terminal session']
+      ['exit', 'Close terminal session'],
+      
+      // System Info
+      ['neofetch', 'Display system information'],
+      ['nmap <host>', 'Scan for open ports'],
+      ['curl <url>', 'Make HTTP request'],
+      
+      // Professional Pages
+      ['resume', 'Display professional resume'],
+      ['timeline', 'Show career timeline'],
+      ['stack', 'Display tech stack'],
+      ['infra', 'Show infrastructure diagram'],
+      ['certs', 'List certifications'],
+      ['email', 'Show contact information'],
+      ['learning', 'Display learning resources'],
+      ['logs', 'View system logs'],
+      
+      // Fun Commands
+      ['sudo <cmd>', 'Execute with elevated privileges'],
+      ['hackername', 'Generate a random hacker alias'],
+      ['music', 'Play synthwave radio'],
+      ['mirror', 'Analyze your system with sarcasm'],
+      ['vault', 'Access encrypted vault'],
+      ['decrypt <file>', 'Attempt to decrypt files'],
+      
+      // Easter Eggs
+      ['cd underground', 'Access the underground'],
+      ['krbtgt roasting', 'Launch Kerberos attack'],
+      ['selfdestruct', 'Trigger system meltdown']
     ];
     
-    let helpText = 'Available commands:\n\n';
+    let helpText = '╔══════════════════════════════════════════════════════════════╗\n';
+    helpText += '║                     AVAILABLE COMMANDS                      ║\n';
+    helpText += '╠══════════════════════════════════════════════════════════════╣\n';
+    
+    let currentCategory = '';
     commands.forEach(([cmd, desc]) => {
-      const paddedCmd = cmd.padEnd(16);
-      helpText += `${paddedCmd} ${desc}\n`;
+      if (cmd === 'help') {
+        helpText += '║  BASIC NAVIGATION                                            ║\n';
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+      } else if (cmd === 'neofetch') {
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+        helpText += '║  SYSTEM INFO                                                 ║\n';
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+      } else if (cmd === 'resume') {
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+        helpText += '║  PROFESSIONAL                                                ║\n';
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+      } else if (cmd === 'sudo <cmd>') {
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+        helpText += '║  FUN COMMANDS                                                ║\n';
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+      } else if (cmd === 'cd underground') {
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+        helpText += '║  EASTER EGGS                                                 ║\n';
+        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
+      }
+      
+      const paddedCmd = cmd.padEnd(18);
+      helpText += `║  ${paddedCmd} ${desc.padEnd(38)} ║\n`;
     });
+    
+    helpText += '╚══════════════════════════════════════════════════════════════╝\n';
+    helpText += '\nTip: Use arrow keys to navigate command history\n';
+    helpText += 'Pro tip: Try "sudo rm -rf /" for a surprise! 😈';
     
     setHistory(prev => [...prev, { type: 'output', content: helpText }]);
   };
