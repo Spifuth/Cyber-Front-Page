@@ -222,10 +222,19 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     const sanitizedCmd = sanitizeInput(cmd);
     const trimmedCmd = sanitizedCmd.toLowerCase();
     
-    // Add command to history
-    setHistory(prev => [...prev, { type: 'command', content: `${getPrompt()}${cmd}` }]);
+    // Add command to history (with sanitized input)
+    setHistory(prev => [...prev, { type: 'command', content: `${getPrompt()}${sanitizedCmd}` }]);
 
     if (trimmedCmd === '') return;
+
+    // Security: Validate command is allowed
+    if (!validateCommand(trimmedCmd)) {
+      setHistory(prev => [...prev, { 
+        type: 'error', 
+        content: `Command not recognized: ${sanitizedCmd}. Type 'help' for available commands.` 
+      }]);
+      return;
+    }
 
     if (trimmedCmd === 'clear') {
       setHistory([]);
