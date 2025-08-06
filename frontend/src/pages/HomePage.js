@@ -163,8 +163,8 @@ export default function HomePage() {
 
         {/* Terminal Modal */}
         {isTerminalOpen && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
-            <div className="w-full max-w-4xl max-h-[80vh] bg-gray-900 border border-green-500/50 rounded-lg overflow-hidden">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center p-2 sm:p-4">
+            <div className="w-full h-full sm:h-[85vh] md:h-[90vh] lg:h-[85vh] xl:max-w-6xl xl:h-[80vh] bg-gray-900 border border-green-500/50 rounded-lg overflow-hidden flex flex-col">
               <Terminal 
                 onNavigateToUnderground={() => {
                   setIsTerminalOpen(false);
