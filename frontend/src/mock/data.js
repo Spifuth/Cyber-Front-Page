@@ -74,11 +74,13 @@ export const mockData = {
   terminalCommands: {
     whoami: 'fenrir',
     pwd: '/home/fenrir/portfolio',
-    ls: ['projects/', 'tools/', 'underground/', '.secrets/'],
+    ls: ['projects/', 'tools/', 'underground/', '.secrets/', 'selfdestruct.exe'],
     'cd underground': 'Access granted. Redirecting to secure zone...',
     'curl ittools.nebulaost.tech': 'Connecting to IT Tools Suite...\n> Response: 200 OK\n> Redirecting...',
     'krbtgt roasting': 'Initializing Kerberoasting attack... Redirecting to secure terminal...',
-    help: 'Available commands: whoami, pwd, ls, cd underground, krbtgt roasting, neofetch, curl ittools.nebulaost.tech, clear, exit',
+    'selfdestruct': 'WARNING: Initiating self-destruct sequence... Are you sure about this?',
+    'toggle maze': 'Cyber maze visibility toggled.',
+    help: 'Available commands: whoami, pwd, ls, cd underground, krbtgt roasting, selfdestruct, toggle maze, neofetch, curl ittools.nebulaost.tech, clear, exit',
     clear: '',
     exit: 'Connection terminated. Au revoir!'
   }
