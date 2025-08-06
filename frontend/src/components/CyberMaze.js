@@ -52,7 +52,7 @@ export default function CyberMaze({ isEnabled = true, color = 'green', opacity =
         // Much slower animation - reduced time multiplier by 5x
         const pulseValue = Math.sin(time * 0.0006 + this.pulseOffset) * 0.2 + 0.3; // Slower pulse
         const proximityGlow = Math.max(0, 1 - mouseDistance / 300); // Larger proximity radius
-        this.glowIntensity = (pulseValue * 0.2 + proximityGlow * 0.4) * this.baseOpacity * opacity;
+        this.glowIntensity = (pulseValue * 0.2 + proximityGlow * 0.4) * this.baseOpacity;
 
         // Draw walls with softer neon effect using selected colors
         ctx.lineWidth = 1.5; // Thinner lines
