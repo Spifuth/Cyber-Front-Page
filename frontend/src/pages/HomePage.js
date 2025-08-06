@@ -14,13 +14,20 @@ export default function HomePage() {
   const [isMazeEnabled, setIsMazeEnabled] = useState(true);
   const [mazeColor, setMazeColor] = useState('green');
   const [mazeOpacity, setMazeOpacity] = useState(0.25);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const navigate = useNavigate();
 
-  const cycleColors = () => {
-    const colors = ['green', 'blue', 'purple', 'red', 'yellow'];
-    const currentIndex = colors.indexOf(mazeColor);
-    const nextColor = colors[(currentIndex + 1) % colors.length];
-    setMazeColor(nextColor);
+  const colorOptions = [
+    { name: 'green', color: 'rgb(34, 197, 94)', label: 'Matrix Green' },
+    { name: 'blue', color: 'rgb(59, 130, 246)', label: 'Cyber Blue' },
+    { name: 'purple', color: 'rgb(139, 92, 246)', label: 'Neon Purple' },
+    { name: 'red', color: 'rgb(239, 68, 68)', label: 'Alert Red' },
+    { name: 'yellow', color: 'rgb(245, 158, 11)', label: 'Warning Yellow' }
+  ];
+
+  const selectColor = (colorName) => {
+    setMazeColor(colorName);
+    setShowColorPicker(false);
   };
 
   const toggleOpacity = () => {
