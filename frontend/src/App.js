@@ -4,6 +4,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import HomePage from "./pages/HomePage";
 import UndergroundPage from "./pages/UndergroundPage";
 import KrbtgtPage from "./pages/KrbtgtPage";
+import SelfDestructPage from "./pages/SelfDestructPage";
 import "./App.css";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/underground" element={<UndergroundPage />} />
             <Route path="/krbtgt" element={<KrbtgtPage />} />
+            <Route path="/selfdestruct" element={<SelfDestructPage />} />
           </Routes>
         </BrowserRouter>
       </div>
