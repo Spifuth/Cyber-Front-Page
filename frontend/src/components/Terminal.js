@@ -16,6 +16,20 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
 
   const { terminalCommands, neofetchData, fileSystem, motdMessages, commandHistory } = mockData;
 
+  // Load filesystem data
+  useEffect(() => {
+    const loadFilesystem = async () => {
+      try {
+        const response = await fetch('/data/filesystem.json');
+        const data = await response.json();
+        setFilesystem(data.filesystem);
+      } catch (error) {
+        console.error('Error loading filesystem:', error);
+      }
+    };
+    loadFilesystem();
+  }, []);
+
   // Real-time clock
   useEffect(() => {
     const timer = setInterval(() => {
