@@ -267,8 +267,12 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
         setCurrentDir(parentDir);
         setHistory(prev => [...prev, { type: 'output', content: '' }]);
       } else {
-        const newPath = currentDir + '/' + path;
-        if (fileSystem[newPath]) {
+        const newPath = path.startsWith('/') ? path : currentDir + '/' + path;
+        if (filesystem?.directories[newPath]) {
+          setCurrentDir(newPath);
+          setHistory(prev => [...prev, { type: 'output', content: '' }]);
+        } else if (fileSystem[newPath]) {
+          // Fallback to old system
           setCurrentDir(newPath);
           setHistory(prev => [...prev, { type: 'output', content: '' }]);
         } else {
@@ -279,8 +283,17 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     }
 
     if (trimmedCmd === 'ls') {
-      const currentFiles = fileSystem[currentDir] || ['Directory not found'];
-      const output = currentFiles.join('  ');
+      let output = '';
+      if (filesystem?.directories[currentDir]) {
+        // Use new filesystem structure
+        const dir = filesystem.directories[currentDir];
+        output = dir.contents.join('  ');
+      } else if (fileSystem[currentDir]) {
+        // Fallback to old system
+        output = fileSystem[currentDir].join('  ');
+      } else {
+        output = 'Directory not found';
+      }
       setHistory(prev => [...prev, { type: 'output', content: output }]);
       return;
     }
