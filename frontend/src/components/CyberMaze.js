@@ -1,11 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-export default function CyberMaze() {
+export default function CyberMaze({ isEnabled = true }) {
   const canvasRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const mazeRef = useRef(null);
 
   useEffect(() => {
+    if (!isEnabled) return;
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -18,8 +20,8 @@ export default function CyberMaze() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Maze generation parameters
-    const gridSize = 40;
+    // Maze generation parameters - increased grid size for better performance
+    const gridSize = 60; // Increased from 40
     const cols = Math.floor(canvas.width / gridSize);
     const rows = Math.floor(canvas.height / gridSize);
 
@@ -31,29 +33,30 @@ export default function CyberMaze() {
         this.visited = false;
         this.glowIntensity = 0;
         this.pulseOffset = Math.random() * Math.PI * 2;
+        this.baseOpacity = 0.15 + Math.random() * 0.1; // Reduced base opacity
       }
 
       draw(ctx, time, mouseDistance = 1) {
         const x = this.x * gridSize;
         const y = this.y * gridSize;
 
-        // Calculate glow based on mouse proximity and time
-        const pulseValue = Math.sin(time * 0.003 + this.pulseOffset) * 0.3 + 0.7;
-        const proximityGlow = Math.max(0, 1 - mouseDistance / 200);
-        this.glowIntensity = pulseValue * 0.3 + proximityGlow * 0.7;
+        // Much slower animation - reduced time multiplier by 5x
+        const pulseValue = Math.sin(time * 0.0006 + this.pulseOffset) * 0.2 + 0.3; // Slower pulse
+        const proximityGlow = Math.max(0, 1 - mouseDistance / 300); // Larger proximity radius
+        this.glowIntensity = (pulseValue * 0.2 + proximityGlow * 0.4) * this.baseOpacity;
 
-        // Draw walls with neon effect
-        ctx.lineWidth = 2;
+        // Draw walls with softer neon effect
+        ctx.lineWidth = 1.5; // Thinner lines
         
         const colors = [
-          `rgba(34, 197, 94, ${this.glowIntensity * 0.8})`, // green
-          `rgba(59, 130, 246, ${this.glowIntensity * 0.6})`, // blue
-          `rgba(139, 92, 246, ${this.glowIntensity * 0.4})`, // purple
+          `rgba(34, 197, 94, ${this.glowIntensity * 0.4})`, // green - more transparent
+          `rgba(59, 130, 246, ${this.glowIntensity * 0.3})`, // blue - more transparent
+          `rgba(139, 92, 246, ${this.glowIntensity * 0.2})`, // purple - more transparent
         ];
 
         colors.forEach((color, index) => {
           ctx.strokeStyle = color;
-          ctx.lineWidth = 3 - index;
+          ctx.lineWidth = 2 - index * 0.5;
           
           if (this.walls.top) {
             ctx.beginPath();
@@ -81,11 +84,11 @@ export default function CyberMaze() {
           }
         });
 
-        // Draw circuit-like nodes at intersections
-        if (this.glowIntensity > 0.5) {
-          ctx.fillStyle = `rgba(34, 197, 94, ${this.glowIntensity})`;
+        // Smaller, subtler circuit nodes
+        if (this.glowIntensity > 0.3) {
+          ctx.fillStyle = `rgba(34, 197, 94, ${this.glowIntensity * 0.6})`;
           ctx.beginPath();
-          ctx.arc(x + gridSize/2, y + gridSize/2, 2, 0, Math.PI * 2);
+          ctx.arc(x + gridSize/2, y + gridSize/2, 1, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -178,26 +181,26 @@ export default function CyberMaze() {
         }
       }
 
-      // Draw floating data packets
+      // Draw floating data packets (fewer and slower)
       drawDataPackets(ctx, time);
       
       animationId = requestAnimationFrame(animate);
     };
 
-    // Data packets animation
-    const dataPackets = Array.from({ length: 8 }, () => ({
+    // Fewer, slower data packets
+    const dataPackets = Array.from({ length: 4 }, () => ({ // Reduced from 8 to 4
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: (Math.random() - 0.5) * 0.5,
-      size: Math.random() * 3 + 1,
-      color: Math.random() > 0.5 ? 'rgba(34, 197, 94, 0.7)' : 'rgba(59, 130, 246, 0.7)',
+      dx: (Math.random() - 0.5) * 0.2, // Much slower movement
+      dy: (Math.random() - 0.5) * 0.2,
+      size: Math.random() * 2 + 0.5, // Smaller particles
+      color: Math.random() > 0.5 ? 'rgba(34, 197, 94, 0.3)' : 'rgba(59, 130, 246, 0.3)', // More transparent
       pulseOffset: Math.random() * Math.PI * 2
     }));
 
     const drawDataPackets = (ctx, time) => {
       dataPackets.forEach(packet => {
-        // Update position
+        // Update position (slower)
         packet.x += packet.dx;
         packet.y += packet.dy;
         
@@ -205,24 +208,24 @@ export default function CyberMaze() {
         if (packet.x <= 0 || packet.x >= canvas.width) packet.dx *= -1;
         if (packet.y <= 0 || packet.y >= canvas.height) packet.dy *= -1;
         
-        // Pulse effect
-        const pulse = Math.sin(time * 0.005 + packet.pulseOffset) * 0.5 + 0.5;
-        const size = packet.size * (1 + pulse * 0.5);
+        // Slower pulse effect
+        const pulse = Math.sin(time * 0.001 + packet.pulseOffset) * 0.3 + 0.4;
+        const size = packet.size * (1 + pulse * 0.3);
         
-        // Draw packet
+        // Draw packet with less glow
         ctx.fillStyle = packet.color;
         ctx.shadowColor = packet.color;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 5; // Reduced glow
         ctx.beginPath();
         ctx.arc(packet.x, packet.y, size, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
         
-        // Draw trail
-        ctx.strokeStyle = packet.color.replace('0.7', '0.3');
-        ctx.lineWidth = 1;
+        // Shorter, more subtle trail
+        ctx.strokeStyle = packet.color.replace('0.3', '0.15');
+        ctx.lineWidth = 0.5;
         ctx.beginPath();
-        ctx.moveTo(packet.x - packet.dx * 10, packet.y - packet.dy * 10);
+        ctx.moveTo(packet.x - packet.dx * 5, packet.y - packet.dy * 5);
         ctx.lineTo(packet.x, packet.y);
         ctx.stroke();
       });
@@ -236,17 +239,30 @@ export default function CyberMaze() {
         cancelAnimationFrame(animationId);
       }
     };
-  }, [mousePos]);
+  }, [mousePos, isEnabled]);
 
-  // Mouse tracking
+  // Mouse tracking (throttled for better performance)
   useEffect(() => {
+    if (!isEnabled) return;
+    
+    let mouseTimeout;
     const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      if (mouseTimeout) return;
+      
+      mouseTimeout = setTimeout(() => {
+        setMousePos({ x: e.clientX, y: e.clientY });
+        mouseTimeout = null;
+      }, 50); // Throttle mouse updates
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (mouseTimeout) clearTimeout(mouseTimeout);
+    };
+  }, [isEnabled]);
+
+  if (!isEnabled) return null;
 
   return (
     <canvas
@@ -254,8 +270,9 @@ export default function CyberMaze() {
       className="fixed inset-0 pointer-events-none"
       style={{ 
         zIndex: 1,
-        opacity: 0.4,
-        mixBlendMode: 'screen'
+        opacity: 0.25, // Reduced from 0.4
+        mixBlendMode: 'screen',
+        filter: 'blur(0.5px)' // Added subtle blur
       }}
     />
   );
