@@ -25,7 +25,17 @@ button[aria-label*="Made with Emergent"],
 a[href*="emergent.sh"],
 div:has-text("Made with Emergent"),
 .fixed.bottom-4.right-4,
-.fixed:has-text("Made with Emergent") {
+.fixed:has-text("Made with Emergent"),
+/* More specific targeting */
+.fixed.bottom-0.right-0,
+.fixed.z-50:has-text("Made with Emergent"),
+iframe[src*="emergent"],
+/* Target any fixed positioning elements with white backgrounds in corners */
+.fixed.bg-white,
+.fixed[style*="background: white"],
+.fixed[style*="background-color: white"],
+/* Catch-all for bottom right positioned elements */
+[style*="position: fixed"][style*="bottom"][style*="right"] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
