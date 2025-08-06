@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '../components/Hero';
 import About from '../components/About';
@@ -16,6 +16,7 @@ export default function HomePage() {
   const [mazeOpacity, setMazeOpacity] = useState(0.25);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const navigate = useNavigate();
+  const colorPickerRef = useRef(null);
 
   const colorOptions = [
     { name: 'green', color: 'rgb(34, 197, 94)', label: 'Matrix Green' },
@@ -24,6 +25,20 @@ export default function HomePage() {
     { name: 'red', color: 'rgb(239, 68, 68)', label: 'Alert Red' },
     { name: 'yellow', color: 'rgb(245, 158, 11)', label: 'Warning Yellow' }
   ];
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target)) {
+        setShowColorPicker(false);
+      }
+    };
+
+    if (showColorPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showColorPicker]);
 
   const selectColor = (colorName) => {
     setMazeColor(colorName);
