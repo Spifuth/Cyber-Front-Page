@@ -97,7 +97,9 @@ export default function Terminal({ onNavigateToUnderground }) {
     if (trimmedCmd === 'cd underground') {
       typeWriter('Access granted. Redirecting to secure zone...', () => {
         setTimeout(() => {
-          onNavigateToUnderground();
+          if (onNavigateToUnderground) {
+            onNavigateToUnderground();
+          }
         }, 1000);
       });
       return;
