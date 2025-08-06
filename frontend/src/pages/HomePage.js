@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Hero from '../components/Hero';
 import About from '../components/About';
 import Projects from '../components/Projects';
@@ -9,6 +10,7 @@ import { Terminal as TerminalIcon, X } from 'lucide-react';
 
 export default function HomePage() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-black text-green-400 relative overflow-hidden">
