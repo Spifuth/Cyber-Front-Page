@@ -1,0 +1,45 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Monitoring Dashboard maison",
+      "description": "Dashboard personnalisé pour surveiller l'infrastructure avec Zabbix et Grafana. Interface moderne avec alertes temps réel et métriques détaillées.",
+      "tech": ["Zabbix", "Grafana", "Docker", "Python"],
+      "status": "Production",
+      "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop",
+      "link": "#",
+      "github": "https://github.com/fenrir-soc/monitoring-dashboard"
+    },
+    {
+      "id": 2,
+      "title": "Stack IT Tools auto-hébergée",
+      "description": "Collection d'outils IT hébergés localement : convertisseurs, générateurs, validateurs. Interface unifiée et sécurisée.",
+      "tech": ["React", "Node.js", "Traefik", "Docker"],
+      "status": "Actif",
+      "image": "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=400&h=200&fit=crop",
+      "link": "https://ittools.nebulaost.tech",
+      "github": "https://github.com/fenrir-soc/it-tools-stack"
+    },
+    {
+      "id": 3,
+      "title": "Bot Discord pour gestion d'alertes",
+      "description": "Bot intelligent pour relayer et gérer les alertes de sécurité. Intégration avec les systèmes de monitoring existants.",
+      "tech": ["Python", "Discord.py", "Redis", "PostgreSQL"],
+      "status": "Développement",
+      "image": "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=200&fit=crop",
+      "link": "#",
+      "github": "https://github.com/fenrir-soc/discord-alert-bot"
+    },
+    {
+      "id": 4,
+      "title": "Reverse proxy + sécurité Traefik",
+      "description": "Configuration avancée de Traefik avec SSL automatique, rate limiting, et protection DDoS. Architecture haute disponibilité.",
+      "tech": ["Traefik", "Let's Encrypt", "Docker Swarm", "Prometheus"],
+      "status": "Production",
+      "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop",
+      "link": "#",
+      "github": "https://github.com/fenrir-soc/traefik-security-config"
+    }
+  ],
+  "lastUpdated": "2025-01-06T13:45:00Z"
+}
