@@ -1,23 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { mockData } from '../mock/data';
 
-export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, onNavigateToSelfDestruct, onToggleMaze }) {
+export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, onNavigateToSelfDestruct }) {
   const [history, setHistory] = useState([]);
   const [currentCommand, setCurrentCommand] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentDir, setCurrentDir] = useState('/home/fenrir');
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
 
-  const { terminalCommands, neofetchData } = mockData;
+  const { terminalCommands, neofetchData, fileSystem, motdMessages, commandHistory } = mockData;
 
+  // Real-time clock
   useEffect(() => {
-    // Welcome message
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Welcome message with random MOTD
+  useEffect(() => {
+    const randomMotd = motdMessages[Math.floor(Math.random() * motdMessages.length)];
     setHistory([
       { type: 'output', content: 'NebulaHost Terminal v2.1.0' },
+      { type: 'output', content: `Today's wisdom: "${randomMotd}"` },
       { type: 'output', content: 'Type "help" for available commands.' },
       { type: 'output', content: '' }
     ]);
-  }, []);
+  }, [motdMessages]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -31,10 +44,19 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
     }
   }, [history]);
 
-  const typeWriter = (text, callback) => {
+  const formatTime = (date) => {
+    return date.toTimeString().slice(0, 8);
+  };
+
+  const getPrompt = () => {
+    const time = formatTime(currentTime);
+    const shortDir = currentDir.replace('/home/fenrir', '~');
+    return `fenrir@nebula:${shortDir} [${time}]$ `;
+  };
+
+  const typeWriter = (text, callback, speed = 15) => {
     setIsTyping(true);
     let i = 0;
-    const speed = 30;
     
     const typeInterval = setInterval(() => {
       if (i < text.length) {
@@ -57,16 +79,115 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
     }, speed);
   };
 
+  const executeNmapScan = () => {
+    const randomPort = Math.floor(Math.random() * 9000) + 1000;
+    const nmapOutput = `Starting Nmap 7.93 ( https://nmap.org )
+Nmap scan report for nebulahost.tech (127.0.0.1)
+Host is up (0.0010s latency).
+Not shown: 996 closed ports
+
+PORT     STATE    SERVICE
+22/tcp   open     ssh
+80/tcp   open     http  
+443/tcp  open     https
+${randomPort}/tcp  filtered elite
+
+Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
+    
+    typeWriter(nmapOutput, null, 20);
+  };
+
+  const executeHelp = () => {
+    const commands = [
+      ['help', 'about'],
+      ['whoami', 'pwd'],
+      ['ls', 'cd'],
+      ['cat', 'nmap'],
+      ['projects', 'krbtgt roasting'],
+      ['tools', 'selfdestruct'],
+      ['neofetch', 'clear'],
+      ['curl', 'exit']
+    ];
+    
+    let helpText = 'Available commands:\n\n';
+    commands.forEach(pair => {
+      helpText += `${pair[0].padEnd(15)} ${pair[1]}\n`;
+    });
+    
+    setHistory(prev => [...prev, { type: 'output', content: helpText }]);
+  };
+
   const executeCommand = (cmd) => {
     const trimmedCmd = cmd.trim().toLowerCase();
     
     // Add command to history
-    setHistory(prev => [...prev, { type: 'command', content: `fenrir@nebulahost:~$ ${cmd}` }]);
+    setHistory(prev => [...prev, { type: 'command', content: `${getPrompt()}${cmd}` }]);
 
     if (trimmedCmd === '') return;
 
     if (trimmedCmd === 'clear') {
       setHistory([]);
+      return;
+    }
+
+    if (trimmedCmd === 'help') {
+      executeHelp();
+      return;
+    }
+
+    if (trimmedCmd === 'nmap nebulahost.tech') {
+      executeNmapScan();
+      return;
+    }
+
+    if (trimmedCmd.startsWith('cd ')) {
+      const path = trimmedCmd.substring(3).trim();
+      if (path === 'underground') {
+        typeWriter('Access granted. Redirecting to secure zone...', () => {
+          setTimeout(() => {
+            if (onNavigateToUnderground) {
+              onNavigateToUnderground();
+            }
+          }, 1000);
+        });
+        return;
+      }
+      
+      // Handle other directory changes
+      if (path === '~' || path === '') {
+        setCurrentDir('/home/fenrir');
+        setHistory(prev => [...prev, { type: 'output', content: '' }]);
+      } else if (path === '..') {
+        const parentDir = currentDir.split('/').slice(0, -1).join('/') || '/';
+        setCurrentDir(parentDir);
+        setHistory(prev => [...prev, { type: 'output', content: '' }]);
+      } else {
+        const newPath = currentDir + '/' + path;
+        if (fileSystem[newPath]) {
+          setCurrentDir(newPath);
+          setHistory(prev => [...prev, { type: 'output', content: '' }]);
+        } else {
+          setHistory(prev => [...prev, { type: 'error', content: `cd: ${path}: No such file or directory` }]);
+        }
+      }
+      return;
+    }
+
+    if (trimmedCmd === 'ls') {
+      const currentFiles = fileSystem[currentDir] || ['Directory not found'];
+      const output = currentFiles.join('  ');
+      setHistory(prev => [...prev, { type: 'output', content: output }]);
+      return;
+    }
+
+    if (trimmedCmd.startsWith('cat ')) {
+      const filename = trimmedCmd.substring(4).trim();
+      const catCommand = `cat ${filename}`;
+      if (terminalCommands[catCommand]) {
+        setHistory(prev => [...prev, { type: 'output', content: terminalCommands[catCommand] }]);
+      } else {
+        setHistory(prev => [...prev, { type: 'error', content: `cat: ${filename}: No such file or directory` }]);
+      }
       return;
     }
 
@@ -94,17 +215,6 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
       return;
     }
 
-    if (trimmedCmd === 'cd underground') {
-      typeWriter('Access granted. Redirecting to secure zone...', () => {
-        setTimeout(() => {
-          if (onNavigateToUnderground) {
-            onNavigateToUnderground();
-          }
-        }, 1000);
-      });
-      return;
-    }
-
     if (trimmedCmd === 'krbtgt roasting') {
       typeWriter('Initializing Kerberoasting attack... Redirecting to secure terminal...', () => {
         setTimeout(() => {
@@ -127,31 +237,17 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
       return;
     }
 
-    if (trimmedCmd === 'toggle maze') {
-      if (onToggleMaze) {
-        onToggleMaze();
-      }
-      setHistory(prev => [...prev, { type: 'output', content: 'Cyber maze visibility toggled.' }]);
-      return;
-    }
-
-    if (trimmedCmd === 'curl ittools.nebulaost.tech') {
+    if (trimmedCmd === 'curl ittools.nebulahost.tech') {
       typeWriter('Connecting to IT Tools Suite...', () => {
         setTimeout(() => {
           setHistory(prev => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
           setHistory(prev => [...prev, { type: 'output', content: '> Content-Type: application/json' }]);
           setHistory(prev => [...prev, { type: 'output', content: '> Redirecting...' }]);
           setTimeout(() => {
-            window.open('https://ittools.nebulaost.tech', '_blank');
+            window.open('https://ittools.nebulahost.tech', '_blank');
           }, 1500);
         }, 1000);
       });
-      return;
-    }
-
-    if (trimmedCmd === 'ls') {
-      const output = terminalCommands.ls.join('  ');
-      setHistory(prev => [...prev, { type: 'output', content: output }]);
       return;
     }
 
@@ -163,7 +259,7 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
           setHistory(prev => [...prev, { type: 'output', content: line }]);
         });
       } else {
-        typeWriter(output);
+        setHistory(prev => [...prev, { type: 'output', content: output }]);
       }
     } else {
       setHistory(prev => [...prev, { 
@@ -177,6 +273,24 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
     if (e.key === 'Enter' && !isTyping) {
       executeCommand(currentCommand);
       setCurrentCommand('');
+      setHistoryIndex(-1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (historyIndex < commandHistory.length - 1) {
+        const newIndex = historyIndex + 1;
+        setHistoryIndex(newIndex);
+        setCurrentCommand(commandHistory[newIndex]);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        const newIndex = historyIndex - 1;
+        setHistoryIndex(newIndex);
+        setCurrentCommand(commandHistory[newIndex]);
+      } else if (historyIndex === 0) {
+        setHistoryIndex(-1);
+        setCurrentCommand('');
+      }
     }
   };
 
@@ -189,7 +303,8 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
           <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
         </div>
-        <span className="text-gray-400">fenrir@nebulahost:~</span>
+        <span className="text-gray-400">fenrir@nebulahost:{currentDir.replace('/home/fenrir', '~')}</span>
+        <span className="text-blue-400 text-xs">{formatTime(currentTime)}</span>
       </div>
 
       {/* Terminal Content */}
@@ -212,13 +327,13 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
         {/* Current Input */}
         {!isTyping && (
           <div className="flex items-center text-blue-400">
-            <span>fenrir@nebulahost:~$ </span>
+            <span>{getPrompt()}</span>
             <input
               ref={inputRef}
               type="text"
               value={currentCommand}
               onChange={(e) => setCurrentCommand(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               className="flex-1 bg-transparent outline-none text-green-400 ml-1"
               autoComplete="off"
               spellCheck="false"
