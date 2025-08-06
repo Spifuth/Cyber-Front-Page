@@ -116,6 +116,25 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
       return;
     }
 
+    if (trimmedCmd === 'selfdestruct') {
+      typeWriter('WARNING: Initiating self-destruct sequence... Are you sure about this?', () => {
+        setTimeout(() => {
+          if (onNavigateToSelfDestruct) {
+            onNavigateToSelfDestruct();
+          }
+        }, 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd === 'toggle maze') {
+      if (onToggleMaze) {
+        onToggleMaze();
+      }
+      setHistory(prev => [...prev, { type: 'output', content: 'Cyber maze visibility toggled.' }]);
+      return;
+    }
+
     if (trimmedCmd === 'curl ittools.nebulaost.tech') {
       typeWriter('Connecting to IT Tools Suite...', () => {
         setTimeout(() => {
