@@ -7,20 +7,33 @@ import Terminal from '../components/Terminal';
 import GitHubLink from '../components/GitHubLink';
 import ToolsLink from '../components/ToolsLink';
 import CyberMaze from '../components/CyberMaze';
-import { Terminal as TerminalIcon, X, Eye, EyeOff } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Palette, Eye, EyeOff } from 'lucide-react';
 
 export default function HomePage() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isMazeEnabled, setIsMazeEnabled] = useState(true);
+  const [mazeColor, setMazeColor] = useState('green');
+  const [mazeOpacity, setMazeOpacity] = useState(0.25);
   const navigate = useNavigate();
+
+  const cycleColors = () => {
+    const colors = ['green', 'blue', 'purple', 'red', 'yellow'];
+    const currentIndex = colors.indexOf(mazeColor);
+    const nextColor = colors[(currentIndex + 1) % colors.length];
+    setMazeColor(nextColor);
+  };
+
+  const toggleOpacity = () => {
+    setMazeOpacity(prev => prev === 0.25 ? 0.1 : 0.25);
+  };
 
   return (
     <div className="min-h-screen bg-black text-green-400 relative overflow-hidden">
       {/* Cyber Maze Background with toggle */}
-      <CyberMaze isEnabled={isMazeEnabled} />
+      <CyberMaze isEnabled={isMazeEnabled} color={mazeColor} opacity={mazeOpacity} />
       
-      {/* Maze Toggle Button */}
-      <div className="fixed top-8 right-8 z-50">
+      {/* Maze Control Panel */}
+      <div className="fixed top-8 right-8 z-50 flex flex-col gap-2">
         <button
           onClick={() => setIsMazeEnabled(!isMazeEnabled)}
           className="bg-gray-900/90 border border-blue-500/50 text-blue-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-blue-400 transition-all duration-300 backdrop-blur-sm group"
@@ -32,6 +45,26 @@ export default function HomePage() {
             <Eye className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
           )}
         </button>
+        
+        {isMazeEnabled && (
+          <>
+            <button
+              onClick={cycleColors}
+              className="bg-gray-900/90 border border-violet-500/50 text-violet-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-violet-400 transition-all duration-300 backdrop-blur-sm group"
+              title="Change Maze Color"
+            >
+              <Palette className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+            </button>
+            
+            <button
+              onClick={toggleOpacity}
+              className="bg-gray-900/90 border border-green-500/50 text-green-400 p-2 rounded-lg hover:bg-gray-800/90 hover:border-green-400 transition-all duration-300 backdrop-blur-sm group text-xs font-mono"
+              title="Toggle Opacity"
+            >
+              {Math.round(mazeOpacity * 100)}%
+            </button>
+          </>
+        )}
       </div>
       
       {/* Animated background elements */}
@@ -82,9 +115,6 @@ export default function HomePage() {
                 onNavigateToSelfDestruct={() => {
                   setIsTerminalOpen(false);
                   navigate('/selfdestruct');
-                }}
-                onToggleMaze={() => {
-                  setIsMazeEnabled(!isMazeEnabled);
                 }}
               />
             </div>
