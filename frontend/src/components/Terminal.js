@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { mockData } from '../mock/data';
 
-export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt }) {
+export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, onNavigateToSelfDestruct, onToggleMaze }) {
   const [history, setHistory] = useState([]);
   const [currentCommand, setCurrentCommand] = useState('');
   const [isTyping, setIsTyping] = useState(false);
