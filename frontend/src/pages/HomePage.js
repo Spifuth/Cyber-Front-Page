@@ -50,10 +50,16 @@ export default function HomePage() {
         {isTerminalOpen && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
             <div className="w-full max-w-4xl max-h-[80vh] bg-gray-900 border border-green-500/50 rounded-lg overflow-hidden">
-              <Terminal onNavigateToUnderground={() => {
-                setIsTerminalOpen(false);
-                navigate('/underground');
-              }} />
+              <Terminal 
+                onNavigateToUnderground={() => {
+                  setIsTerminalOpen(false);
+                  navigate('/underground');
+                }}
+                onNavigateToKrbtgt={() => {
+                  setIsTerminalOpen(false);
+                  navigate('/krbtgt');
+                }}
+              />
             </div>
           </div>
         )}
