@@ -108,13 +108,13 @@ export default function Terminal({ onNavigateToUnderground }) {
     if (trimmedCmd === 'krbtgt roasting') {
       typeWriter('Initializing Kerberoasting attack... Redirecting to secure terminal...', () => {
         setTimeout(() => {
-          if (onNavigateToUnderground) {
-            window.location.href = '/krbtgt';
-          }
+          window.location.href = '/krbtgt';
         }, 1000);
       });
       return;
     }
+
+    if (trimmedCmd === 'curl ittools.nebulaost.tech') {
       typeWriter('Connecting to IT Tools Suite...', () => {
         setTimeout(() => {
           setHistory(prev => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
