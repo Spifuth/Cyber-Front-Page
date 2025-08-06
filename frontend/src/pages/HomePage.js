@@ -52,7 +52,7 @@ export default function HomePage() {
             <div className="w-full max-w-4xl max-h-[80vh] bg-gray-900 border border-green-500/50 rounded-lg overflow-hidden">
               <Terminal onNavigateToUnderground={() => {
                 setIsTerminalOpen(false);
-                window.location.href = '/underground';
+                navigate('/underground');
               }} />
             </div>
           </div>
