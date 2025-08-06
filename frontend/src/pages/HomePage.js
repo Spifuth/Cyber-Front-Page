@@ -60,13 +60,48 @@ export default function HomePage() {
         
         {isMazeEnabled && (
           <>
-            <button
-              onClick={cycleColors}
-              className="bg-gray-900/90 border border-violet-500/50 text-violet-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-violet-400 transition-all duration-300 backdrop-blur-sm group"
-              title="Change Maze Color"
-            >
-              <Palette className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowColorPicker(!showColorPicker)}
+                className="bg-gray-900/90 border border-violet-500/50 text-violet-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-violet-400 transition-all duration-300 backdrop-blur-sm group"
+                title="Change Maze Color"
+              >
+                <Palette className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+              </button>
+              
+              {/* Color Picker Menu */}
+              {showColorPicker && (
+                <div className="absolute right-0 top-full mt-2 bg-gray-900/95 border border-violet-500/30 rounded-lg p-3 backdrop-blur-sm min-w-[200px] shadow-lg">
+                  <div className="text-violet-400 text-xs font-mono mb-3 text-center">
+                    Select Maze Color
+                  </div>
+                  <div className="space-y-2">
+                    {colorOptions.map((option) => (
+                      <button
+                        key={option.name}
+                        onClick={() => selectColor(option.name)}
+                        className={`w-full flex items-center space-x-3 p-2 rounded-lg transition-all duration-300 hover:bg-gray-800/50 ${
+                          mazeColor === option.name 
+                            ? 'bg-gray-700/50 border border-violet-400/30' 
+                            : 'border border-transparent'
+                        }`}
+                      >
+                        <div 
+                          className="w-4 h-4 rounded-full border border-gray-600"
+                          style={{ backgroundColor: option.color }}
+                        ></div>
+                        <span className="text-gray-300 text-sm font-mono flex-1 text-left">
+                          {option.label}
+                        </span>
+                        {mazeColor === option.name && (
+                          <div className="w-2 h-2 bg-violet-400 rounded-full"></div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             
             <button
               onClick={toggleOpacity}
