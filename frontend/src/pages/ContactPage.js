@@ -5,6 +5,7 @@ const ContactPage = () => {
   const navigate = useNavigate();
   const [copiedField, setCopiedField] = useState('');
   const [showSecureForm, setShowSecureForm] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
