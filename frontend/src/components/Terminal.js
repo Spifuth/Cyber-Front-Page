@@ -528,7 +528,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
-    if (trimmedCmd === 'music' || trimmedCmd === 'radio') {
+    if (trimmedCmd === 'music') {
       typeWriter('🎵 Tuning into Synthwave FM...', () => {
         setTimeout(() => {
           setHistory(prev => [...prev, { type: 'output', content: '♪ Now Playing: "Neon Dreams" by Cyber Artist' }]);
