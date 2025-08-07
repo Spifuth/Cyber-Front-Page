@@ -315,12 +315,18 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     if (trimmedCmd === 'ls') {
       let output = '';
       if (filesystem?.directories[currentDir]) {
-        // Use new filesystem structure
+        // Use new filesystem structure - filter out directories
         const dir = filesystem.directories[currentDir];
-        output = dir.contents.join('  ');
+        const filesOnly = dir.contents.filter(item => {
+          // Check if item is a file (doesn't exist as a directory)
+          const potentialPath = currentDir.endsWith('/') ? currentDir + item : currentDir + '/' + item;
+          return !filesystem.directories[potentialPath];
+        });
+        output = filesOnly.length > 0 ? filesOnly.join('  ') : 'No files found';
       } else if (fileSystem[currentDir]) {
-        // Fallback to old system
-        output = fileSystem[currentDir].join('  ');
+        // Fallback to old system - show only files
+        const filesOnly = fileSystem[currentDir].filter(item => !item.endsWith('/'));
+        output = filesOnly.length > 0 ? filesOnly.join('  ') : 'No files found';
       } else {
         output = 'Directory not found';
       }
