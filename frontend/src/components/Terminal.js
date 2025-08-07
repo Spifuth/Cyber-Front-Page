@@ -122,40 +122,41 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     const commands = [
       // Basic Navigation
       ['help', 'Show this help message'],
-      ['whoami', 'Display current user'],
-      ['pwd', 'Show current directory'],
+      ['whoami', 'Display current user info'],
+      ['pwd', 'Show current directory path'],
       ['ls', 'List directory contents'],
-      ['cd <dir>', 'Change directory'],
+      ['cd <dir>', 'Change directory location'],
       ['cat <file>', 'Display file contents'],
       ['clear', 'Clear terminal screen'],
       ['exit', 'Close terminal session'],
       
       // System Info
       ['neofetch', 'Display system information'],
-      ['nmap <host>', 'Scan for open ports'],
-      ['curl <url>', 'Make HTTP request'],
+      ['nmap <host>', 'Network port scanner'],
+      ['curl <url>', 'Make HTTP requests'],
       
       // Professional Pages
-      ['resume', 'Display professional resume'],
+      ['resume', 'View professional resume'],
       ['timeline', 'Show career timeline'],
-      ['stack', 'Display tech stack'],
+      ['stack', 'Display technology stack'],
       ['skills', 'Show skills radar chart'],
-      ['infra', 'Show infrastructure diagram'],
+      ['infra', 'View infrastructure setup'],
       ['certs', 'List certifications'],
-      ['email', 'Show contact information'],
+      ['contact', 'Show contact information'],
       ['learning', 'Display learning resources'],
-      ['logs', 'Toggle live system logs'],
+      ['projects', 'Navigate to projects page'],
       
-      // Fun Commands
-      ['sudo <cmd>', 'Execute with elevated privileges'],
-      ['hackername', 'Generate a random hacker alias'],
-      ['music', 'Play synthwave radio'],
-      ['mirror', 'Analyze your system with sarcasm'],
+      // Fun & Interactive
+      ['logs', 'Toggle live system logs'],
       ['matrix', 'Enter the Matrix'],
-      ['banner <text>', 'Display text in ASCII art'],
+      ['banner <text>', 'Generate ASCII art banners'],
+      ['hackername', 'Generate hacker alias'],
+      ['music', 'Play synthwave radio'],
+      ['mirror', 'System analysis with attitude'],
       ['vault', 'Access encrypted vault'],
-      ['decrypt <file>', 'Attempt to decrypt files'],
+      ['decrypt <file>', 'Decrypt vault files'],
       ['theme <name>', 'Switch color themes'],
+      ['sudo <cmd>', 'Fake elevated privileges'],
       
       // Easter Eggs
       ['cd underground', 'Access the underground'],
@@ -164,39 +165,33 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     ];
     
     let helpText = '╔══════════════════════════════════════════════════════════════╗\n';
-    helpText += '║                     AVAILABLE COMMANDS                      ║\n';
+    helpText += '║                    NEBULAHOST COMMAND CENTER                 ║\n';
     helpText += '╠══════════════════════════════════════════════════════════════╣\n';
+    helpText += '║                                                              ║\n';
     
-    let currentCategory = '';
-    commands.forEach(([cmd, desc]) => {
-      if (cmd === 'help') {
-        helpText += '║  BASIC NAVIGATION                                            ║\n';
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-      } else if (cmd === 'neofetch') {
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-        helpText += '║  SYSTEM INFO                                                 ║\n';
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-      } else if (cmd === 'resume') {
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-        helpText += '║  PROFESSIONAL                                                ║\n';
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-      } else if (cmd === 'sudo <cmd>') {
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-        helpText += '║  FUN COMMANDS                                                ║\n';
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-      } else if (cmd === 'cd underground') {
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-        helpText += '║  EASTER EGGS                                                 ║\n';
-        helpText += '╟──────────────────────────────────────────────────────────────╢\n';
-      }
+    // Group commands in pairs for 2-column layout
+    for (let i = 0; i < commands.length; i += 2) {
+      const [cmd1, desc1] = commands[i];
+      const [cmd2, desc2] = commands[i + 1] || ['', ''];
       
-      const paddedCmd = cmd.padEnd(18);
-      helpText += `║  ${paddedCmd} ${desc.padEnd(38)} ║\n`;
-    });
+      const leftCmd = cmd1.padEnd(20);
+      const leftDesc = desc1.padEnd(25);
+      const rightCmd = cmd2.padEnd(15);
+      const rightDesc = desc2.padEnd(20);
+      
+      if (cmd2) {
+        helpText += `║ ${leftCmd} ${leftDesc.slice(0, 25)} │ ${rightCmd} ${rightDesc.slice(0, 15)} ║\n`;
+      } else {
+        helpText += `║ ${leftCmd} ${leftDesc.slice(0, 25)}                          ║\n`;
+      }
+    }
     
-    helpText += '╚══════════════════════════════════════════════════════════════╝\n';
-    helpText += '\nTip: Use arrow keys to navigate command history\n';
-    helpText += 'New: Try "matrix", "logs", "skills", "theme neon" 🚀';
+    helpText += '║                                                              ║\n';
+    helpText += '╠══════════════════════════════════════════════════════════════╣\n';
+    helpText += '║  🎯 TIP: Use ↑/↓ arrows for command history                  ║\n';
+    helpText += '║  🚀 NEW: matrix, logs, skills, banner <text>                ║\n';
+    helpText += '║  🎨 THEMES: theme matrix|neon|cyber|retro                   ║\n';
+    helpText += '╚══════════════════════════════════════════════════════════════╝';
     
     setHistory(prev => [...prev, { type: 'output', content: helpText }]);
   };
