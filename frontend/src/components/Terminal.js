@@ -452,7 +452,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
-    if (trimmedCmd === 'email' || trimmedCmd === 'contact') {
+    if (trimmedCmd === 'contact') {
       typeWriter('Opening secure communication channels...', () => {
         setTimeout(() => navigate('/contact'), 1000);
       });
