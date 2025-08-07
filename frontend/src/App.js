@@ -74,6 +74,7 @@ function App() {
             <Route path="/resume" element={<ResumePage />} />
             <Route path="/timeline" element={<TimelinePage />} />
             <Route path="/stack" element={<StackPage />} />
+            <Route path="/skills" element={<SkillsPage />} />
             <Route path="/infra" element={<InfraPage />} />
             <Route path="/certs" element={<CertsPage />} />
             <Route path="/contact" element={<ContactPage />} />
