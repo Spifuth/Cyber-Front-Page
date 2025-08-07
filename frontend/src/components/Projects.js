@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ExternalLink, Github, Eye, X, ChevronLeft, ChevronRight, Activity, Code, Server, Shield } from 'lucide-react';
 
 // ProjectCard Component
-const ProjectCard = ({ project, onImageClick, viewMode, featured }) => {
+const ProjectCard = ({ project, onImageClick, featured }) => {
   const getProjectIcon = (title) => {
     if (title.includes('Monitoring')) return Activity;
     if (title.includes('Tools')) return Code;
