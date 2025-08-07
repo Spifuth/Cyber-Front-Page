@@ -120,9 +120,9 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
 
   const executeHelp = () => {
     const commands = [
-      // Basic Navigation
+      // Basic Commands
       ['help', 'Show this help message'],
-      ['whoami', 'Display current user info'],
+      ['whoami', 'Display current user'],
       ['pwd', 'Show current directory path'],
       ['ls', 'List directory contents'],
       ['cd <dir>', 'Change directory location'],
