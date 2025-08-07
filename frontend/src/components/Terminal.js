@@ -155,7 +155,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       ['mirror', 'System analysis with attitude'],
       ['vault', 'Access encrypted vault'],
       ['decrypt <file>', 'Decrypt vault files'],
-      ['sudo <cmd>', 'Fake elevated privileges'],
       
       // Easter Eggs
       ['cd underground', 'Access the underground'],
