@@ -139,19 +139,23 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       ['resume', 'Display professional resume'],
       ['timeline', 'Show career timeline'],
       ['stack', 'Display tech stack'],
+      ['skills', 'Show skills radar chart'],
       ['infra', 'Show infrastructure diagram'],
       ['certs', 'List certifications'],
       ['email', 'Show contact information'],
       ['learning', 'Display learning resources'],
-      ['logs', 'View system logs'],
+      ['logs', 'Toggle live system logs'],
       
       // Fun Commands
       ['sudo <cmd>', 'Execute with elevated privileges'],
       ['hackername', 'Generate a random hacker alias'],
       ['music', 'Play synthwave radio'],
       ['mirror', 'Analyze your system with sarcasm'],
+      ['matrix', 'Enter the Matrix'],
+      ['banner <text>', 'Display text in ASCII art'],
       ['vault', 'Access encrypted vault'],
       ['decrypt <file>', 'Attempt to decrypt files'],
+      ['theme <name>', 'Switch color themes'],
       
       // Easter Eggs
       ['cd underground', 'Access the underground'],
@@ -192,7 +196,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     
     helpText += '╚══════════════════════════════════════════════════════════════╝\n';
     helpText += '\nTip: Use arrow keys to navigate command history\n';
-    helpText += 'Pro tip: Try "sudo rm -rf /" for a surprise! 😈';
+    helpText += 'New: Try "matrix", "logs", "skills", "theme neon" 🚀';
     
     setHistory(prev => [...prev, { type: 'output', content: helpText }]);
   };
