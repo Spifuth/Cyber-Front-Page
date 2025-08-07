@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Code, Server, Activity, Shield, Github } from 'lucide-react';
+import { ExternalLink, Code, Server, Activity, Shield, Github, Image, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
+  const [categories, setCategories] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentProject, setCurrentProject] = useState(null);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'visual'
 
   useEffect(() => {
     const fetchProjects = async () => {
