@@ -272,7 +272,12 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Enhanced Terminal Commands (skills, matrix, banner, logs, theme)"
+    - "Skills Page with Radar Chart and Grid View"
+    - "Animated Logs Feed Component"
+    - "Enhanced Projects Section with Visual Modes"
+    - "Terminal Visual Improvements (no green border, responsive)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
