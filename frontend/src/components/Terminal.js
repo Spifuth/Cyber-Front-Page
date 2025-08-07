@@ -480,6 +480,22 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
+    if (trimmedCmd === 'projects') {
+      typeWriter('Accessing project portfolio...', () => {
+        setTimeout(() => {
+          // Scroll to projects section instead of navigating
+          const projectsSection = document.getElementById('projects');
+          if (projectsSection) {
+            projectsSection.scrollIntoView({ behavior: 'smooth' });
+            setHistory(prev => [...prev, { type: 'output', content: 'Scrolled to projects section. Use browser to view full portfolio.' }]);
+          } else {
+            setHistory(prev => [...prev, { type: 'output', content: 'Projects section found. Check the main page for project gallery.' }]);
+          }
+        }, 1000);
+      });
+      return;
+    }
+
     if (trimmedCmd === 'skills') {
       typeWriter('Accessing skills matrix... Analyzing competency levels...', () => {
         setTimeout(() => navigate('/skills'), 1000);
