@@ -142,6 +142,220 @@ export default function HomePage() {
         <About />
         <Projects />
         
+        {/* Professional Sections */}
+        <section className="py-20 px-4 relative">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                Professional Portfolio
+              </h2>
+              <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+                Explore my expertise, experience, and professional achievements
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Resume/CV */}
+              <div 
+                onClick={() => navigate('/resume')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-green-500/20 rounded-lg">
+                    <User className="h-6 w-6 text-green-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-blue-500/30 bg-blue-500/10 text-blue-400">
+                    CV/RESUME
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-green-400 transition-colors">
+                  Resume & CV
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Professional background, education, and career summary
+                </p>
+                <div className="text-green-400 text-sm font-mono">→ View Resume</div>
+              </div>
+
+              {/* Timeline */}
+              <div 
+                onClick={() => navigate('/timeline')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-blue-500/20 rounded-lg">
+                    <Clock className="h-6 w-6 text-blue-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-blue-500/30 bg-blue-500/10 text-blue-400">
+                    CAREER
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-blue-400 transition-colors">
+                  Career Timeline
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Professional journey, roles, and key achievements over time
+                </p>
+                <div className="text-blue-400 text-sm font-mono">→ View Timeline</div>
+              </div>
+
+              {/* Tech Stack */}
+              <div 
+                onClick={() => navigate('/stack')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-purple-500/20 rounded-lg">
+                    <Code className="h-6 w-6 text-purple-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-purple-500/30 bg-purple-500/10 text-purple-400">
+                    TECHNICAL
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-purple-400 transition-colors">
+                  Tech Stack
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Technologies, frameworks, and tools with expertise levels
+                </p>
+                <div className="text-purple-400 text-sm font-mono">→ View Stack</div>
+              </div>
+
+              {/* Skills Radar */}
+              <div 
+                onClick={() => navigate('/skills')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-yellow-500/20 rounded-lg">
+                    <FileText className="h-6 w-6 text-yellow-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-yellow-500/30 bg-yellow-500/10 text-yellow-400">
+                    SKILLS
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-yellow-400 transition-colors">
+                  Skills Matrix
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Visual skills radar chart and competency analysis
+                </p>
+                <div className="text-yellow-400 text-sm font-mono">→ View Skills</div>
+              </div>
+
+              {/* Infrastructure */}
+              <div 
+                onClick={() => navigate('/infra')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-red-500/20 rounded-lg">
+                    <Server className="h-6 w-6 text-red-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-red-500/30 bg-red-500/10 text-red-400">
+                    INFRASTRUCTURE
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-red-400 transition-colors">
+                  Infrastructure
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  DevOps practices, cloud platforms, and system architecture
+                </p>
+                <div className="text-red-400 text-sm font-mono">→ View Infra</div>
+              </div>
+
+              {/* Certifications */}
+              <div 
+                onClick={() => navigate('/certs')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-indigo-500/20 rounded-lg">
+                    <Award className="h-6 w-6 text-indigo-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-indigo-500/30 bg-indigo-500/10 text-indigo-400">
+                    CREDENTIALS
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-indigo-400 transition-colors">
+                  Certifications
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Professional certifications, badges, and achievements
+                </p>
+                <div className="text-indigo-400 text-sm font-mono">→ View Certs</div>
+              </div>
+
+              {/* Learning Resources */}
+              <div 
+                onClick={() => navigate('/learning')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-teal-500/20 rounded-lg">
+                    <BookOpen className="h-6 w-6 text-teal-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-teal-500/30 bg-teal-500/10 text-teal-400">
+                    LEARNING
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-teal-400 transition-colors">
+                  Learning Path
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Continuous learning resources, courses, and knowledge base
+                </p>
+                <div className="text-teal-400 text-sm font-mono">→ View Learning</div>
+              </div>
+
+              {/* Contact */}
+              <div 
+                onClick={() => navigate('/contact')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-orange-500/20 rounded-lg">
+                    <Mail className="h-6 w-6 text-orange-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-orange-500/30 bg-orange-500/10 text-orange-400">
+                    CONTACT
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-orange-400 transition-colors">
+                  Get In Touch
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Contact information, availability, and communication channels
+                </p>
+                <div className="text-orange-400 text-sm font-mono">→ Contact Me</div>
+              </div>
+
+              {/* System Logs */}
+              <div 
+                onClick={() => navigate('/logs')}
+                className="group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-pink-500/20 rounded-lg">
+                    <FileText className="h-6 w-6 text-pink-400" />
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-xs border border-pink-500/30 bg-pink-500/10 text-pink-400">
+                    SYSTEM
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-pink-400 transition-colors">
+                  System Logs
+                </h3>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  Development logs, system monitoring, and activity tracking
+                </p>
+                <div className="text-pink-400 text-sm font-mono">→ View Logs</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
         <div className="flex justify-center items-center gap-8 py-16">
           <GitHubLink />
           <ToolsLink />
