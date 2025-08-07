@@ -210,7 +210,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     const allowedCommands = [
       'help', 'whoami', 'pwd', 'ls', 'clear', 'exit', 'neofetch',
       'resume', 'timeline', 'stack', 'skills', 'infra', 'certs', 'email', 'contact',
-      'learning', 'resources', 'logs', 'hackername', 'music', 'radio',
+      'learning', 'resources', 'logs', 'projects', 'hackername', 'music', 'radio',
       'mirror', 'matrix', 'vault', 'selfdestruct', 'krbtgt roasting'
     ];
     
