@@ -8,6 +8,7 @@ import SelfDestructPage from "./pages/SelfDestructPage";
 import ResumePage from "./pages/ResumePage";
 import TimelinePage from "./pages/TimelinePage";
 import StackPage from "./pages/StackPage";
+import SkillsPage from "./pages/SkillsPage";
 import InfraPage from "./pages/InfraPage";
 import CertsPage from "./pages/CertsPage";
 import ContactPage from "./pages/ContactPage";
