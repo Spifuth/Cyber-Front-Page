@@ -7,7 +7,7 @@ import Terminal from '../components/Terminal';
 import GitHubLink from '../components/GitHubLink';
 import ToolsLink from '../components/ToolsLink';
 import CyberMaze from '../components/CyberMaze';
-import { Terminal as TerminalIcon, X, Palette, Eye, EyeOff } from 'lucide-react';
+import { Terminal as TerminalIcon, X, Palette, Eye, EyeOff, User, Clock, Code, Server, Award, Mail, BookOpen, FileText } from 'lucide-react';
 
 export default function HomePage() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
