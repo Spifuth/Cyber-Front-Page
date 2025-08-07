@@ -205,6 +205,66 @@ frontend:
         agent: "testing"
         comment: "✅ GitHub and Tools links are visible and properly implemented. Verified during homepage testing that the links are present and accessible in the layout."
 
+  - task: "Enhanced Terminal Commands (skills, matrix, banner, logs, theme)"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/Terminal.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "NEW FEATURE: Enhanced terminal with cyberpunk commands - skills (navigate to skills page), matrix (Matrix rain effect), banner <text> (ASCII art), logs (toggle animated logs feed), theme <name> (color themes). Needs comprehensive testing."
+
+  - task: "Skills Page with Radar Chart and Grid View"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/SkillsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "NEW FEATURE: Skills page (/skills) with radar chart visualization, grid view toggle, category filtering, soft skills progress bars, and statistics summary. Needs testing for all view modes and functionality."
+
+  - task: "Animated Logs Feed Component"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/AnimatedLogsFeed.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "NEW FEATURE: Floating animated logs panel with live system logs (INFO, WARN, ERROR, ROAST, HACK, CRIT types), pause/resume functionality, clear logs button, and close button. Triggered by 'logs' terminal command."
+
+  - task: "Enhanced Projects Section with Visual Modes"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/Projects.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "NEW FEATURE: Enhanced projects section with grid/visual view modes, featured projects highlighting, category filtering, and project screenshots/gallery functionality with lightbox modal."
+
+  - task: "Terminal Visual Improvements (no green border, responsive)"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/Terminal.js, HomePage.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "NEW FEATURE: Terminal input field visual fix (no green border), responsive terminal using full screen space, smooth animations and transitions."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
