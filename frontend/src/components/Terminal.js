@@ -480,9 +480,63 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     }
 
     if (trimmedCmd === 'logs') {
-      typeWriter('Tailing system logs... Access granted.', () => {
-        setTimeout(() => navigate('/logs'), 1000);
+      setShowLogs(!showLogs);
+      typeWriter(`Live logs ${showLogs ? 'disabled' : 'enabled'}. System monitoring ${showLogs ? 'paused' : 'active'}.`);
+      return;
+    }
+
+    if (trimmedCmd === 'skills') {
+      typeWriter('Accessing skills matrix... Analyzing competency levels...', () => {
+        setTimeout(() => navigate('/skills'), 1000);
       });
+      return;
+    }
+
+    if (trimmedCmd === 'matrix') {
+      typeWriter('Entering the Matrix...', () => {
+        setMatrixActive(true);
+        setTimeout(() => {
+          setHistory(prev => [...prev, { type: 'output', content: generateMatrixRain() }]);
+          setTimeout(() => setMatrixActive(false), 5000);
+        }, 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd.startsWith('banner ')) {
+      const text = trimmedCmd.substring(7).trim();
+      if (!text) {
+        setHistory(prev => [...prev, { type: 'error', content: 'Usage: banner <text>' }]);
+        return;
+      }
+      
+      typeWriter('Generating ASCII art...', () => {
+        setTimeout(() => {
+          const asciiArt = generateASCIIBanner(text);
+          setHistory(prev => [...prev, { type: 'output', content: asciiArt }]);
+        }, 1000);
+      });
+      return;
+    }
+
+    if (trimmedCmd.startsWith('theme ')) {
+      const themeName = trimmedCmd.substring(6).trim();
+      const availableThemes = ['default', 'matrix', 'neon', 'cyber', 'retro'];
+      
+      if (!themeName) {
+        setHistory(prev => [...prev, { type: 'output', content: `Available themes: ${availableThemes.join(', ')}` }]);
+        setHistory(prev => [...prev, { type: 'output', content: `Current theme: ${currentTheme}` }]);
+        return;
+      }
+      
+      if (!availableThemes.includes(themeName)) {
+        setHistory(prev => [...prev, { type: 'error', content: `Unknown theme: ${themeName}. Available: ${availableThemes.join(', ')}` }]);
+        return;
+      }
+      
+      setCurrentTheme(themeName);
+      applyTheme(themeName);
+      typeWriter(`Theme changed to "${themeName}". Terminal aesthetics updated.`);
       return;
     }
 
