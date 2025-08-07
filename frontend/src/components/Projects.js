@@ -342,106 +342,151 @@ export default function Projects() {
   return (
     <section className="py-20 px-4 relative" id="projects">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-mono font-bold mb-4 text-green-400">
-            <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
-              ./projects
-            </span>
+          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            Projets
           </h2>
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mb-4"></div>
-          <p className="text-gray-400 font-mono"># ls -la ~/projects/</p>
+          <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+            Portfolio de projets cybersécurité, infrastructure et outils d'automatisation
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {projects.map((project) => {
-            const IconComponent = getProjectIcon(project.title);
-            return (
-              <div
-                key={project.id}
-                className="group bg-gray-900/50 border border-green-500/20 rounded-lg overflow-hidden backdrop-blur-sm hover:border-green-400/50 transition-all duration-500 hover:transform hover:scale-[1.02]"
+        {/* Controls */}
+        <div className="mb-12 flex flex-wrap justify-center gap-4">
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                viewMode === 'grid' 
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                  : 'bg-gray-800/50 text-gray-400 hover:text-green-400'
+              }`}
+            >
+              📋 Grid View
+            </button>
+            <button
+              onClick={() => setViewMode('visual')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                viewMode === 'visual' 
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                  : 'bg-gray-800/50 text-gray-400 hover:text-green-400'
+              }`}
+            >
+              🖼️ Visual Mode
+            </button>
+          </div>
+          
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="bg-gray-800/50 text-green-400 border border-gray-600/50 rounded-lg px-4 py-2 focus:border-green-500/50 focus:outline-none"
+          >
+            <option value="all">All Categories ({projects.length})</option>
+            {Object.entries(categories).map(([key, cat]) => (
+              <option key={key} value={key}>
+                {cat.icon} {key} ({projects.filter(p => p.category === key).length})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Featured Projects */}
+        {selectedCategory === 'all' && featuredProjects.length > 0 && (
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-center mb-8 text-yellow-400">⭐ Featured Projects</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredProjects.map((project) => (
+                <ProjectCard 
+                  key={project.id} 
+                  project={project} 
+                  onImageClick={openLightbox}
+                  viewMode="grid"
+                  featured={true}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* All Projects */}
+        <div className={`grid gap-8 ${
+          viewMode === 'visual' 
+            ? 'md:grid-cols-1 lg:grid-cols-2' 
+            : 'md:grid-cols-2 lg:grid-cols-3'
+        }`}>
+          {filteredProjects.map((project) => (
+            <ProjectCard 
+              key={project.id} 
+              project={project} 
+              onImageClick={openLightbox}
+              viewMode={viewMode}
+              featured={false}
+            />
+          ))}
+        </div>
+
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-4xl mb-4">🔍</div>
+            <p className="text-gray-400">No projects found in this category.</p>
+          </div>
+        )}
+
+        {/* Lightbox Modal */}
+        {lightboxOpen && currentImage && (
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="relative max-w-6xl max-h-full">
+              {/* Navigation Buttons */}
+              {currentProject?.screenshots?.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 transition-colors"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 transition-colors"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </>
+              )}
+
+              {/* Close Button */}
+              <button
+                onClick={closeLightbox}
+                className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 transition-colors"
               >
-                {/* Project Image */}
-                <div className="relative h-48 overflow-hidden bg-gray-800">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-                  <div className="absolute top-4 right-4">
-                    <div className={`px-3 py-1 bg-black/70 border ${getStatusColor(project.status)} rounded-full text-xs font-mono backdrop-blur-sm`}>
-                      {project.status}
-                    </div>
+                <X size={24} />
+              </button>
+
+              {/* Image */}
+              <div className="bg-gray-900 rounded-lg overflow-hidden">
+                <img
+                  src={currentImage.url}
+                  alt={currentImage.alt}
+                  className="max-w-full max-h-[80vh] object-contain mx-auto"
+                  onError={(e) => {
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMUYyOTM3Ii8+CjxwYXRoIGQ9Ik0xNzUgMTMwSDE0NVYxNjBIMTc1VjEzMFoiIGZpbGw9IiM0QjU1NjMiLz4KPHA+dGggZD0iTTE5NSAxNzBIMjI1VjIwMEgxOTVWMTcwWiIgZmlsbD0iIzRCNTU2MyIvPgo8cGF0aCBkPSJNMTQ1IDE3MEgxNzVWMjAwSDE0NVYxNzBaIiBmaWxsPSIjNEI1NTYzIi8+CjwvZz4KPC9zdmc+';
+                  }}
+                />
+                
+                {/* Image Caption */}
+                {currentImage.caption && (
+                  <div className="p-4 bg-gray-800/90">
+                    <p className="text-green-400 text-center">{currentImage.caption}</p>
+                    <p className="text-gray-400 text-sm text-center mt-1">
+                      {currentImageIndex + 1} of {currentProject?.screenshots?.length}
+                    </p>
                   </div>
-                </div>
-
-                {/* Project Content */}
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <IconComponent className="w-6 h-6 text-green-400 group-hover:text-blue-400 transition-colors duration-300" />
-                    <h3 className="text-xl font-mono font-semibold text-green-400 group-hover:text-blue-400 transition-colors duration-300">
-                      {project.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-gray-300 leading-relaxed text-sm">
-                    {project.description}
-                  </p>
-
-                  {/* Tech Stack */}
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech.map((tech, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-1 bg-black/50 text-violet-300 text-xs font-mono border border-violet-500/30 rounded hover:border-violet-400/50 transition-colors duration-300"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="pt-4 flex space-x-2">
-                    {project.link && project.link !== '#' && (
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-green-400 font-mono text-sm border border-green-500/30 rounded-lg hover:border-green-400/50 hover:from-green-900/20 hover:to-blue-900/20 transition-all duration-300"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        <span>view_live</span>
-                      </a>
-                    )}
-                    
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-violet-400 font-mono text-sm border border-violet-500/30 rounded-lg hover:border-violet-400/50 hover:from-violet-900/20 hover:to-blue-900/20 transition-all duration-300"
-                      >
-                        <Github className="w-4 h-4" />
-                      </a>
-                    )}
-                    
-                    {(!project.link || project.link === '#') && !project.github && (
-                      <button className="w-full flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-gray-500 font-mono text-sm border border-gray-500/30 rounded-lg cursor-not-allowed">
-                        <Code className="w-4 h-4" />
-                        <span>in_development</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Scan line effect */}
-                <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-400/50 to-transparent animate-pulse"></div>
-                </div>
+                )}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
