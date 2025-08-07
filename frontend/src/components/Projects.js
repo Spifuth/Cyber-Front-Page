@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Code, Server, Activity, Shield, Github, Image, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import { ExternalLink, Github, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // ProjectCard Component
 const ProjectCard = ({ project, onImageClick, viewMode, featured }) => {
@@ -53,32 +53,6 @@ const ProjectCard = ({ project, onImageClick, viewMode, featured }) => {
         {project.description}
       </p>
 
-      {/* Screenshots Preview */}
-      {project.screenshots && project.screenshots.length > 0 && (
-        <div className="mb-4">
-          <div className="flex space-x-2 overflow-x-auto">
-            {project.screenshots.slice(0, 2).map((screenshot, index) => (
-              <div key={index} className="relative flex-shrink-0">
-                <img
-                  src={screenshot.url}
-                  alt={screenshot.alt}
-                  className="w-20 h-14 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => onImageClick(project, index)}
-                  onError={(e) => {
-                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA4MCA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjU2IiBmaWxsPSIjMUYyOTM3Ii8+CjxwYXRoIGQ9Ik0zNSAyMEgzMFYzMEgzNVYyMFoiIGZpbGw9IiM0QjU1NjMiLz4KPHBhdGggZD0iTTQ1IDM1SDUwVjQ1SDQ1VjM1WiIgZmlsbD0iIzRCNTU2MyIvPgo8L3N2Zz4=';
-                  }}
-                />
-                {index === 0 && project.screenshots.length > 2 && (
-                  <div className="absolute inset-0 bg-black/50 rounded flex items-center justify-center text-white text-xs">
-                    +{project.screenshots.length - 1}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Technologies */}
       <div className="flex flex-wrap gap-2 mb-4">
         {project.technologies.slice(0, 4).map((tech, index) => (
@@ -96,28 +70,8 @@ const ProjectCard = ({ project, onImageClick, viewMode, featured }) => {
         )}
       </div>
 
-      {/* Metrics */}
-      {project.metrics && (
-        <div className="mb-4 text-xs text-gray-400 grid grid-cols-2 gap-2">
-          {Object.entries(project.metrics).slice(0, 2).map(([key, value]) => (
-            <div key={key}>
-              <span className="text-green-400">{value}</span> {key.replace('_', ' ')}
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* Action Buttons */}
       <div className="flex gap-3 mt-auto">
-        {project.screenshots && project.screenshots.length > 0 && (
-          <button
-            onClick={() => onImageClick(project, 0)}
-            className="flex items-center gap-2 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 rounded-lg transition-colors text-sm"
-          >
-            <Eye className="h-4 w-4" />
-            View
-          </button>
-        )}
         {project.github_url && (
           <a
             href={project.github_url}
