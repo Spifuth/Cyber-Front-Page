@@ -808,7 +808,14 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
               value={currentCommand}
               onChange={(e) => setCurrentCommand(e.target.value)}
               onKeyDown={handleKeyPress}
-              className="flex-1 bg-transparent outline-none border-none text-green-400 ml-1 text-xs sm:text-sm focus:outline-none focus:ring-0 focus:border-none"
+              className="flex-1 bg-transparent text-green-400 ml-1 text-xs sm:text-sm caret-green-400"
+              style={{ 
+                outline: 'none', 
+                border: 'none', 
+                boxShadow: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'textfield'
+              }}
               autoComplete="off"
               spellCheck="false"
               placeholder="Type 'help' for available commands..."
