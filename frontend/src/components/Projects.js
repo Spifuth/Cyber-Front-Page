@@ -295,14 +295,6 @@ export default function Projects() {
 
   const featuredProjects = projects.filter(project => project.featured);
 
-  const getProjectIcon = (title) => {
-    if (title.includes('Monitoring')) return Activity;
-    if (title.includes('Tools')) return Code;
-    if (title.includes('Bot')) return Server;
-    if (title.includes('proxy')) return Shield;
-    return Code;
-  };
-
   if (loading) {
     return (
       <section className="py-20 px-4 relative" id="projects">
