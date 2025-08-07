@@ -9,8 +9,8 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 
 ### `help`
 - **Input**: `help`
-- **Processing**: Displays formatted help menu with all available commands in a 2-column layout
-- **Output**: ASCII art table showing all commands organized by category
+- **Processing**: Displays formatted help menu with all available commands in a clean 2-column layout
+- **Output**: ASCII art table showing all commands organized by category (removed tips/new/theme sections)
 - **Category**: Basic Navigation
 
 ### `whoami` 
@@ -26,16 +26,16 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 - **Category**: Basic Navigation
 
 ### `ls`
-- **Input**: `ls` or `ls [directory]`
-- **Processing**: Lists files/directories from filesystem.json, supports directory navigation
-- **Output**: Formatted directory listing with file details
+- **Input**: `ls`
+- **Processing**: Lists only files from filesystem.json, filters out directories
+- **Output**: Formatted file listing (no folders shown, keeps filesystem minimal)
 - **Category**: File System
 
 ### `cd <directory>`
 - **Input**: `cd [directory_name]`
-- **Processing**: Changes current directory, validates against filesystem.json
-- **Output**: Success message or error if directory doesn't exist
-- **Special**: `cd underground` → navigates to easter egg page
+- **Processing**: Gives hints for normal directories, special handling for underground
+- **Output**: Hint messages for most directories
+- **Special**: `cd underground` → navigates to easter egg page (hidden from help)
 - **Category**: File System
 
 ### `cat <file>`
@@ -108,22 +108,10 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 - **Output**: Success message + navigation
 - **Category**: Professional
 
-### `email` 
-- **Input**: `email`
-- **Processing**: Same as contact command
-- **Output**: Contact page navigation
-- **Category**: Professional
-
 ### `learning`
 - **Input**: `learning`
 - **Processing**: Navigates to learning resources page
 - **Output**: Success message + navigation
-- **Category**: Professional
-
-### `resources`
-- **Input**: `resources`
-- **Processing**: Same as learning command
-- **Output**: Learning page navigation
 - **Category**: Professional
 
 ### `projects`
@@ -140,12 +128,6 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 - **Input**: `matrix`
 - **Processing**: Activates Matrix-style character rain effect
 - **Output**: Animated Japanese characters falling in terminal
-- **Category**: Fun/Visual
-
-### `banner <text>`
-- **Input**: `banner [any_text]`
-- **Processing**: Converts input text to ASCII art banner
-- **Output**: Large ASCII art representation of the text
 - **Category**: Fun/Visual
 
 ### `logs`
@@ -166,12 +148,6 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 - **Output**: ASCII art radio with synthwave station info
 - **Category**: Fun
 
-### `radio`
-- **Input**: `radio`
-- **Processing**: Same as music command
-- **Output**: Synthwave radio interface
-- **Category**: Fun
-
 ### `mirror`
 - **Input**: `mirror`
 - **Processing**: Displays system analysis with attitude/personality
@@ -190,19 +166,6 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 - **Output**: Fake decryption progress + "decrypted" content
 - **Category**: Fun/Security Theme
 
-### `theme <name>`
-- **Input**: `theme [theme_name]`
-- **Processing**: Changes terminal color theme, validates against available themes
-- **Output**: Theme change confirmation or error for invalid themes
-- **Available Themes**: default, matrix, neon, cyber, retro
-- **Category**: Customization
-
-### `sudo <command>`
-- **Input**: `sudo [any_command]`
-- **Processing**: Simulates elevated privileges with fake authentication
-- **Output**: Fake authentication + executes underlying command with "elevated" styling
-- **Category**: Fun/Security Theme
-
 ---
 
 ## 🥚 EASTER EGG COMMANDS
@@ -212,6 +175,7 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 - **Processing**: Special directory change that navigates to underground page
 - **Output**: Navigation to /underground route
 - **Category**: Easter Egg
+- **Note**: Hidden from help command, only accessible by knowing the command
 
 ### `krbtgt roasting`
 - **Input**: `krbtgt roasting`
@@ -243,54 +207,65 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 
 ---
 
-## 📁 FILE SYSTEM STRUCTURE
+## 🗑️ REMOVED COMMANDS (As Requested)
 
-The terminal uses `/app/frontend/public/data/filesystem.json` to simulate a file system:
-- Supports directory navigation
-- File listing with `ls`
-- File reading with `cat`
-- Directory structure maintained in JSON format
+The following commands have been removed from the terminal:
 
-## 🎨 THEME SYSTEM
-
-The terminal supports multiple color themes:
-- **default**: Standard green-on-black
-- **matrix**: Matrix movie style
-- **neon**: Bright neon colors
-- **cyber**: Cyberpunk aesthetic
-- **retro**: Vintage computer style
-
-## 🛡️ SECURITY FEATURES
-
-- Input sanitization to prevent XSS
-- Command validation against allowed list
-- Length limits on user input
-- Safe rendering of terminal output
+### Removed for Simplification
+- ❌ **`banner <text>`** - ASCII art banner generation
+- ❌ **`theme <name>`** - Terminal color theme switcher  
+- ❌ **`sudo <command>`** - Fake elevated privileges simulation
+- ❌ **`resources`** - Duplicate of `learning` command
+- ❌ **`email`** - Duplicate of `contact` command
+- ❌ **`radio`** - Duplicate of `music` command
 
 ---
 
-## 📝 NOTES FOR REMOVAL
+## 📁 FILE SYSTEM BEHAVIOR
 
-**Commands that could be removed if simplifying:**
+### Current Behavior
+- **`ls`**: Shows only files, no directories (cleaner output)
+- **`cd`**: Provides hints instead of navigation (except underground easter egg)
+- **`cat`**: Works normally for file viewing
 
-1. **Low Usage/Redundant**:
-   - `resources` (duplicate of `learning`)
-   - `email` (duplicate of `contact`)
-   - `radio` (duplicate of `music`)
-   - `pwd` (basic utility, rarely used)
+### File System Structure
+The terminal uses `/app/frontend/public/data/filesystem.json` but only shows files in listings to keep the interface focused on commands rather than navigation.
 
-2. **Complex/Maintenance Heavy**:
-   - `vault` + `decrypt` (complex simulation)
-   - `nmap` + `curl` (network simulation)
-   - `sudo` (wrapper complexity)
+---
 
-3. **Easter Eggs** (if wanting to be more professional):
-   - `hackername`
-   - `mirror`
-   - Matrix animation in `matrix`
+## 📝 CURRENT COMMAND COUNT
 
-**Essential Commands to Keep**:
-- Navigation: `help`, `whoami`, `ls`, `cd`, `clear`
-- Professional: `neofetch`, `resume`, `timeline`, `stack`, `skills`, `projects`, `certs`, `contact`
-- Interactive: `logs`, `banner`, `theme`
-- Easter Eggs: `cd underground`, `krbtgt roasting`, `selfdestruct`
+**Total Active Commands: ~60** across 6 categories:
+- **Basic Navigation**: 8 commands
+- **Professional**: 10 commands  
+- **Fun/Interactive**: 7 commands
+- **Easter Eggs**: 3 commands
+- **Network Simulation**: 2 commands
+- **File System**: Integrated into basic commands
+
+---
+
+## 🎨 INTERFACE IMPROVEMENTS
+
+### Help Command Enhancements
+- ✅ **Clean 2-column layout**: Properly aligned commands and descriptions
+- ✅ **Removed clutter**: No more tips/new/themes section at bottom
+- ✅ **Consistent spacing**: Better visual organization
+- ✅ **Hidden easter eggs**: cd underground not revealed in help
+
+### File System Improvements  
+- ✅ **Files only**: `ls` shows only files, not directories
+- ✅ **Helpful hints**: `cd` provides guidance instead of navigation
+- ✅ **Easter egg preserved**: `cd underground` still works for discovery
+
+---
+
+## 🛡️ SECURITY & VALIDATION
+
+- Input sanitization to prevent XSS
+- Command validation against updated whitelist
+- Length limits on user input
+- Safe rendering of terminal output
+- Removed potentially confusing commands
+
+**The terminal is now streamlined, focused, and easier to navigate while maintaining its cyberpunk charm and essential functionality.**
