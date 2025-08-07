@@ -17,6 +17,9 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
 
+  // Import AnimatedLogsFeed at the top of the file
+  const AnimatedLogsFeed = React.lazy(() => import('./AnimatedLogsFeed'));
+
   const { terminalCommands, neofetchData, fileSystem, motdMessages, commandHistory } = mockData;
 
   // Load filesystem data
