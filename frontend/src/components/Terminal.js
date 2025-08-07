@@ -507,31 +507,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     }
 
     // ============ FUN COMMANDS ============
-    
-    if (trimmedCmd.startsWith('sudo ')) {
-      const sudoCmd = trimmedCmd.substring(5).trim();
-      const jokes = [
-        `fenrir is not in the sudoers file. This incident will be reported to Santa.`,
-        `Sorry ${sudoCmd}, I can't let you do that. *HAL 9000 voice*`,
-        `sudo: password incorrect. Try 'password123' or 'admin'. Just kidding! 😂`,
-        `Access denied. Maybe try saying "please"? No wait, this isn't Canada.`,
-        `${sudoCmd}: command not found. Did you try turning it off and on again?`,
-        `Permission denied. Your security clearance is insufficient for this operation.`
-      ];
-      
-      if (sudoCmd === 'rm -rf /' || sudoCmd === 'rm -rf /*') {
-        typeWriter('🚨 CRITICAL SYSTEM ERROR 🚨\nDetected attempt to delete everything!\nInitiating emergency protocols...', () => {
-          setTimeout(() => {
-            setHistory(prev => [...prev, { type: 'error', content: '❌ Just kidding! No system was harmed in the making of this joke.' }]);
-            setHistory(prev => [...prev, { type: 'output', content: '💡 Pro tip: Never run "sudo rm -rf /" on a real system!' }]);
-          }, 2000);
-        });
-      } else {
-        const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-        setHistory(prev => [...prev, { type: 'error', content: randomJoke }]);
-      }
-      return;
-    }
 
     if (trimmedCmd === 'hackername') {
       const prefixes = ['Cyber', 'Dark', 'Neo', 'Zero', 'Phantom', 'Ghost', 'Shadow', 'Digital'];
