@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockData } from '../mock/data';
+import AnimatedLogsFeed from './AnimatedLogsFeed';
 
 export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, onNavigateToSelfDestruct }) {
   const navigate = useNavigate();
