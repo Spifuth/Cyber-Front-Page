@@ -275,11 +275,7 @@ export default function Projects() {
         )}
 
         {/* All Projects */}
-        <div className={`grid gap-8 ${
-          viewMode === 'visual' 
-            ? 'md:grid-cols-1 lg:grid-cols-2' 
-            : 'md:grid-cols-2 lg:grid-cols-3'
-        }`}>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
             <ProjectCard 
               key={project.id} 
