@@ -266,7 +266,6 @@ export default function Projects() {
                   key={project.id} 
                   project={project} 
                   onImageClick={openLightbox}
-                  viewMode="grid"
                   featured={true}
                 />
               ))}
