@@ -656,25 +656,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     return matrix;
   };
 
-  // Helper function to generate ASCII banner
-  const generateASCIIBanner = (text) => {
-    const lines = [
-      '╔══════════════════════════════════════════════════════════════╗',
-      '║                                                              ║',
-      `║  ${text.toUpperCase().padStart(30 + text.length / 2).padEnd(60)}  ║`,
-      '║                                                              ║',
-      '╚══════════════════════════════════════════════════════════════╝'
-    ];
-    return lines.join('\n');
-  };
-
-  // Helper function to apply theme
-  const applyTheme = (themeName) => {
-    // This would typically modify CSS variables or classes
-    // For now, just store the theme name
-    localStorage.setItem('terminal-theme', themeName);
-  };
-
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !isTyping) {
       executeCommand(currentCommand);
