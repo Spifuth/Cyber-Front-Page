@@ -160,30 +160,17 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       ['selfdestruct', 'Trigger system meltdown']
     ];
     
-    let helpText = '╔══════════════════════════════════════════════════════════════╗\n';
-    helpText += '║                    NEBULAHOST COMMAND CENTER                 ║\n';
-    helpText += '╠══════════════════════════════════════════════════════════════╣\n';
-    helpText += '║                                                              ║\n';
+    let helpText = '┌────────────────────────────────────────────────────────────────┐\n';
+    helpText += '│                    NEBULAHOST COMMAND CENTER                   │\n';
+    helpText += '├────────────────────────────────────────────────────────────────┤\n';
     
-    // Properly aligned 2-column layout
-    for (let i = 0; i < commands.length; i += 2) {
-      const [cmd1, desc1] = commands[i];
-      const [cmd2, desc2] = commands[i + 1] || ['', ''];
-      
-      const leftCmd = cmd1.padEnd(16);
-      const leftDesc = desc1.padEnd(20);
-      const rightCmd = cmd2.padEnd(16);
-      const rightDesc = desc2;
-      
-      if (cmd2) {
-        helpText += `║ ${leftCmd} ${leftDesc} │ ${rightCmd} ${rightDesc.padEnd(20)} ║\n`;
-      } else {
-        helpText += `║ ${leftCmd} ${leftDesc}                          ║\n`;
-      }
-    }
+    // Simple single column format for better readability
+    commands.forEach(([cmd, desc]) => {
+      const cmdPadded = cmd.padEnd(18);
+      helpText += `│ ${cmdPadded} ${desc.padEnd(42)} │\n`;
+    });
     
-    helpText += '║                                                              ║\n';
-    helpText += '╚══════════════════════════════════════════════════════════════╝';
+    helpText += '└────────────────────────────────────────────────────────────────┘';
     
     setHistory(prev => [...prev, { type: 'output', content: helpText }]);
   };
