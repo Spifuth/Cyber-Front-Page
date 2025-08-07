@@ -708,6 +708,39 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     }
   };
 
+  // Helper function to generate Matrix rain effect
+  const generateMatrixRain = () => {
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    let matrix = '';
+    for (let i = 0; i < 20; i++) {
+      let line = '';
+      for (let j = 0; j < 60; j++) {
+        line += chars[Math.floor(Math.random() * chars.length)];
+      }
+      matrix += line + '\n';
+    }
+    return matrix;
+  };
+
+  // Helper function to generate ASCII banner
+  const generateASCIIBanner = (text) => {
+    const lines = [
+      '╔══════════════════════════════════════════════════════════════╗',
+      '║                                                              ║',
+      `║  ${text.toUpperCase().padStart(30 + text.length / 2).padEnd(60)}  ║`,
+      '║                                                              ║',
+      '╚══════════════════════════════════════════════════════════════╝'
+    ];
+    return lines.join('\n');
+  };
+
+  // Helper function to apply theme
+  const applyTheme = (themeName) => {
+    // This would typically modify CSS variables or classes
+    // For now, just store the theme name
+    localStorage.setItem('terminal-theme', themeName);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !isTyping) {
       executeCommand(currentCommand);
