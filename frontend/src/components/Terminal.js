@@ -167,7 +167,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     // Simple single column format for better readability
     commands.forEach(([cmd, desc]) => {
       const cmdPadded = cmd.padEnd(18);
-      helpText += `│ ${cmdPadded} ${desc.padEnd(42)} │\n`;
+      helpText += `│ ${cmdPadded} ${desc.padEnd(43)} │\n`;
     });
     
     helpText += '└────────────────────────────────────────────────────────────────┘';
