@@ -345,30 +345,8 @@ export default function Projects() {
         </div>
 
         {/* Controls */}
-        <div className="mb-12 flex flex-wrap justify-center gap-4">
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                viewMode === 'grid' 
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                  : 'bg-gray-800/50 text-gray-400 hover:text-green-400'
-              }`}
-            >
-              📋 Grid View
-            </button>
-            <button
-              onClick={() => setViewMode('visual')}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                viewMode === 'visual' 
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                  : 'bg-gray-800/50 text-gray-400 hover:text-green-400'
-              }`}
-            >
-              🖼️ Visual Mode
-            </button>
-          </div>
-          
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+          {/* Category Filter */}
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
