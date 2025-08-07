@@ -157,7 +157,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       ['decrypt <file>', 'Decrypt vault files'],
       
       // Easter Eggs
-      ['cd underground', 'Access the underground'],
       ['krbtgt roasting', 'Launch Kerberos attack'],
       ['selfdestruct', 'Trigger system meltdown']
     ];
