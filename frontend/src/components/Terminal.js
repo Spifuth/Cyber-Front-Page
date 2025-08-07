@@ -817,6 +817,12 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
           </div>
         )}
       </div>
+      
+      {/* Animated Logs Feed */}
+      <AnimatedLogsFeed 
+        isVisible={showLogs}
+        onClose={() => setShowLogs(false)}
+      />
     </div>
   );
 }
