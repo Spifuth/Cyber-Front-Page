@@ -211,7 +211,7 @@ export default function Projects() {
   const [currentImage, setCurrentImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentProject, setCurrentProject] = useState(null);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'visual'
+
 
   useEffect(() => {
     const fetchProjects = async () => {
