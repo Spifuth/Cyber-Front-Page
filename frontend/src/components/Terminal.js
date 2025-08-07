@@ -149,7 +149,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       // Fun & Interactive
       ['logs', 'Toggle live system logs'],
       ['matrix', 'Enter the Matrix'],
-      ['banner <text>', 'Generate ASCII art banners'],
+
       ['hackername', 'Generate hacker alias'],
       ['music', 'Play synthwave radio'],
       ['mirror', 'System analysis with attitude'],
