@@ -35,13 +35,65 @@ export default function Projects() {
   }, []);
 
   const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case 'production': return 'text-green-400 border-green-500/30';
-      case 'actif': return 'text-blue-400 border-blue-500/30';
-      case 'développement': return 'text-yellow-400 border-yellow-500/30';
-      default: return 'text-gray-400 border-gray-500/30';
+    const statusMap = {
+      'active': 'text-green-400 border-green-500/30 bg-green-500/10',
+      'completed': 'text-blue-400 border-blue-500/30 bg-blue-500/10',
+      'beta': 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
+      'in_development': 'text-orange-400 border-orange-500/30 bg-orange-500/10',
+      'archived': 'text-gray-400 border-gray-500/30 bg-gray-500/10'
+    };
+    return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
+  };
+
+  const getCategoryIcon = (category) => {
+    const iconMap = {
+      'Infrastructure': '🏗️',
+      'Security Tools': '🛡️', 
+      'Research': '🔬',
+      'Automation': '🤖',
+      'Malware Analysis': '🦠',
+      'Penetration Testing': '⚔️'
+    };
+    return iconMap[category] || '💻';
+  };
+
+  const openLightbox = (project, imageIndex = 0) => {
+    if (project.screenshots && project.screenshots.length > 0) {
+      setCurrentProject(project);
+      setCurrentImageIndex(imageIndex);
+      setCurrentImage(project.screenshots[imageIndex]);
+      setLightboxOpen(true);
     }
   };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    setCurrentImage(null);
+    setCurrentProject(null);
+    setCurrentImageIndex(0);
+  };
+
+  const nextImage = () => {
+    if (currentProject && currentProject.screenshots) {
+      const nextIndex = (currentImageIndex + 1) % currentProject.screenshots.length;
+      setCurrentImageIndex(nextIndex);
+      setCurrentImage(currentProject.screenshots[nextIndex]);
+    }
+  };
+
+  const prevImage = () => {
+    if (currentProject && currentProject.screenshots) {
+      const prevIndex = (currentImageIndex - 1 + currentProject.screenshots.length) % currentProject.screenshots.length;
+      setCurrentImageIndex(prevIndex);
+      setCurrentImage(currentProject.screenshots[prevIndex]);
+    }
+  };
+
+  const filteredProjects = selectedCategory === 'all' 
+    ? projects 
+    : projects.filter(project => project.category === selectedCategory);
+
+  const featuredProjects = projects.filter(project => project.featured);
 
   const getProjectIcon = (title) => {
     if (title.includes('Monitoring')) return Activity;
