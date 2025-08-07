@@ -11,6 +11,9 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
   const [currentDir, setCurrentDir] = useState('/home/fenrir');
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [filesystem, setFilesystem] = useState(null);
+  const [showLogs, setShowLogs] = useState(false);
+  const [matrixActive, setMatrixActive] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('default');
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
 
