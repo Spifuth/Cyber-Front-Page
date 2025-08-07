@@ -3,6 +3,150 @@ import { ExternalLink, Code, Server, Activity, Shield, Github, Image, X, Chevron
 
 // ProjectCard Component
 const ProjectCard = ({ project, onImageClick, viewMode, featured }) => {
+  const getStatusColor = (status) => {
+    const statusMap = {
+      'active': 'text-green-400 border-green-500/30 bg-green-500/10',
+      'completed': 'text-blue-400 border-blue-500/30 bg-blue-500/10',
+      'beta': 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
+      'in_development': 'text-orange-400 border-orange-500/30 bg-orange-500/10',
+      'archived': 'text-gray-400 border-gray-500/30 bg-gray-500/10'
+    };
+    return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
+  };
+
+  const getCategoryIcon = (category) => {
+    const iconMap = {
+      'Infrastructure': '🏗️',
+      'Security Tools': '🛡️', 
+      'Research': '🔬',
+      'Automation': '🤖',
+      'Malware Analysis': '🦠',
+      'Penetration Testing': '⚔️'
+    };
+    return iconMap[category] || '💻';
+  };
+
+  return (
+    <div className={`group relative bg-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 ${featured ? 'ring-2 ring-yellow-400/20' : ''}`}>
+      {featured && (
+        <div className="absolute -top-2 -right-2 bg-yellow-400 text-black px-2 py-1 text-xs font-bold rounded-full">
+          ⭐ FEATURED
+        </div>
+      )}
+
+      {/* Project Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="p-3 bg-green-500/20 rounded-lg">
+          <span className="text-2xl">{getCategoryIcon(project.category)}</span>
+        </div>
+        <div className={`px-3 py-1 rounded-full text-xs border ${getStatusColor(project.status)}`}>
+          {project.status.replace('_', ' ').toUpperCase()}
+        </div>
+      </div>
+
+      {/* Project Content */}
+      <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-green-400 transition-colors">
+        {project.title}
+      </h3>
+      
+      <p className="text-gray-400 mb-4 leading-relaxed text-sm">
+        {project.description}
+      </p>
+
+      {/* Screenshots Preview */}
+      {project.screenshots && project.screenshots.length > 0 && (
+        <div className="mb-4">
+          <div className="flex space-x-2 overflow-x-auto">
+            {project.screenshots.slice(0, 2).map((screenshot, index) => (
+              <div key={index} className="relative flex-shrink-0">
+                <img
+                  src={screenshot.url}
+                  alt={screenshot.alt}
+                  className="w-20 h-14 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => onImageClick(project, index)}
+                  onError={(e) => {
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA4MCA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjU2IiBmaWxsPSIjMUYyOTM3Ii8+CjxwYXRoIGQ9Ik0zNSAyMEgzMFYzMEgzNVYyMFoiIGZpbGw9IiM0QjU1NjMiLz4KPHBhdGggZD0iTTQ1IDM1SDUwVjQ1SDQ1VjM1WiIgZmlsbD0iIzRCNTU2MyIvPgo8L3N2Zz4=';
+                  }}
+                />
+                {index === 0 && project.screenshots.length > 2 && (
+                  <div className="absolute inset-0 bg-black/50 rounded flex items-center justify-center text-white text-xs">
+                    +{project.screenshots.length - 1}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Technologies */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {project.technologies.slice(0, 4).map((tech, index) => (
+          <span
+            key={index}
+            className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded border border-blue-500/30"
+          >
+            {tech}
+          </span>
+        ))}
+        {project.technologies.length > 4 && (
+          <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs rounded border border-gray-500/30">
+            +{project.technologies.length - 4} more
+          </span>
+        )}
+      </div>
+
+      {/* Metrics */}
+      {project.metrics && (
+        <div className="mb-4 text-xs text-gray-400 grid grid-cols-2 gap-2">
+          {Object.entries(project.metrics).slice(0, 2).map(([key, value]) => (
+            <div key={key}>
+              <span className="text-green-400">{value}</span> {key.replace('_', ' ')}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex gap-3 mt-auto">
+        {project.screenshots && project.screenshots.length > 0 && (
+          <button
+            onClick={() => onImageClick(project, 0)}
+            className="flex items-center gap-2 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 rounded-lg transition-colors text-sm"
+          >
+            <Eye className="h-4 w-4" />
+            View
+          </button>
+        )}
+        {project.github_url && (
+          <a
+            href={project.github_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-2 bg-gray-700/50 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
+          >
+            <Github className="h-4 w-4" />
+            Code
+          </a>
+        )}
+        {project.live_demo && (
+          <a
+            href={project.live_demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 rounded-lg transition-colors text-sm border border-green-500/30"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Demo
+          </a>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ProjectCard Component
+const ProjectCard = ({ project, onImageClick, viewMode, featured }) => {
   const getProjectIcon = (title) => {
     if (title.includes('Monitoring')) return Activity;
     if (title.includes('Tools')) return Code;
