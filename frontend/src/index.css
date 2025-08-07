@@ -177,3 +177,33 @@ input:focus, button:focus {
   outline: 2px solid rgba(34, 197, 94, 0.5);
   outline-offset: 2px;
 }
+
+/* Animations for new features */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes matrix {
+  0% { transform: translateY(-100vh); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.matrix-char {
+  animation: matrix linear infinite;
+  animation-duration: var(--duration);
+  animation-delay: var(--delay);
+}
+
+@keyframes neonGlow {
+  0%, 100% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor; }
+  50% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+.neon-text {
+  animation: neonGlow 2s ease-in-out infinite alternate;
+}
