@@ -1,6 +1,206 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, Code, Server, Activity, Shield, Github, Image, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 
+// ProjectCard Component
+const ProjectCard = ({ project, onImageClick, viewMode, featured }) => {
+  const getProjectIcon = (title) => {
+    if (title.includes('Monitoring')) return Activity;
+    if (title.includes('Tools')) return Code;
+    if (title.includes('Bot')) return Server;
+    if (title.includes('proxy')) return Shield;
+    return Code;
+  };
+
+  const getStatusColor = (status) => {
+    const statusMap = {
+      'active': 'text-green-400 border-green-500/30 bg-green-500/10',
+      'completed': 'text-blue-400 border-blue-500/30 bg-blue-500/10',
+      'beta': 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
+      'in_development': 'text-orange-400 border-orange-500/30 bg-orange-500/10',
+      'archived': 'text-gray-400 border-gray-500/30 bg-gray-500/10'
+    };
+    return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
+  };
+
+  const IconComponent = getProjectIcon(project.title);
+
+  if (viewMode === 'visual') {
+    return (
+      <div className={`group relative bg-gray-900/50 backdrop-blur-sm border rounded-lg overflow-hidden hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 ${
+        featured ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'border-gray-700/50'
+      }`}>
+        {/* Featured Badge */}
+        {featured && (
+          <div className="absolute top-2 left-2 z-10 bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs border border-yellow-500/30">
+            ⭐ Featured
+          </div>
+        )}
+
+        {/* Project Image/Screenshots */}
+        <div className="relative h-48 bg-gray-800 overflow-hidden">
+          {project.screenshots && project.screenshots.length > 0 ? (
+            <div className="relative h-full">
+              <img
+                src={project.screenshots[0].url}
+                alt={project.screenshots[0].alt}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                onClick={() => onImageClick(project, 0)}
+                onError={(e) => {
+                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMUYyOTM3Ii8+CjxwYXRoIGQ9Ik0xNzUgMTMwSDE0NVYxNjBIMTc1VjEzMFoiIGZpbGw9IiM0QjU1NjMiLz4KPHA+dGggZD0iTTE5NSAxNzBIMjI1VjIwMEgxOTVWMTcwWiIgZmlsbD0iIzRCNTU2MyIvPgo8cGF0aCBkPSJNMTQ1IDE3MEgxNzVWMjAwSDE0NVYxNzBaIiBmaWxsPSIjNEI1NTYzIi8+CjwvZz4KPC9zdmc+';
+                }}
+              />
+              {project.screenshots.length > 1 && (
+                <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                  +{project.screenshots.length - 1} more
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <Eye className="h-8 w-8 text-white" />
+              </div>
+            </div>
+          ) : (
+            <div className="h-full flex items-center justify-center bg-gray-800">
+              <IconComponent className="h-16 w-16 text-gray-600" />
+            </div>
+          )}
+          
+          {/* Status Badge */}
+          <div className="absolute top-2 right-2">
+            <div className={`px-3 py-1 rounded-full text-xs border ${getStatusColor(project.status)}`}>
+              {project.status}
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <IconComponent className="h-5 w-5 text-green-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-white group-hover:text-green-400 transition-colors">
+              {project.title}
+            </h3>
+          </div>
+          
+          <p className="text-gray-400 mb-4 leading-relaxed">
+            {project.description}
+          </p>
+
+          {/* Technologies */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {(project.technologies || project.tech || []).map((tech, index) => (
+              <span
+                key={index}
+                className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded border border-blue-500/30"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            {(project.github_url || project.github) && (
+              <a
+                href={project.github_url || project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
+              >
+                <Github className="h-4 w-4" />
+                Code
+              </a>
+            )}
+            {(project.live_demo || project.link) && project.live_demo !== '#' && project.link !== '#' && (
+              <a
+                href={project.live_demo || project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 rounded-lg transition-colors text-sm border border-green-500/30"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Demo
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Grid view (default)
+  return (
+    <div className={`group relative bg-gray-900/50 backdrop-blur-sm border rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 ${
+      featured ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'border-gray-700/50'
+    }`}>
+      {/* Featured Badge */}
+      {featured && (
+        <div className="absolute -top-2 -right-2 bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs border border-yellow-500/30">
+          ⭐ Featured
+        </div>
+      )}
+
+      {/* Project Icon */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="p-3 bg-green-500/20 rounded-lg">
+          <IconComponent className="h-6 w-6 text-green-400" />
+        </div>
+        <div className={`px-3 py-1 rounded-full text-xs border ${getStatusColor(project.status)}`}>
+          {project.status}
+        </div>
+      </div>
+
+      {/* Project Content */}
+      <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-green-400 transition-colors">
+        {project.title}
+      </h3>
+      
+      <p className="text-gray-400 mb-4 leading-relaxed">
+        {project.description}
+      </p>
+
+      {/* Technologies */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {(project.technologies || project.tech || []).map((tech, index) => (
+          <span
+            key={index}
+            className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded border border-blue-500/30"
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-3">
+        {(project.github_url || project.github) && (
+          <a
+            href={project.github_url || project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
+          >
+            <Github className="h-4 w-4" />
+            Code
+          </a>
+        )}
+        {(project.live_demo || project.link) && project.live_demo !== '#' && project.link !== '#' && (
+          <a
+            href={project.live_demo || project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 rounded-lg transition-colors text-sm border border-green-500/30"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Demo
+          </a>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [categories, setCategories] = useState({});
