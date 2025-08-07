@@ -214,12 +214,12 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
   const validateCommand = (cmd) => {
     const allowedCommands = [
       'help', 'whoami', 'pwd', 'ls', 'clear', 'exit', 'neofetch',
-      'resume', 'timeline', 'stack', 'infra', 'certs', 'email', 'contact',
+      'resume', 'timeline', 'stack', 'skills', 'infra', 'certs', 'email', 'contact',
       'learning', 'resources', 'logs', 'hackername', 'music', 'radio',
-      'mirror', 'vault', 'selfdestruct', 'krbtgt roasting'
+      'mirror', 'matrix', 'vault', 'selfdestruct', 'krbtgt roasting'
     ];
     
-    const allowedPrefixes = ['cd ', 'cat ', 'nmap ', 'curl ', 'sudo ', 'decrypt '];
+    const allowedPrefixes = ['cd ', 'cat ', 'nmap ', 'curl ', 'sudo ', 'decrypt ', 'banner ', 'theme '];
     
     return allowedCommands.includes(cmd) || 
            allowedPrefixes.some(prefix => cmd.startsWith(prefix));
