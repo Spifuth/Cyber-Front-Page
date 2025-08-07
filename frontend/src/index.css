@@ -178,6 +178,23 @@ input:focus, button:focus {
   outline-offset: 2px;
 }
 
+/* Terminal input specific styles - NO BORDERS */
+.terminal-input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: textfield !important;
+}
+
+.terminal-input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
 /* Animations for new features */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
