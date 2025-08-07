@@ -288,26 +288,13 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
         return;
       }
       
-      // Handle other directory changes
+      // Handle other directory changes - give hints instead of navigating
       if (path === '~' || path === '') {
-        setCurrentDir('/home/fenrir');
-        setHistory(prev => [...prev, { type: 'output', content: '' }]);
+        setHistory(prev => [...prev, { type: 'output', content: 'Hint: This terminal is focused on commands, not navigation. Try "help" for available commands.' }]);
       } else if (path === '..') {
-        const parentDir = currentDir.split('/').slice(0, -1).join('/') || '/';
-        setCurrentDir(parentDir);
-        setHistory(prev => [...prev, { type: 'output', content: '' }]);
+        setHistory(prev => [...prev, { type: 'output', content: 'Hint: Directory navigation is limited. Use specific commands to access content.' }]);
       } else {
-        const newPath = path.startsWith('/') ? path : currentDir + '/' + path;
-        if (filesystem?.directories[newPath]) {
-          setCurrentDir(newPath);
-          setHistory(prev => [...prev, { type: 'output', content: '' }]);
-        } else if (fileSystem[newPath]) {
-          // Fallback to old system
-          setCurrentDir(newPath);
-          setHistory(prev => [...prev, { type: 'output', content: '' }]);
-        } else {
-          setHistory(prev => [...prev, { type: 'error', content: `cd: ${path}: No such file or directory` }]);
-        }
+        setHistory(prev => [...prev, { type: 'output', content: `Hint: "${path}" is not accessible. Try "help" to see available commands.` }]);
       }
       return;
     }
