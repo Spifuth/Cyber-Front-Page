@@ -1,0 +1,33 @@
+# =============================================
+# STATIC FILE EXTRACTION DOCKERFILE
+# For hosting on external platforms (Netlify, Vercel, etc.)
+# =============================================
+
+# Build stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY frontend/package.json frontend/yarn.lock ./
+
+# Install dependencies
+RUN yarn install --frozen-lockfile --production=false
+
+# Copy source code
+COPY frontend/ .
+
+# Build the application
+RUN yarn build
+
+# Static extraction stage (no server)
+FROM alpine:latest AS extractor
+
+# Create directories
+RUN mkdir -p /static-files
+
+# Copy built files
+COPY --from=builder /app/build /static-files/
+
+# This container is for extracting files only
+# Use: docker cp <container_id>:/static-files ./build
