@@ -506,27 +506,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
-    if (trimmedCmd.startsWith('theme ')) {
-      const themeName = trimmedCmd.substring(6).trim();
-      const availableThemes = ['default', 'matrix', 'neon', 'cyber', 'retro'];
-      
-      if (!themeName) {
-        setHistory(prev => [...prev, { type: 'output', content: `Available themes: ${availableThemes.join(', ')}` }]);
-        setHistory(prev => [...prev, { type: 'output', content: `Current theme: ${currentTheme}` }]);
-        return;
-      }
-      
-      if (!availableThemes.includes(themeName)) {
-        setHistory(prev => [...prev, { type: 'error', content: `Unknown theme: ${themeName}. Available: ${availableThemes.join(', ')}` }]);
-        return;
-      }
-      
-      setCurrentTheme(themeName);
-      applyTheme(themeName);
-      typeWriter(`Theme changed to "${themeName}". Terminal aesthetics updated.`);
-      return;
-    }
-
     // ============ FUN COMMANDS ============
     
     if (trimmedCmd.startsWith('sudo ')) {
