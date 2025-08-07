@@ -506,22 +506,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       return;
     }
 
-    if (trimmedCmd.startsWith('banner ')) {
-      const text = trimmedCmd.substring(7).trim();
-      if (!text) {
-        setHistory(prev => [...prev, { type: 'error', content: 'Usage: banner <text>' }]);
-        return;
-      }
-      
-      typeWriter('Generating ASCII art...', () => {
-        setTimeout(() => {
-          const asciiArt = generateASCIIBanner(text);
-          setHistory(prev => [...prev, { type: 'output', content: asciiArt }]);
-        }, 1000);
-      });
-      return;
-    }
-
     if (trimmedCmd.startsWith('theme ')) {
       const themeName = trimmedCmd.substring(6).trim();
       const availableThemes = ['default', 'matrix', 'neon', 'cyber', 'retro'];
