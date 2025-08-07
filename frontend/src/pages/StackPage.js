@@ -88,26 +88,26 @@ const StackPage = () => {
           </div>
         </div>
 
-        {/* Stack Categories Grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
+        {/* Stack Categories Grid - FIXED LAYOUT */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 auto-rows-fr">
           {stackData?.stack && Object.entries(stackData.stack).map(([categoryKey, categoryData]) => (
             <div 
               key={categoryKey} 
-              className={`border-2 border-gray-700 rounded-lg overflow-hidden bg-gray-900 bg-opacity-30 hover:border-green-400 transition-all duration-300 ${
-                selectedCategory === categoryKey ? 'border-green-400 transform scale-105' : ''
+              className={`border-2 border-gray-700 rounded-lg overflow-hidden bg-gray-900 bg-opacity-30 hover:border-green-400 transition-all duration-300 flex flex-col ${
+                selectedCategory === categoryKey ? 'border-green-400 ring-2 ring-green-400/20' : ''
               }`}
             >
-              {/* Category Header */}
+              {/* Category Header - FIXED */}
               <div 
-                className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 cursor-pointer hover:from-gray-700 hover:to-gray-800 transition-all"
+                className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 cursor-pointer hover:from-gray-700 hover:to-gray-800 transition-all flex-shrink-0"
                 onClick={() => setSelectedCategory(selectedCategory === categoryKey ? null : categoryKey)}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{categoryData.icon}</span>
-                    <h2 className="text-xl font-bold text-green-400">{categoryData.category}</h2>
+                  <div className="flex items-center space-x-3 min-w-0">
+                    <span className="text-2xl flex-shrink-0">{categoryData.icon}</span>
+                    <h2 className="text-lg md:text-xl font-bold text-green-400 truncate">{categoryData.category}</h2>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 flex-shrink-0">
                     <span className="text-gray-400 text-sm">
                       {categoryData.technologies?.length || 0} tools
                     </span>
@@ -120,29 +120,29 @@ const StackPage = () => {
                 </div>
               </div>
 
-              {/* Technologies List */}
-              <div className={`transition-all duration-300 overflow-hidden ${
-                selectedCategory === categoryKey || selectedCategory === null ? 'max-h-screen' : 'max-h-0'
+              {/* Technologies List - FIXED OVERFLOW */}
+              <div className={`transition-all duration-300 overflow-hidden flex-1 ${
+                selectedCategory === categoryKey || selectedCategory === null ? 'max-h-none' : 'max-h-0'
               }`}>
-                <div className="p-4 space-y-4">
+                <div className="p-4 space-y-3 h-full overflow-y-auto">
                   {categoryData.technologies?.map((tech, index) => (
-                    <div key={index} className="border border-gray-700 rounded p-4 hover:border-green-600 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-lg font-bold text-white">{tech.name}</h3>
-                        <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-1 text-xs rounded border ${getLevelColor(tech.level)}`}>
+                    <div key={index} className="border border-gray-700 rounded-lg p-3 hover:border-green-600 transition-colors bg-gray-800/30">
+                      <div className="flex justify-between items-start mb-2 gap-2">
+                        <h3 className="text-base font-bold text-white leading-tight flex-1 min-w-0">{tech.name}</h3>
+                        <div className="flex items-center space-x-2 flex-shrink-0">
+                          <span className={`px-2 py-1 text-xs rounded border ${getLevelColor(tech.level)} whitespace-nowrap`}>
                             {tech.level}
                           </span>
-                          <span className="text-gray-400 text-sm">{tech.years}yr{tech.years !== 1 ? 's' : ''}</span>
+                          <span className="text-gray-400 text-xs whitespace-nowrap">{tech.years}yr{tech.years !== 1 ? 's' : ''}</span>
                         </div>
                       </div>
                       
-                      <p className="text-gray-400 text-sm mb-3">{tech.description}</p>
+                      <p className="text-gray-400 text-sm mb-3 leading-snug">{tech.description}</p>
                       
-                      {/* Progress Bar */}
-                      <div className="w-full bg-gray-700 rounded-full h-2">
+                      {/* Progress Bar - FIXED STYLING */}
+                      <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
                         <div 
-                          className={`h-2 rounded-full transition-all duration-500 ${getLevelColor(tech.level).split(' ')[2]}`}
+                          className={`h-2 rounded-full transition-all duration-500 ${getLevelColor(tech.level).split(' ')[2] || 'bg-green-400'}`}
                           style={{ width: `${getLevelProgress(tech.level)}%` }}
                         ></div>
                       </div>
