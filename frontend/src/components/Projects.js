@@ -22,6 +22,7 @@ export default function Projects() {
         }
         const data = await response.json();
         setProjects(data.projects);
+        setCategories(data.categories || {});
         setLoading(false);
       } catch (err) {
         console.error('Error loading projects:', err);
