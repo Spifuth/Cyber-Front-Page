@@ -1,0 +1,52 @@
+# =============================================
+# ULTRA-LIGHT NGINX DOCKERFILE (~30MB)
+# Cyberpunk Portfolio - Maximum Optimization
+# =============================================
+
+# Build stage
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY frontend/package.json frontend/yarn.lock ./
+RUN yarn install --frozen-lockfile --production=false
+
+# Copy source and build
+COPY frontend/ .
+RUN yarn build
+
+# Ultra-light production stage
+FROM nginx:alpine AS production
+
+# Install security updates only
+RUN apk update && apk upgrade && \
+    apk add --no-cache curl && \
+    rm -rf /var/cache/apk/*
+
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy optimized nginx configuration
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+
+# Copy built application
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Create non-root user for nginx
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup && \
+    chown -R appuser:appgroup /usr/share/nginx/html /var/cache/nginx /var/run /var/log/nginx
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost/ || exit 1
+
+# Expose port 80
+EXPOSE 80
+
+# Switch to non-root user
+USER appuser
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
