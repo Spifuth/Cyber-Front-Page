@@ -1,0 +1,34 @@
+name: Dependency Audit
+
+on:
+  push:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install npm dependencies
+        working-directory: frontend
+        run: npm install --package-lock-only --legacy-peer-deps
+
+      - name: Run npm audit
+        working-directory: frontend
+        run: npm audit
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Run pip-audit
+        run: pip-audit -r backend/requirements.txt
