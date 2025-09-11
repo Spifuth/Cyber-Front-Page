@@ -29,8 +29,11 @@ def test_status_endpoints():
     data = post_resp.json()
     for field in ["id", "client_name", "timestamp"]:
         assert field in data
+    created_id = data["id"]
 
     get_resp = requests.get(f"{backend_url}/api/status", timeout=10)
     assert get_resp.status_code == 200
-    assert isinstance(get_resp.json(), list)
+    get_data = get_resp.json()
+    assert isinstance(get_data, list)
+    assert any(item.get("id") == created_id for item in get_data)
 
