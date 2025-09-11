@@ -4,7 +4,7 @@
 # =============================================
 
 # Stage 1: Build Stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Security: Create non-root user
 RUN addgroup -g 1001 -S nodegroup && \
@@ -12,6 +12,9 @@ RUN addgroup -g 1001 -S nodegroup && \
 
 # Set working directory
 WORKDIR /app
+
+# Run subsequent commands as the non-root user
+USER nodeuser
 
 # Copy package files
 COPY frontend/package.json frontend/yarn.lock ./
@@ -29,7 +32,7 @@ RUN yarn build
 RUN rm -rf node_modules src craco.config.js tailwind.config.js postcss.config.js
 
 # Stage 2: Production Stage - Lightweight Static Server
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 # Security: Install security updates and required packages
 RUN apk update && apk upgrade && \
@@ -41,7 +44,7 @@ RUN addgroup -g 1001 -S appgroup && \
     adduser -S appuser -u 1001 -G appgroup
 
 # Install serve globally as minimal static server
-RUN npm install -g serve
+RUN npm install -g serve@14.2.5
 
 # Set working directory
 WORKDIR /app
