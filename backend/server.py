@@ -55,10 +55,16 @@ async def get_status_checks():
 # Include the router in the main app
 app.include_router(api_router)
 
+# Trusted domains allowed to access this API
+TRUSTED_ORIGINS = [
+    "https://29fdc702-5474-4256-aa98-eaa10f15092d.preview.emergentagent.com",
+    "http://localhost:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=["*"],
+    allow_credentials=False,
+    allow_origins=TRUSTED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
