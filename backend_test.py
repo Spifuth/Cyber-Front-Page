@@ -8,19 +8,28 @@ import requests
 import json
 import sys
 from datetime import datetime
+from pathlib import Path
+import os
 
-# Get the backend URL from frontend .env file
+# Get the backend URL from frontend .env file or environment variable
 def get_backend_url():
+    # First check if an environment variable is provided
+    env_url = os.getenv("BACKEND_URL")
+    if env_url:
+        return env_url
+
+    # Fallback to reading the frontend .env file relative to this script
+    env_path = Path(__file__).resolve().parent / "frontend" / ".env"
     try:
-        with open('/app/frontend/.env', 'r') as f:
+        with env_path.open("r") as f:
             for line in f:
-                if line.startswith('REACT_APP_BACKEND_URL='):
-                    return line.split('=', 1)[1].strip()
+                if line.startswith("REACT_APP_BACKEND_URL="):
+                    return line.split("=", 1)[1].strip()
     except Exception as e:
         print(f"Error reading frontend .env: {e}")
-        return None
+    return None
 
-def test_backend_connectivity():
+def check_backend_connectivity():
     """Test basic backend connectivity"""
     print("=" * 60)
     print("TESTING BACKEND CONNECTIVITY")
@@ -56,7 +65,7 @@ def test_backend_connectivity():
         print(f"❌ Backend connectivity: UNEXPECTED ERROR - {e}")
         return False
 
-def test_hello_world_endpoint():
+def check_hello_world_endpoint():
     """Test the GET /api/ endpoint"""
     print("\n" + "=" * 60)
     print("TESTING HELLO WORLD ENDPOINT")
@@ -86,7 +95,7 @@ def test_hello_world_endpoint():
         print(f"❌ Hello World endpoint: ERROR - {e}")
         return False
 
-def test_status_endpoints():
+def check_status_endpoints():
     """Test the status check endpoints (POST and GET /api/status)"""
     print("\n" + "=" * 60)
     print("TESTING STATUS CHECK ENDPOINTS")
@@ -163,7 +172,7 @@ def test_status_endpoints():
     
     return post_success and get_success
 
-def test_cors_configuration():
+def check_cors_configuration():
     """Test CORS configuration"""
     print("\n" + "=" * 60)
     print("TESTING CORS CONFIGURATION")
@@ -212,12 +221,12 @@ def main():
     }
     
     # Run tests
-    test_results['connectivity'] = test_backend_connectivity()
-    
+    test_results['connectivity'] = check_backend_connectivity()
+
     if test_results['connectivity']:
-        test_results['hello_world'] = test_hello_world_endpoint()
-        test_results['status_endpoints'] = test_status_endpoints()
-        test_results['cors'] = test_cors_configuration()
+        test_results['hello_world'] = check_hello_world_endpoint()
+        test_results['status_endpoints'] = check_status_endpoints()
+        test_results['cors'] = check_cors_configuration()
     else:
         print("\n❌ Skipping other tests due to connectivity failure")
     

@@ -232,7 +232,7 @@ export default function Projects() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-            Projets
+            Projects
           </h2>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
             Portfolio de projets cybersécurité, infrastructure et outils d'automatisation
