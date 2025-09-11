@@ -27,15 +27,15 @@ You now have **3 deployment options** to choose from:
 
 ### Step 1: Build and Deploy
 ```bash
-# Update domain in docker-compose.yml
-sed -i 's/nebulahost.tech/YOUR_DOMAIN.com/g' docker-compose.yml
+# Update domain in docker/docker-compose.yml
+sed -i 's/nebulahost.tech/YOUR_DOMAIN.com/g' docker/docker-compose.yml
 
 # Build and start
-docker-compose build --no-cache
-docker-compose up -d
+docker-compose -f docker/docker-compose.yml build --no-cache
+docker-compose -f docker/docker-compose.yml up -d
 
 # Verify
-docker-compose logs -f cyberpunk-portfolio
+docker-compose -f docker/docker-compose.yml logs -f cyberpunk-portfolio
 curl -I https://your-domain.com
 ```
 
