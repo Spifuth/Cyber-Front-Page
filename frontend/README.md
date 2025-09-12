@@ -1,70 +1,48 @@
-# Getting Started with Create React App
+# Frontend du portfolio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Application React du projet **Cyber-Front-Page**. Elle est basée sur React 19, configurée via [Craco](https://github.com/dilanx/craco) et stylisée avec Tailwind CSS et shadcn/ui.
 
-## Available Scripts
+## Stack principale
 
-In the project directory, you can run:
+- **Yarn 1.x** pour la gestion des dépendances
+- **Craco** : surcharge de la configuration CRA et alias `@` vers `src/`
+- **Tailwind CSS** (+ `tailwindcss-animate`) avec thème sombre/clair
+- **Radix UI** & **shadcn/ui** pour les composants
+- **next-themes** et `ThemeContext` pour la gestion des thèmes
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+cd frontend
+yarn install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Scripts
 
-### `npm test`
+- `yarn start` : lance le serveur de développement sur `http://localhost:3000`
+- `yarn build` : génère les fichiers de production dans `build/`
+- `yarn test` : exécute les tests en mode CI
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Structure
 
-### `npm run build`
+```
+src/
+  components/  # composants UI réutilisables
+  contexts/    # contextes React (ex. ThemeContext)
+  hooks/       # hooks personnalisés
+  lib/         # utilitaires et helpers
+  mock/        # données simulées (data.js)
+  pages/       # pages de l'application
+public/
+  data/        # fichiers JSON (projects, skills, timeline, etc.)
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Les fichiers JSON de `public/data/` alimentent les sections du portfolio. Pour des tests hors ligne, des données de démonstration sont disponibles dans `src/mock/data.js`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Thèmes
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Le mode sombre/clair est géré par `ThemeContext` et la librairie `next-themes`. La configuration Tailwind (`tailwind.config.js`) expose des variables CSS permettant d'ajuster les couleurs et de créer de nouveaux thèmes.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Pour plus de détails sur le projet global et les commandes du terminal, consultez le README à la racine du dépôt.
