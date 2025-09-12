@@ -5,9 +5,9 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ## 🚀 Features
 
 ### 🖥️ Interactive Terminal
-- **90+ Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
+- **30 Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
 - **File System Simulation**: Navigate directories and files with `ls`, `cd`, and `cat`
-- **Cyberpunk Themes**: Multiple color schemes (matrix, neon, cyber, retro, default)
+- **Cyberpunk Aesthetic**: Neon-styled terminal design
 - **Visual Effects**: Matrix rain animation, ASCII art banners, live system logs
 - **Command History**: Arrow key navigation through command history
 - **Security Features**: Input sanitization and command validation
@@ -31,24 +31,23 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 - **System Logs**: Development activity and monitoring
 
 ### 🎮 Interactive Elements
-- **Project Gallery**: Grid and visual modes with screenshot previews
+- **Project Gallery**: Interactive grid with screenshot previews
 - **Easter Egg Pages**: Hidden sections accessible via terminal commands
 - **Live Log Feed**: Animated system monitoring overlay
-- **Theme Switcher**: Real-time terminal appearance customization
 - **Responsive Navigation**: Seamless routing between sections
 
 ## 🛠️ Technology Stack
 
 ### Frontend
 - **React 19.0.0**: Modern React with hooks and context
-- **React Router 7.5.1**: Client-side routing
+- **React Router 7.6.0**: Client-side routing
 - **Tailwind CSS 3.4.17**: Utility-first styling
 - **Radix UI**: Accessible component primitives
 - **Lucide React**: Modern icon system
 - **Shadcn/ui**: Component library integration
 
 ### Development Tools
-- **Craco**: Create React App Configuration Override
+- **Vite/Vitest**: Modern build and testing setup
 - **PostCSS & Autoprefixer**: CSS processing
 - **ESLint**: Code linting and quality
 - **Yarn**: Package management
@@ -61,24 +60,29 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ## 📁 Project Structure
 
 ```
-cyberpunk-portfolio/
+Cyber-Front-Page/
 ├── frontend/                 # React application
 │   ├── public/
 │   │   └── data/            # JSON data files
+│   │       ├── certs.json
+│   │       ├── infra.json
+│   │       ├── learning.json
+│   │       ├── logs.json
 │   │       ├── projects.json
 │   │       ├── skills.json
+│   │       ├── stack.json
 │   │       ├── timeline.json
 │   │       └── filesystem.json
 │   ├── src/
 │   │   ├── components/      # React components
-│   │   │   ├── Terminal.jsx # Interactive terminal
-│   │   │   ├── Projects.js  # Project gallery
-│   │   │   ├── CyberMaze.js # Animated background
+│   │   │   ├── Terminal.jsx  # Interactive terminal
+│   │   │   ├── Projects.jsx  # Project gallery
+│   │   │   ├── CyberMaze.jsx # Animated background
 │   │   │   └── ...
 │   │   ├── pages/          # Page components
-│   │   │   ├── HomePage.js
-│   │   │   ├── ResumePage.js
-│   │   │   ├── StackPage.js
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── ResumePage.jsx
+│   │   │   ├── StackPage.jsx
 │   │   │   └── ...
 │   │   └── hooks/          # Custom React hooks
 │   └── package.json
@@ -107,7 +111,7 @@ cyberpunk-portfolio/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd cyberpunk-portfolio
+   cd Cyber-Front-Page
    ```
 
 2. **Install dependencies**
@@ -143,8 +147,8 @@ docker-compose up -d
 
 ### Option 2: Standalone Docker
 ```bash
-docker build -t cyberpunk-portfolio -f docker/Dockerfile .
-docker run -p 3000:3000 cyberpunk-portfolio
+docker build -t Cyber-Front-Page -f docker/Dockerfile .
+docker run -p 3000:3000 Cyber-Front-Page
 ```
 
 ### Option 3: Static Files (Netlify/Vercel)
@@ -157,7 +161,7 @@ docker rm temp-container
 
 ## 🎮 Terminal Commands
 
-The terminal supports 90+ commands across multiple categories:
+The terminal supports 30 commands across multiple categories:
 
 ### Essential Commands
 - `help` - Show all available commands
@@ -169,8 +173,6 @@ The terminal supports 90+ commands across multiple categories:
 
 ### Fun Commands
 - `matrix` - Enter Matrix mode with character rain
-- `banner <text>` - Generate ASCII art
-- `theme <name>` - Switch terminal themes
 - `logs` - Toggle live system monitoring
 - `hackername` - Generate random hacker alias
 
@@ -194,14 +196,6 @@ The terminal supports 90+ commands across multiple categories:
 - **Skills**: Edit `/frontend/public/data/skills.json`
 - **Timeline**: Edit `/frontend/public/data/timeline.json`
 - **File System**: Edit `/frontend/public/data/filesystem.json`
-
-### Theme Customization
-Themes are defined in the Terminal component. Available themes:
-- `default` - Classic green terminal
-- `matrix` - Matrix movie style
-- `neon` - Bright neon colors
-- `cyber` - Full cyberpunk aesthetic
-- `retro` - Vintage computer style
 
 ## 🔒 Security Features
 
