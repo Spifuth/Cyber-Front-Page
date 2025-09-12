@@ -61,7 +61,7 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ## 📁 Project Structure
 
 ```
-cyberpunk-portfolio/
+Cyber-Front-Page/
 ├── frontend/                 # React application
 │   ├── public/
 │   │   └── data/            # JSON data files
@@ -107,7 +107,7 @@ cyberpunk-portfolio/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd cyberpunk-portfolio
+   cd Cyber-Front-Page
    ```
 
 2. **Install dependencies**
@@ -143,8 +143,8 @@ docker-compose up -d
 
 ### Option 2: Standalone Docker
 ```bash
-docker build -t cyberpunk-portfolio -f docker/Dockerfile .
-docker run -p 3000:3000 cyberpunk-portfolio
+docker build -t Cyber-Front-Page -f docker/Dockerfile .
+docker run -p 3000:3000 Cyber-Front-Page
 ```
 
 ### Option 3: Static Files (Netlify/Vercel)
