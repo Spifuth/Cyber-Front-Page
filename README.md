@@ -189,7 +189,7 @@ The terminal supports 30 commands across multiple categories:
 1. Edit `/frontend/src/components/Terminal.jsx`
 2. Add command to `validateCommand()` function
 3. Implement command logic in `handleCommand()`
-4. Update help text in `showHelp()` function
+4. Update help text in `executeHelp()` function
 
 ### Modifying Data
 - **Projects**: Edit `/frontend/public/data/projects.json`
