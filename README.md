@@ -5,7 +5,7 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ## 🚀 Features
 
 ### 🖥️ Interactive Terminal
-- **90+ Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
+- **~29 Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
 - **File System Simulation**: Navigate directories and files with `ls`, `cd`, and `cat`
 - **Cyberpunk Themes**: Multiple color schemes (matrix, neon, cyber, retro, default)
 - **Visual Effects**: Matrix rain animation, ASCII art banners, live system logs
@@ -157,7 +157,7 @@ docker rm temp-container
 
 ## 🎮 Terminal Commands
 
-The terminal supports 90+ commands across multiple categories:
+The terminal supports ~29 commands across multiple categories:
 
 ### Essential Commands
 - `help` - Show all available commands

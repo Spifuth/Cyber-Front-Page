@@ -52,8 +52,8 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 - Contributing guidelines
 
 ### 2. **Terminal Commands Documentation**
-- **TERMINAL_COMMANDS.md**: Complete documentation of all 90+ commands
-- Organized by categories: Basic, Professional, Fun/Interactive, Easter Eggs, Network Simulation
+- **TERMINAL_COMMANDS.md**: Complete documentation of all ~29 commands
+- Organized by categories: Basic Commands, System Info, Professional Pages, Fun & Interactive, Easter Eggs
 - Input/Processing/Output details for each command
 - Recommendations for command removal/simplification
 - Security features and validation explanations
@@ -92,7 +92,7 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 
 ## 🎮 FEATURES VERIFIED & WORKING
 
-### 1. **Terminal Interface** (90+ commands)
+### 1. **Terminal Interface** (~29 commands)
 - ✅ **Basic Navigation**: help, whoami, pwd, ls, cd, cat, clear, exit
 - ✅ **Professional Commands**: neofetch, resume, timeline, stack, skills, infra, certs, contact, learning, projects
 - ✅ **Interactive Elements**: matrix, banner, logs, hackername, music, mirror, vault, decrypt, theme, sudo
@@ -130,7 +130,7 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 - **Dependencies**: All verified and up-to-date
 
 ### Features Count
-- **Terminal Commands**: 90+ commands across 6 categories
+- **Terminal Commands**: ~29 commands across 5 categories
 - **Professional Pages**: 9 dedicated sections
 - **Interactive Elements**: Matrix animation, logs feed, theme switcher
 - **Navigation Routes**: 12+ pages with smooth transitions

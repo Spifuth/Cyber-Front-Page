@@ -58,16 +58,32 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 
 ---
 
-## 🧑‍💼 PROFESSIONAL COMMANDS
+## 🌐 SYSTEM INFO COMMANDS
 
 ### `neofetch`
 - **Input**: `neofetch`
 - **Processing**: Displays system information in neofetch style from mock data
 - **Output**: ASCII art + system specs, skills, location, etc.
-- **Category**: Professional
+- **Category**: System Info
+
+### `nmap <target>`
+- **Input**: `nmap [target_address]`
+- **Processing**: Simulates network scan with fake results
+- **Output**: Fake nmap scan results with open ports and services
+- **Category**: System Info
+
+### `curl <url>`
+- **Input**: `curl [url]`
+- **Processing**: Simulates HTTP request
+- **Output**: Fake HTTP response or error message
+- **Category**: System Info
+
+---
+
+## 🧑‍💼 PROFESSIONAL PAGE COMMANDS
 
 ### `resume`
-- **Input**: `resume` 
+- **Input**: `resume`
 - **Processing**: Navigates to resume page
 - **Output**: Success message + navigation
 - **Category**: Professional
@@ -191,21 +207,7 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 
 ---
 
-## 🔍 NETWORK SIMULATION COMMANDS
 
-### `nmap <target>`
-- **Input**: `nmap [target_address]`
-- **Processing**: Simulates network scan with fake results
-- **Output**: Fake nmap scan results with open ports and services
-- **Category**: Network/Security Simulation
-
-### `curl <url>`
-- **Input**: `curl [url]`
-- **Processing**: Simulates HTTP request
-- **Output**: Fake HTTP response or error message
-- **Category**: Network/Security Simulation
-
----
 
 ## 🗑️ REMOVED COMMANDS (As Requested)
 
@@ -235,12 +237,12 @@ The terminal uses `/app/frontend/public/data/filesystem.json` but only shows fil
 
 ## 📝 CURRENT COMMAND COUNT
 
-**Total Active Commands: ~60** across 6 categories:
-- **Basic Navigation**: 8 commands
-- **Professional**: 10 commands  
-- **Fun/Interactive**: 7 commands
-- **Easter Eggs**: 3 commands
-- **Network Simulation**: 2 commands
+**Total Active Commands: ~29** across 5 categories:
+- **Basic Commands**: 8 commands
+- **System Info**: 3 commands
+- **Professional Pages**: 9 commands
+- **Fun & Interactive**: 7 commands
+- **Easter Eggs**: 2 commands (+ hidden `cd underground`)
 - **File System**: Integrated into basic commands
 
 ---
