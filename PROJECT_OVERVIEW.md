@@ -9,11 +9,11 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 ## 🔧 MAJOR FIXES IMPLEMENTED
 
 ### 1. **Critical Bug Fixes**
-- ✅ **Fixed Projects.js Compilation Error**: Removed duplicate `ProjectCard` component declarations
+- ✅ **Fixed Projects.jsx Compilation Error**: Removed duplicate `ProjectCard` component declarations
 - ✅ **Terminal Projects Command**: Now properly scrolls to projects section with confirmation
 - ✅ **Terminal Theme Command**: Fixed validation to work with correct theme names (matrix, neon, cyber, retro, default)
 - ✅ **Stack Page Grid Layout**: Verified working correctly with proper styling
-- ✅ **Duplicate HTML IDs**: Fixed multiple `id="projects"` elements in Projects.js
+- ✅ **Duplicate HTML IDs**: Fixed multiple `id="projects"` elements in Projects.jsx
 
 ### 2. **Docker Organization**
 - ✅ **Moved all Docker files** to dedicated `/docker` folder:
