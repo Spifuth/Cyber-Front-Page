@@ -35,7 +35,7 @@ docker-compose build --no-cache
 docker-compose up -d
 
 # Verify
-docker-compose logs -f cyberpunk-portfolio
+docker-compose logs -f Cyber-Front-Page
 curl -I https://your-domain.com
 ```
 
@@ -45,8 +45,8 @@ curl -I https://your-domain.com
 curl -I https://your-domain.com | grep -E "(X-Frame-Options|X-Content-Type|CSP)"
 
 # Verify container security
-docker exec cyberpunk-portfolio whoami  # Should show 'appuser'
-docker exec cyberpunk-portfolio id      # Should show uid=1001(appuser)
+docker exec Cyber-Front-Page whoami  # Should show 'appuser'
+docker exec Cyber-Front-Page id      # Should show uid=1001(appuser)
 ```
 
 ## 🔧 STATIC FILE EXTRACTION (Option 2)
@@ -117,7 +117,7 @@ services:
 
 ```bash
 # Memory usage (much lower now)
-docker stats cyberpunk-portfolio
+docker stats Cyber-Front-Page
 
 # Should show ~50-80MB RAM usage vs 200MB+ with NGINX
 ```
