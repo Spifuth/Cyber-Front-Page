@@ -71,7 +71,7 @@ cyberpunk-portfolio/
 │   │       └── filesystem.json
 │   ├── src/
 │   │   ├── components/      # React components
-│   │   │   ├── Terminal.js  # Interactive terminal
+│   │   │   ├── Terminal.jsx # Interactive terminal
 │   │   │   ├── Projects.js  # Project gallery
 │   │   │   ├── CyberMaze.js # Animated background
 │   │   │   └── ...
@@ -184,10 +184,10 @@ The terminal supports 90+ commands across multiple categories:
 ## 🎨 Customization
 
 ### Adding New Commands
-1. Edit `/frontend/src/components/Terminal.js`
+1. Edit `/frontend/src/components/Terminal.jsx`
 2. Add command to `validateCommand()` function
 3. Implement command logic in `handleCommand()`
-4. Update help text in `showHelp()` function
+4. Update help text in `executeHelp()` function
 
 ### Modifying Data
 - **Projects**: Edit `/frontend/public/data/projects.json`
