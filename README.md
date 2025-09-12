@@ -7,7 +7,7 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ### 🖥️ Interactive Terminal
 - **30 Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
 - **File System Simulation**: Navigate directories and files with `ls`, `cd`, and `cat`
-- **Cyberpunk Themes**: Multiple color schemes (matrix, neon, cyber, retro, default)
+- **Cyberpunk Aesthetic**: Neon-styled terminal design
 - **Visual Effects**: Matrix rain animation, ASCII art banners, live system logs
 - **Command History**: Arrow key navigation through command history
 - **Security Features**: Input sanitization and command validation
@@ -31,10 +31,9 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 - **System Logs**: Development activity and monitoring
 
 ### 🎮 Interactive Elements
-- **Project Gallery**: Grid and visual modes with screenshot previews
+- **Project Gallery**: Interactive grid with screenshot previews
 - **Easter Egg Pages**: Hidden sections accessible via terminal commands
 - **Live Log Feed**: Animated system monitoring overlay
-- **Theme Switcher**: Real-time terminal appearance customization
 - **Responsive Navigation**: Seamless routing between sections
 
 ## 🛠️ Technology Stack
@@ -197,14 +196,6 @@ The terminal supports 30 commands across multiple categories:
 - **Skills**: Edit `/frontend/public/data/skills.json`
 - **Timeline**: Edit `/frontend/public/data/timeline.json`
 - **File System**: Edit `/frontend/public/data/filesystem.json`
-
-### Theme Customization
-Themes are defined in the Terminal component. Available themes:
-- `default` - Classic green terminal
-- `matrix` - Matrix movie style
-- `neon` - Bright neon colors
-- `cyber` - Full cyberpunk aesthetic
-- `retro` - Vintage computer style
 
 ## 🔒 Security Features
 
