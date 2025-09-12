@@ -126,7 +126,6 @@
     "tail -f security.log",
     "grep -i \"malware\" /var/log/suricata/eve.json",
     "python3 /home/fenrir/Scripts/monitor.py",
-    "sudo fail2ban-client status",
     "ps aux | grep suspicious",
     "netstat -tulpn | grep :22"
   ],

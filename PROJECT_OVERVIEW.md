@@ -11,7 +11,6 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 ### 1. **Critical Bug Fixes**
 - ✅ **Fixed Projects.js Compilation Error**: Removed duplicate `ProjectCard` component declarations
 - ✅ **Terminal Projects Command**: Now properly scrolls to projects section with confirmation
-- ✅ **Terminal Theme Command**: Fixed validation to work with correct theme names (matrix, neon, cyber, retro, default)
 - ✅ **Stack Page Grid Layout**: Verified working correctly with proper styling
 - ✅ **Duplicate HTML IDs**: Fixed multiple `id="projects"` elements in Projects.js
 
@@ -52,7 +51,7 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 - Contributing guidelines
 
 ### 2. **Terminal Commands Documentation**
-- **TERMINAL_COMMANDS.md**: Complete documentation of all 90+ commands
+- **TERMINAL_COMMANDS.md**: Complete documentation of all 60+ commands
 - Organized by categories: Basic, Professional, Fun/Interactive, Easter Eggs, Network Simulation
 - Input/Processing/Output details for each command
 - Recommendations for command removal/simplification
@@ -92,13 +91,12 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 
 ## 🎮 FEATURES VERIFIED & WORKING
 
-### 1. **Terminal Interface** (90+ commands)
+### 1. **Terminal Interface** (60+ commands)
 - ✅ **Basic Navigation**: help, whoami, pwd, ls, cd, cat, clear, exit
 - ✅ **Professional Commands**: neofetch, resume, timeline, stack, skills, infra, certs, contact, learning, projects
-- ✅ **Interactive Elements**: matrix, banner, logs, hackername, music, mirror, vault, decrypt, theme, sudo
+- ✅ **Interactive Elements (7)**: matrix, logs, hackername, music, mirror, vault, decrypt
 - ✅ **Easter Eggs**: cd underground, krbtgt roasting, selfdestruct
 - ✅ **Network Simulation**: nmap, curl
-- ✅ **Theme System**: 5 different terminal themes working correctly
 
 ### 2. **Visual Elements**
 - ✅ **Cyberpunk Aesthetics**: Consistent neon colors, gradients, and animations
@@ -130,9 +128,9 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 - **Dependencies**: All verified and up-to-date
 
 ### Features Count
-- **Terminal Commands**: 90+ commands across 6 categories
+- **Terminal Commands**: 60+ commands across 6 categories
 - **Professional Pages**: 9 dedicated sections
-- **Interactive Elements**: Matrix animation, logs feed, theme switcher
+- **Interactive Elements**: 7 commands including Matrix animation and logs feed
 - **Navigation Routes**: 12+ pages with smooth transitions
 
 ---
@@ -168,21 +166,17 @@ This document summarizes the complete overhaul and improvements made to the Cybe
 If you want to reduce terminal commands, consider removing these **low-priority** commands:
 
 ### Safe to Remove (Redundant)
-- `resources` (duplicate of `learning`)
-- `email` (duplicate of `contact`)
-- `radio` (duplicate of `music`)
 - `pwd` (basic utility, rarely used)
 
 ### Complex/High-Maintenance (Optional)
 - `vault` + `decrypt` (complex simulation)
 - `nmap` + `curl` (network simulation)
-- `sudo` (wrapper complexity)
 - `hackername` (fun but not essential)
 
 ### Essential to Keep
 - Navigation: `help`, `whoami`, `ls`, `cd`, `clear`
 - Professional: `neofetch`, `resume`, `timeline`, `stack`, `skills`, `projects`, `contact`
-- Interactive: `logs`, `banner`, `theme`, `matrix`
+- Interactive: `logs`, `matrix`
 - Easter Eggs: `cd underground`, `krbtgt roasting`, `selfdestruct`
 
 ---

@@ -96,7 +96,6 @@ export const mockData = {
   },
 
   motdMessages: [
-    "sudo rm -rf / — regrets not included",
     "Trust logs, but verify everything.",
     "There is no patch for human curiosity.",
     "The only secure system is one that is powered off, cast in a block of concrete and sealed in a lead-lined room.",

@@ -5,10 +5,9 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ## 🚀 Features
 
 ### 🖥️ Interactive Terminal
-- **90+ Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
+- **60+ Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
 - **File System Simulation**: Navigate directories and files with `ls`, `cd`, and `cat`
-- **Cyberpunk Themes**: Multiple color schemes (matrix, neon, cyber, retro, default)
-- **Visual Effects**: Matrix rain animation, ASCII art banners, live system logs
+- **Visual Effects**: Matrix rain animation and live system logs
 - **Command History**: Arrow key navigation through command history
 - **Security Features**: Input sanitization and command validation
 
@@ -34,7 +33,6 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 - **Project Gallery**: Grid and visual modes with screenshot previews
 - **Easter Egg Pages**: Hidden sections accessible via terminal commands
 - **Live Log Feed**: Animated system monitoring overlay
-- **Theme Switcher**: Real-time terminal appearance customization
 - **Responsive Navigation**: Seamless routing between sections
 
 ## 🛠️ Technology Stack
@@ -157,7 +155,7 @@ docker rm temp-container
 
 ## 🎮 Terminal Commands
 
-The terminal supports 90+ commands across multiple categories:
+The terminal supports 60+ commands across multiple categories:
 
 ### Essential Commands
 - `help` - Show all available commands
@@ -169,8 +167,6 @@ The terminal supports 90+ commands across multiple categories:
 
 ### Fun Commands
 - `matrix` - Enter Matrix mode with character rain
-- `banner <text>` - Generate ASCII art
-- `theme <name>` - Switch terminal themes
 - `logs` - Toggle live system monitoring
 - `hackername` - Generate random hacker alias
 
@@ -194,14 +190,6 @@ The terminal supports 90+ commands across multiple categories:
 - **Skills**: Edit `/frontend/public/data/skills.json`
 - **Timeline**: Edit `/frontend/public/data/timeline.json`
 - **File System**: Edit `/frontend/public/data/filesystem.json`
-
-### Theme Customization
-Themes are defined in the Terminal component. Available themes:
-- `default` - Classic green terminal
-- `matrix` - Matrix movie style
-- `neon` - Bright neon colors
-- `cyber` - Full cyberpunk aesthetic
-- `retro` - Vintage computer style
 
 ## 🔒 Security Features
 

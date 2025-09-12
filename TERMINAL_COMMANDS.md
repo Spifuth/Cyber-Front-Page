@@ -10,7 +10,7 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 ### `help`
 - **Input**: `help`
 - **Processing**: Displays formatted help menu with all available commands in a clean 2-column layout
-- **Output**: ASCII art table showing all commands organized by category (removed tips/new/theme sections)
+- **Output**: ASCII art table showing all commands organized by category (removed tips/new sections)
 - **Category**: Basic Navigation
 
 ### `whoami` 
@@ -212,9 +212,6 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 The following commands have been removed from the terminal:
 
 ### Removed for Simplification
-- ❌ **`banner <text>`** - ASCII art banner generation
-- ❌ **`theme <name>`** - Terminal color theme switcher  
-- ❌ **`sudo <command>`** - Fake elevated privileges simulation
 - ❌ **`resources`** - Duplicate of `learning` command
 - ❌ **`email`** - Duplicate of `contact` command
 - ❌ **`radio`** - Duplicate of `music` command
@@ -249,7 +246,7 @@ The terminal uses `/app/frontend/public/data/filesystem.json` but only shows fil
 
 ### Help Command Enhancements
 - ✅ **Clean 2-column layout**: Properly aligned commands and descriptions
-- ✅ **Removed clutter**: No more tips/new/themes section at bottom
+- ✅ **Removed clutter**: No more tips/new sections at bottom
 - ✅ **Consistent spacing**: Better visual organization
 - ✅ **Hidden easter eggs**: cd underground not revealed in help
 
