@@ -65,20 +65,25 @@ Cyber-Front-Page/
 ├── frontend/                 # React application
 │   ├── public/
 │   │   └── data/            # JSON data files
+│   │       ├── certs.json
+│   │       ├── infra.json
+│   │       ├── learning.json
+│   │       ├── logs.json
 │   │       ├── projects.json
 │   │       ├── skills.json
+│   │       ├── stack.json
 │   │       ├── timeline.json
 │   │       └── filesystem.json
 │   ├── src/
 │   │   ├── components/      # React components
-│   │   │   ├── Terminal.js  # Interactive terminal
-│   │   │   ├── Projects.js  # Project gallery
-│   │   │   ├── CyberMaze.js # Animated background
+│   │   │   ├── Terminal.jsx  # Interactive terminal
+│   │   │   ├── Projects.jsx  # Project gallery
+│   │   │   ├── CyberMaze.jsx # Animated background
 │   │   │   └── ...
 │   │   ├── pages/          # Page components
-│   │   │   ├── HomePage.js
-│   │   │   ├── ResumePage.js
-│   │   │   ├── StackPage.js
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── ResumePage.jsx
+│   │   │   ├── StackPage.jsx
 │   │   │   └── ...
 │   │   └── hooks/          # Custom React hooks
 │   └── package.json
@@ -182,7 +187,7 @@ The terminal supports 30 commands across multiple categories:
 ## 🎨 Customization
 
 ### Adding New Commands
-1. Edit `/frontend/src/components/Terminal.js`
+1. Edit `/frontend/src/components/Terminal.jsx`
 2. Add command to `validateCommand()` function
 3. Implement command logic in `handleCommand()`
 4. Update help text in `showHelp()` function
