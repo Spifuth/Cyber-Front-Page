@@ -5,7 +5,7 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ## 🚀 Features
 
 ### 🖥️ Interactive Terminal
-- **90+ Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
+- **30 Commands**: Comprehensive command set including navigation, professional sections, and easter eggs
 - **File System Simulation**: Navigate directories and files with `ls`, `cd`, and `cat`
 - **Cyberpunk Aesthetic**: Neon-styled terminal design
 - **Visual Effects**: Matrix rain animation, ASCII art banners, live system logs
@@ -40,14 +40,14 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 
 ### Frontend
 - **React 19.0.0**: Modern React with hooks and context
-- **React Router 7.5.1**: Client-side routing
+- **React Router 7.6.0**: Client-side routing
 - **Tailwind CSS 3.4.17**: Utility-first styling
 - **Radix UI**: Accessible component primitives
 - **Lucide React**: Modern icon system
 - **Shadcn/ui**: Component library integration
 
 ### Development Tools
-- **Craco**: Create React App Configuration Override
+- **Vite/Vitest**: Modern build and testing setup
 - **PostCSS & Autoprefixer**: CSS processing
 - **ESLint**: Code linting and quality
 - **Yarn**: Package management
@@ -60,24 +60,29 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 ## 📁 Project Structure
 
 ```
-cyberpunk-portfolio/
+Cyber-Front-Page/
 ├── frontend/                 # React application
 │   ├── public/
 │   │   └── data/            # JSON data files
+│   │       ├── certs.json
+│   │       ├── infra.json
+│   │       ├── learning.json
+│   │       ├── logs.json
 │   │       ├── projects.json
 │   │       ├── skills.json
+│   │       ├── stack.json
 │   │       ├── timeline.json
 │   │       └── filesystem.json
 │   ├── src/
 │   │   ├── components/      # React components
-│   │   │   ├── Terminal.js  # Interactive terminal
-│   │   │   ├── Projects.js  # Project gallery
-│   │   │   ├── CyberMaze.js # Animated background
+│   │   │   ├── Terminal.jsx  # Interactive terminal
+│   │   │   ├── Projects.jsx  # Project gallery
+│   │   │   ├── CyberMaze.jsx # Animated background
 │   │   │   └── ...
 │   │   ├── pages/          # Page components
-│   │   │   ├── HomePage.js
-│   │   │   ├── ResumePage.js
-│   │   │   ├── StackPage.js
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── ResumePage.jsx
+│   │   │   ├── StackPage.jsx
 │   │   │   └── ...
 │   │   └── hooks/          # Custom React hooks
 │   └── package.json
@@ -106,7 +111,7 @@ cyberpunk-portfolio/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd cyberpunk-portfolio
+   cd Cyber-Front-Page
    ```
 
 2. **Install dependencies**
@@ -142,8 +147,8 @@ docker-compose up -d
 
 ### Option 2: Standalone Docker
 ```bash
-docker build -t cyberpunk-portfolio -f docker/Dockerfile .
-docker run -p 3000:3000 cyberpunk-portfolio
+docker build -t Cyber-Front-Page -f docker/Dockerfile .
+docker run -p 3000:3000 Cyber-Front-Page
 ```
 
 ### Option 3: Static Files (Netlify/Vercel)
@@ -156,7 +161,7 @@ docker rm temp-container
 
 ## 🎮 Terminal Commands
 
-The terminal supports 90+ commands across multiple categories:
+The terminal supports 30 commands across multiple categories:
 
 ### Essential Commands
 - `help` - Show all available commands
@@ -168,7 +173,6 @@ The terminal supports 90+ commands across multiple categories:
 
 ### Fun Commands
 - `matrix` - Enter Matrix mode with character rain
-- `banner <text>` - Generate ASCII art
 - `logs` - Toggle live system monitoring
 - `hackername` - Generate random hacker alias
 
@@ -182,7 +186,7 @@ The terminal supports 90+ commands across multiple categories:
 ## 🎨 Customization
 
 ### Adding New Commands
-1. Edit `/frontend/src/components/Terminal.js`
+1. Edit `/frontend/src/components/Terminal.jsx`
 2. Add command to `validateCommand()` function
 3. Implement command logic in `handleCommand()`
 4. Update help text in `showHelp()` function
