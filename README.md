@@ -41,14 +41,14 @@ A futuristic, interactive cyberpunk-themed portfolio website featuring an immers
 
 ### Frontend
 - **React 19.0.0**: Modern React with hooks and context
-- **React Router 7.5.1**: Client-side routing
+- **React Router 7.6.0**: Client-side routing
 - **Tailwind CSS 3.4.17**: Utility-first styling
 - **Radix UI**: Accessible component primitives
 - **Lucide React**: Modern icon system
 - **Shadcn/ui**: Component library integration
 
 ### Development Tools
-- **Craco**: Create React App Configuration Override
+- **Vite/Vitest**: Modern build and testing setup
 - **PostCSS & Autoprefixer**: CSS processing
 - **ESLint**: Code linting and quality
 - **Yarn**: Package management
