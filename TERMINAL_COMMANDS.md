@@ -235,13 +235,14 @@ The terminal uses `/app/frontend/public/data/filesystem.json` but only shows fil
 
 ## 📝 CURRENT COMMAND COUNT
 
-**Total Active Commands: ~60** across 6 categories:
+**Total Active Commands: 30** across 5 categories:
 - **Basic Navigation**: 8 commands
-- **Professional**: 10 commands  
+- **Professional**: 10 commands
 - **Fun/Interactive**: 7 commands
 - **Easter Eggs**: 3 commands
-- **Network Simulation**: 2 commands
-- **File System**: Integrated into basic commands
+- **Network/Security Simulation**: 2 commands
+
+File system commands are included under Basic Navigation.
 
 ---
 
