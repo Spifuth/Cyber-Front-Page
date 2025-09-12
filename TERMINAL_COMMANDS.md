@@ -175,7 +175,7 @@ Complete list of available terminal commands in the Cyberpunk Portfolio applicat
 - **Processing**: Special directory change that navigates to underground page
 - **Output**: Navigation to /underground route
 - **Category**: Easter Egg
-- **Note**: Hidden from help command, only accessible by knowing the command
+- **Note**: Hidden from help command, only accessible by knowing the command; counts as a variant of `cd` and is not counted separately in totals
 
 ### `krbtgt roasting`
 - **Input**: `krbtgt roasting`
@@ -235,13 +235,14 @@ The terminal uses `/app/frontend/public/data/filesystem.json` but only shows fil
 
 ## 📝 CURRENT COMMAND COUNT
 
-**Total Active Commands: ~60** across 6 categories:
+**Total Active Commands: ~29** across 5 categories:
 - **Basic Navigation**: 8 commands
-- **Professional**: 10 commands  
+- **Professional**: 10 commands
 - **Fun/Interactive**: 7 commands
-- **Easter Eggs**: 3 commands
+- **Easter Eggs**: 2 commands
 - **Network Simulation**: 2 commands
-- **File System**: Integrated into basic commands
+
+*File system commands (ls, cd, cat) are counted within Basic Navigation.*
 
 ---
 
