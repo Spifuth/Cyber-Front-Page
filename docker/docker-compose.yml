@@ -2,24 +2,30 @@ version: "3.9"
 
 services:
   cyberfront:
+    image: ${IMAGE_NAME:-cyber-front-page:dev}
     build:
       context: ..
       dockerfile: Dockerfile
+      args:
+        - NPM_REGISTRY=${NPM_REGISTRY:-https://registry.npmjs.org/}
+        - USE_LOCAL_DIST=${USE_LOCAL_DIST:-0}
     env_file:
       - ../.env
     environment:
       SITE_NAME: ${SITE_NAME:-Cyber Front Page}
       SITE_THEME: ${SITE_THEME:-cyber}
       SITE_DOMAIN: ${SITE_DOMAIN:-example.com}
+      SITE_TAGLINE: ${SITE_TAGLINE:-Offline-ready cyberpunk terminal}
       TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-http://localhost:5173}
-    # Expose port 8080 locally; remove when Traefik handles routing exclusively
-    ports:
-      - "8080:80"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.cyberfront.rule=${TRAEFIK_ROUTER_RULE:-Host(`example.com`)}"
-      - "traefik.http.routers.cyberfront.entrypoints=${TRAEFIK_ENTRYPOINT:-web}"
-      - "traefik.http.services.cyberfront.loadbalancer.server.port=80"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME:-cyberfront}.rule=${TRAEFIK_ROUTER_RULE:-Host(`example.com`)}"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME:-cyberfront}.entrypoints=${TRAEFIK_ENTRYPOINT:-web}"
+      - "traefik.http.services.${TRAEFIK_SERVICE_NAME:-cyberfront}.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}.headers.customResponseHeaders.Content-Security-Policy=default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; connect-src 'self';"
+      - "traefik.http.middlewares.${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}.headers.customResponseHeaders.Strict-Transport-Security=max-age=63072000; includeSubDomains; preload"
+      - "traefik.http.middlewares.${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}.headers.customResponseHeaders.Referrer-Policy=strict-origin-when-cross-origin"
+      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME:-cyberfront}.middlewares=${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/health || exit 1"]
       interval: 30s

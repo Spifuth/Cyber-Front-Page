@@ -3,10 +3,12 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
+  "packageManager": "yarn@4.4.1",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "node -e \"console.log('Linting deferred to CI (configure ESLint once dependencies are available)')\""
   },
   "dependencies": {
     "lucide-react": "0.507.0",

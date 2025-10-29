@@ -1,29 +1,43 @@
-# Git metadata
+# Version control
 .git
 .gitignore
 
-# Editor settings
-.vscode/
-.idea/
-
-# Dependency caches
+# Node & build artifacts
 node_modules/
 frontend/node_modules/
 frontend/.vite/
+build/
+dist/
 
-# Test and tooling directories
-tests/
+# Include CI artifacts when present
+!frontend/dist/**
 
-# Documentation and local configs
+# Environment & configuration
+.env
+.env.*
+!.env.example
+
+# Documentation and metadata
 docs/
-README.md
 CHANGELOG.md
+README.md
 
-# Logs and temporary files
-*.log
+# Editor & system files
+.vscode/
+.idea/
 .DS_Store
+*.swp
 
-# Python caches
+# Python artifacts
 __pycache__/
 .venv/
 venv/
+
+# Logs & caches
+*.log
+logs/
+*.cache
+
+# Yarn berry data (generated in CI)
+.yarn/
+frontend/.yarn/

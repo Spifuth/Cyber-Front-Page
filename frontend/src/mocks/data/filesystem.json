@@ -1,0 +1,144 @@
+{
+  "filesystem": {
+    "currentPath": "/home/fenrir",
+    "directories": {
+      "/": {
+        "type": "directory",
+        "permissions": "drwxr-xr-x",
+        "owner": "root:root",
+        "contents": ["home", "var", "etc", "opt", "tmp"]
+      },
+      "/home": {
+        "type": "directory", 
+        "permissions": "drwxr-xr-x",
+        "owner": "root:root",
+        "contents": ["fenrir"]
+      },
+      "/home/fenrir": {
+        "type": "directory",
+        "permissions": "drwx------",
+        "owner": "fenrir:fenrir", 
+        "contents": ["Documents", "Scripts", "Tools", "Projects", ".config", ".ssh", "README.txt"]
+      },
+      "/home/fenrir/Documents": {
+        "type": "directory",
+        "permissions": "drwx------",
+        "owner": "fenrir:fenrir",
+        "contents": ["incident_reports", "research_notes", "checklists", "certificates.pdf"]
+      },
+      "/home/fenrir/Scripts": {
+        "type": "directory", 
+        "permissions": "drwx------",
+        "owner": "fenrir:fenrir",
+        "contents": ["threat_hunting", "log_analysis", "automation", "backup.sh", "monitor.py"]
+      },
+      "/home/fenrir/Tools": {
+        "type": "directory",
+        "permissions": "drwx------", 
+        "owner": "fenrir:fenrir",
+        "contents": ["custom_yara", "splunk_queries", "nmap_scripts", "volatility_plugins"]
+      },
+      "/home/fenrir/Projects": {
+        "type": "directory",
+        "permissions": "drwx------",
+        "owner": "fenrir:fenrir", 
+        "contents": ["nebulahost", "siem_rules", "threat_intel", "honeypot"]
+      },
+      "/var": {
+        "type": "directory",
+        "permissions": "drwxr-xr-x",
+        "owner": "root:root",
+        "contents": ["log", "www", "lib"]
+      },
+      "/var/log": {
+        "type": "directory",
+        "permissions": "drwxr-xr-x", 
+        "owner": "root:root",
+        "contents": ["syslog", "auth.log", "suricata", "fail2ban.log", "security.log"]
+      },
+      "/etc": {
+        "type": "directory",
+        "permissions": "drwxr-xr-x",
+        "owner": "root:root",
+        "contents": ["passwd", "shadow", "hosts", "ssh", "fail2ban", "suricata"]
+      },
+      "/opt": {
+        "type": "directory",
+        "permissions": "drwxr-xr-x",
+        "owner": "root:root",
+        "contents": ["splunk", "misp", "velox", "custom_tools"]
+      },
+      "/tmp": {
+        "type": "directory",
+        "permissions": "drwxrwxrwx",
+        "owner": "root:root",
+        "contents": ["temp_analysis", "quarantine"]
+      }
+    },
+    "files": {
+      "/home/fenrir/README.txt": {
+        "type": "file",
+        "permissions": "-rw-r--r--",
+        "owner": "fenrir:fenrir",
+        "size": "2.1K",
+        "content": "=== NebulaHost Security Operations Center ===\n\nWelcome to Fenrir's SOC environment!\n\nThis system contains:\n• Threat hunting scripts and tools\n• Incident response playbooks  \n• Custom SIEM rules and queries\n• Malware analysis sandbox (Velox)\n• Threat intelligence feeds\n\nSecurity Notice:\nThis system is monitored 24/7. All activities are logged.\nUnauthorized access is strictly prohibited.\n\n--- Fenrir | SOC Analyst | CyberGuard Technologies ---"
+      },
+      "/home/fenrir/Scripts/backup.sh": {
+        "type": "file",
+        "permissions": "-rwx------", 
+        "owner": "fenrir:fenrir",
+        "size": "1.5K",
+        "content": "#!/bin/bash\n# Automated backup script for critical SOC data\necho \"Starting backup of security logs and configurations...\"\nrsync -av /var/log/security.log /backup/\necho \"Backup completed successfully\""
+      },
+      "/home/fenrir/Scripts/monitor.py": {
+        "type": "file",
+        "permissions": "-rwx------",
+        "owner": "fenrir:fenrir", 
+        "size": "3.2K",
+        "content": "#!/usr/bin/env python3\n# Real-time threat monitoring script\nimport time\nimport subprocess\n\ndef monitor_threats():\n    print(\"[INFO] Starting threat monitoring...\")\n    # Monitor for suspicious activities\n    while True:\n        # Check for anomalies\n        time.sleep(60)\n\nif __name__ == \"__main__\":\n    monitor_threats()"
+      },
+      "/home/fenrir/Documents/certificates.pdf": {
+        "type": "file",
+        "permissions": "-rw-------",
+        "owner": "fenrir:fenrir",
+        "size": "847K",
+        "content": "[BINARY FILE] Professional certifications and training records"
+      },
+      "/var/log/security.log": {
+        "type": "file", 
+        "permissions": "-rw-r-----",
+        "owner": "root:adm",
+        "size": "15.2M",
+        "content": "[LOG FILE] Security events and intrusion detection alerts"
+      },
+      "/var/log/fail2ban.log": {
+        "type": "file",
+        "permissions": "-rw-r-----", 
+        "owner": "root:adm",
+        "size": "8.7M",
+        "content": "[LOG FILE] Fail2ban intrusion prevention system logs"
+      }
+    }
+  },
+  "commandHistory": [
+    "ls -la",
+    "cd /var/log", 
+    "tail -f security.log",
+    "grep -i \"malware\" /var/log/suricata/eve.json",
+    "python3 /home/fenrir/Scripts/monitor.py",
+    "sudo fail2ban-client status",
+    "ps aux | grep suspicious",
+    "netstat -tulpn | grep :22"
+  ],
+  "bashPrompt": {
+    "user": "fenrir",
+    "hostname": "nebulahost-soc", 
+    "style": "cyberpunk",
+    "colors": {
+      "user": "#00ff41",
+      "hostname": "#0084ff", 
+      "path": "#ff9500",
+      "prompt": "#ffffff"
+    }
+  }
+}

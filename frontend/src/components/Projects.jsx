@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Github, Eye, X, ChevronLeft, ChevronRight, Activity, Code, Server, Shield } from 'lucide-react';
+import { ExternalLink, Github, X, ChevronLeft, ChevronRight, Activity, Code, Server, Shield } from 'lucide-react';
+import { loadCollection } from '../lib/dataClient';
+import { isMockEnabled } from '../lib/env';
 
-// ProjectCard Component
-const ProjectCard = ({ project, onImageClick, featured }) => {
+const ProjectCard = ({ project, featured }) => {
   const getProjectIcon = (title) => {
     if (title.includes('Monitoring')) return Activity;
     if (title.includes('Tools')) return Code;
@@ -13,30 +14,33 @@ const ProjectCard = ({ project, onImageClick, featured }) => {
 
   const getStatusColor = (status) => {
     const statusMap = {
-      'active': 'text-green-400 border-green-500/30 bg-green-500/10',
-      'completed': 'text-blue-400 border-blue-500/30 bg-blue-500/10',
-      'beta': 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
-      'in_development': 'text-orange-400 border-orange-500/30 bg-orange-500/10',
-      'archived': 'text-gray-400 border-gray-500/30 bg-gray-500/10'
+      active: 'text-green-400 border-green-500/30 bg-green-500/10',
+      completed: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
+      beta: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
+      in_development: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
+      archived: 'text-gray-400 border-gray-500/30 bg-gray-500/10'
     };
     return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
   };
 
   const IconComponent = getProjectIcon(project.title);
+  const hasGithub = Boolean(project.github_url || project.github);
+  const offline = isMockEnabled();
+  const hasDemo = !offline && Boolean(project.live_demo || project.link);
+  const demoUrl = offline ? '#' : project.live_demo || project.link || '#';
 
-  // Grid view (default)
   return (
-    <div className={`group relative bg-gray-900/50 backdrop-blur-sm border rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 ${
-      featured ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'border-gray-700/50'
-    }`}>
-      {/* Featured Badge */}
+    <div
+      className={`group relative bg-gray-900/50 backdrop-blur-sm border rounded-lg p-6 hover:border-green-500/50 transition-all duration-300 hover:bg-gray-900/80 ${
+        featured ? 'border-yellow-500/50 ring-1 ring-yellow-500/20' : 'border-gray-700/50'
+      }`}
+    >
       {featured && (
         <div className="absolute -top-2 -right-2 bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs border border-yellow-500/30">
           ⭐ Featured
         </div>
       )}
 
-      {/* Project Icon */}
       <div className="flex items-center justify-between mb-4">
         <div className="p-3 bg-green-500/20 rounded-lg">
           <IconComponent className="h-6 w-6 text-green-400" />
@@ -46,30 +50,24 @@ const ProjectCard = ({ project, onImageClick, featured }) => {
         </div>
       </div>
 
-      {/* Project Content */}
       <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-green-400 transition-colors">
         {project.title}
       </h3>
-      
+
       <p className="text-gray-400 mb-4 leading-relaxed">
         {project.description}
       </p>
 
-      {/* Technologies */}
       <div className="flex flex-wrap gap-2 mb-6">
         {(project.technologies || project.tech || []).map((tech, index) => (
-          <span
-            key={index}
-            className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded border border-blue-500/30"
-          >
+          <span key={index} className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded border border-blue-500/30">
             {tech}
           </span>
         ))}
       </div>
 
-      {/* Action Buttons */}
       <div className="flex gap-3">
-        {(project.github_url || project.github) && (
+        {hasGithub && (
           <a
             href={project.github_url || project.github}
             target="_blank"
@@ -80,9 +78,9 @@ const ProjectCard = ({ project, onImageClick, featured }) => {
             Code
           </a>
         )}
-        {(project.live_demo || project.link) && project.live_demo !== '#' && project.link !== '#' && (
+        {hasDemo && demoUrl !== '#' && (
           <a
-            href={project.live_demo || project.link}
+            href={demoUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 rounded-lg transition-colors text-sm border border-green-500/30"
@@ -107,16 +105,11 @@ export default function Projects() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentProject, setCurrentProject] = useState(null);
 
-
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/data/projects.json');
-        if (!response.ok) {
-          throw new Error('Failed to fetch projects');
-        }
-        const data = await response.json();
-        setProjects(data.projects);
+        const data = await loadCollection('projects');
+        setProjects(data.projects || []);
         setCategories(data.categories || {});
         setLoading(false);
       } catch (err) {
@@ -131,21 +124,21 @@ export default function Projects() {
 
   const getStatusColor = (status) => {
     const statusMap = {
-      'active': 'text-green-400 border-green-500/30 bg-green-500/10',
-      'completed': 'text-blue-400 border-blue-500/30 bg-blue-500/10',
-      'beta': 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
-      'in_development': 'text-orange-400 border-orange-500/30 bg-orange-500/10',
-      'archived': 'text-gray-400 border-gray-500/30 bg-gray-500/10'
+      active: 'text-green-400 border-green-500/30 bg-green-500/10',
+      completed: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
+      beta: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
+      in_development: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
+      archived: 'text-gray-400 border-gray-500/30 bg-gray-500/10'
     };
     return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
   };
 
   const getCategoryIcon = (category) => {
     const iconMap = {
-      'Infrastructure': '🏗️',
-      'Security Tools': '🛡️', 
-      'Research': '🔬',
-      'Automation': '🤖',
+      Infrastructure: '🏗️',
+      'Security Tools': '🛡️',
+      Research: '🔬',
+      Automation: '🤖',
       'Malware Analysis': '🦠',
       'Penetration Testing': '⚔️'
     };
@@ -184,11 +177,8 @@ export default function Projects() {
     }
   };
 
-  const filteredProjects = selectedCategory === 'all' 
-    ? projects 
-    : projects.filter(project => project.category === selectedCategory);
-
-  const featuredProjects = projects.filter(project => project.featured);
+  const filteredProjects = selectedCategory === 'all' ? projects : projects.filter((project) => project.category === selectedCategory);
+  const featuredProjects = projects.filter((project) => project.featured);
 
   if (loading) {
     return (
@@ -200,12 +190,9 @@ export default function Projects() {
                 ./projects
               </span>
             </h2>
-            <div className="w-24 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mb-4"></div>
-            <p className="text-gray-400 font-mono"># Loading projects...</p>
+            <div className="w-24 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent mx-auto"></div>
           </div>
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-400"></div>
-          </div>
+          <p className="text-center text-gray-400">Loading projects...</p>
         </div>
       </section>
     );
@@ -214,13 +201,9 @@ export default function Projects() {
   if (error) {
     return (
       <section className="py-20 px-4 relative" id="projects">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <h2 className="text-4xl font-mono font-bold mb-4 text-red-400">
-              ./projects --error
-            </h2>
-            <p className="text-red-400 font-mono"># {error}</p>
-          </div>
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-4xl font-mono font-bold mb-4 text-green-400">./projects</h2>
+          <p className="text-red-400">{error}</p>
         </div>
       </section>
     );
@@ -229,120 +212,91 @@ export default function Projects() {
   return (
     <section className="py-20 px-4 relative" id="projects">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-            Projets
+          <h2 className="text-4xl font-mono font-bold mb-4 text-green-400">
+            <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+              ./projects
+            </span>
           </h2>
-          <p className="text-gray-400 text-lg max-w-3xl mx-auto">
-            Portfolio de projets cybersécurité, infrastructure et outils d'automatisation
+          <div className="w-24 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent mx-auto"></div>
+          <p className="text-gray-400 max-w-3xl mx-auto">
+            Sélection de projets cyber & infra, construits pour l'auto-hébergement, la détection d'intrusions et l'automatisation des flux de sécurité.
           </p>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-          {/* Category Filter */}
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="bg-gray-800/50 text-green-400 border border-gray-600/50 rounded-lg px-4 py-2 focus:border-green-500/50 focus:outline-none"
+        <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={`px-4 py-2 rounded-full border ${selectedCategory === 'all' ? 'border-green-400 bg-green-500/20 text-green-200' : 'border-gray-700 text-gray-400 hover:border-green-400/40 hover:text-green-200'}`}
           >
-            <option value="all">All Categories ({projects.length})</option>
-            {Object.entries(categories).map(([key, cat]) => (
-              <option key={key} value={key}>
-                {cat.icon} {key} ({projects.filter(p => p.category === key).length})
-              </option>
-            ))}
-          </select>
+            All
+          </button>
+          {Object.entries(categories).map(([category, info]) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-full border ${
+                selectedCategory === category
+                  ? 'border-green-400 bg-green-500/20 text-green-200'
+                  : 'border-gray-700 text-gray-400 hover:border-green-400/40 hover:text-green-200'
+              }`}
+            >
+              {getCategoryIcon(category)} {category}
+              {info?.count ? <span className="ml-2 text-sm text-green-400">({info.count})</span> : null}
+            </button>
+          ))}
         </div>
 
-        {/* Featured Projects */}
-        {selectedCategory === 'all' && featuredProjects.length > 0 && (
+        {featuredProjects.length > 0 && (
           <div className="mb-16">
-            <h3 className="text-2xl font-bold text-center mb-8 text-yellow-400">⭐ Featured Projects</h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <h3 className="text-2xl font-mono text-yellow-400 mb-6">► Featured Operations</h3>
+            <div className="grid md:grid-cols-2 gap-6">
               {featuredProjects.map((project) => (
-                <ProjectCard 
-                  key={project.id} 
-                  project={project} 
-                  onImageClick={openLightbox}
-                  featured={true}
-                />
+                <ProjectCard key={project.id} project={project} featured />
               ))}
             </div>
           </div>
         )}
 
-        {/* All Projects */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredProjects.map((project) => (
-            <ProjectCard 
-              key={project.id} 
-              project={project} 
-              onImageClick={openLightbox}
-              featured={false}
-            />
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
 
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">🔍</div>
-            <p className="text-gray-400">No projects found in this category.</p>
-          </div>
-        )}
-
-        {/* Lightbox Modal */}
         {lightboxOpen && currentImage && (
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="relative max-w-6xl max-h-full">
-              {/* Navigation Buttons */}
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center z-50 p-4">
+            <div className="flex justify-between w-full max-w-5xl mb-4 text-white">
+              <button onClick={closeLightbox} className="p-2 hover:text-red-400 transition-colors" aria-label="Close screenshot">
+                <X className="h-6 w-6" />
+              </button>
+              <div className="text-center">
+                <h3 className="text-lg font-semibold">{currentProject?.title}</h3>
+                <p className="text-sm text-gray-400">{currentImage?.caption}</p>
+              </div>
+              <div className="w-10"></div>
+            </div>
+
+            <div className="relative w-full max-w-5xl">
+              <img src={currentImage?.url} alt={currentImage?.alt} className="w-full h-auto rounded-lg border border-green-500/20" />
               {currentProject?.screenshots?.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 transition-colors"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 p-3 rounded-full text-white hover:bg-black/70 transition"
+                    aria-label="Previous screenshot"
                   >
-                    <ChevronLeft size={24} />
+                    <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 transition-colors"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 p-3 rounded-full text-white hover:bg-black/70 transition"
+                    aria-label="Next screenshot"
                   >
-                    <ChevronRight size={24} />
+                    <ChevronRight className="h-6 w-6" />
                   </button>
                 </>
               )}
-
-              {/* Close Button */}
-              <button
-                onClick={closeLightbox}
-                className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full z-10 transition-colors"
-              >
-                <X size={24} />
-              </button>
-
-              {/* Image */}
-              <div className="bg-gray-900 rounded-lg overflow-hidden">
-                <img
-                  src={currentImage.url}
-                  alt={currentImage.alt}
-                  className="max-w-full max-h-[80vh] object-contain mx-auto"
-                  onError={(e) => {
-                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMUYyOTM3Ii8+CjxwYXRoIGQ9Ik0xNzUgMTMwSDE0NVYxNjBIMTc1VjEzMFoiIGZpbGw9IiM0QjU1NjMiLz4KPHA+dGggZD0iTTE5NSAxNzBIMjI1VjIwMEgxOTVWMTcwWiIgZmlsbD0iIzRCNTU2MyIvPgo8cGF0aCBkPSJNMTQ1IDE3MEgxNzVWMjAwSDE0NVYxNzBaIiBmaWxsPSIjNEI1NTYzIi8+CjwvZz4KPC9zdmc+';
-                  }}
-                />
-                
-                {/* Image Caption */}
-                {currentImage.caption && (
-                  <div className="p-4 bg-gray-800/90">
-                    <p className="text-green-400 text-center">{currentImage.caption}</p>
-                    <p className="text-gray-400 text-sm text-center mt-1">
-                      {currentImageIndex + 1} of {currentProject?.screenshots?.length}
-                    </p>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         )}
