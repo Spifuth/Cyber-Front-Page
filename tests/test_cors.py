@@ -4,7 +4,7 @@ from backend.server import app
 
 client = TestClient(app)
 
-TRUSTED_ORIGIN = "https://29fdc702-5474-4256-aa98-eaa10f15092d.preview.emergentagent.com"
+TRUSTED_ORIGIN = "http://localhost:5173"
 
 
 def test_cors_allows_trusted_origin():
