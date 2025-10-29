@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Github, ExternalLink } from 'lucide-react';
-import { mockData } from '../mock/data';
+import { getMockGithub } from '../mocks/mockBackend';
+import { getEnvVar, getExternalUrl } from '../lib/env';
 
 export default function GitHubLink() {
-  const { github } = mockData;
+  const data = useMemo(() => {
+    const fallback = getMockGithub();
+    return {
+      username: getEnvVar('VITE_GITHUB_PROFILE', fallback.username),
+      url: getExternalUrl('VITE_GITHUB_URL', '#'),
+      avatar: getEnvVar('VITE_GITHUB_AVATAR', fallback.avatar)
+    };
+  }, []);
 
   return (
     <div className="group">
       <a
-        href={github.url}
+        href={data.url}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center space-x-4 bg-gray-900/50 border border-green-500/20 rounded-lg p-6 backdrop-blur-sm hover:border-green-400/50 hover:bg-green-500/5 transition-all duration-500 transform hover:scale-105"
@@ -16,7 +24,7 @@ export default function GitHubLink() {
         {/* Avatar */}
         <div className="relative">
           <img
-            src={github.avatar}
+            src={data.avatar}
             alt="GitHub Avatar"
             className="w-16 h-16 rounded-full border-2 border-green-500/30 group-hover:border-green-400 transition-colors duration-300"
           />
@@ -32,7 +40,7 @@ export default function GitHubLink() {
             </h3>
           </div>
           <p className="text-gray-400 text-sm font-mono">
-            @{github.username}
+            @{data.username}
           </p>
           <div className="flex items-center space-x-2 mt-2 text-gray-500 text-xs">
             <span>View repositories</span>

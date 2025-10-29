@@ -1,92 +1,122 @@
 # Cyber Front Page
 
-Branche `dev` servant de socle propre pour le portfolio cyberpunk de Fenrir. L'application fournit une landing page statique (Vite + React) et un backend FastAPI optionnel pour stocker l'historique des "status checks". L'ensemble est prêt pour un déploiement dans un homelab via Caddy et Traefik.
+Branche `dev` pour une vitrine cyberpunk offline-ready : frontend Vite/React, backend FastAPI optionnel et livraison via Caddy + Traefik. Cette branche est pensée pour fonctionner sans accès réseau local, tout en restant prête pour une CI GitHub connectée.
 
-## Contenu du dépôt
+## Aperçu du projet
+
+- **frontend/** : SPA Vite + Tailwind, thèmes et terminal interactif.
+- **backend/** : API FastAPI (MongoDB facultatif, stockage mémoire par défaut).
+- **docker/** : Dockerfile multi-stage (Node → Caddy) + docker-compose avec labels Traefik v3.
+- **.github/** : pipeline CI orchestrant build frontend, audit Python et image Docker multi-arch.
+
+## Mode offline
+
+Le frontend bascule automatiquement sur des mocks lorsque `VITE_USE_MOCK=1` (valeur par défaut). Les données sont servies depuis `frontend/public/data/*.json` et des placeholders locaux (`frontend/public/assets`).
+
+- Les requêtes réseau sont neutralisées en mode offline (`Projects`, `Learning`, etc.).
+- `frontend/src/mocks/mockBackend.js` expose des collections statiques alignées sur les JSON publics.
+- Les URLs externes peuvent être réactivées via les variables `.env` (`VITE_TOOLS_URL`, `VITE_GITHUB_URL`, ...).
+
+### Variables clés
 
 ```
-frontend/  → SPA Vite + Tailwind
-backend/   → API FastAPI (stockage MongoDB optionnel)
-docker/    → Dockerfile Caddy + docker-compose prêt Traefik
-docs/      → Documentation complémentaire
+VITE_USE_MOCK=1
+VITE_CONTACT_* (email, linkedin, github, ...)
+VITE_TOOLS_* (name, url, description)
+VITE_GITHUB_* (profile, url, avatar)
+VITE_PROFILE_* (name, role, description, tech stack)
 ```
 
-## Prérequis
+### Limites offline
 
-- Node.js 20+
-- npm 10+
-- Python 3.11+
-- Docker / Docker Compose (pour l'image de prod)
+- Les liens externes sont neutralisés (`href="#"`) tant que le mode mock est actif.
+- Les assets sont des SVG statiques (pas de screenshots dynamiques).
+- L'audio/streaming n'est pas embarqué ; les sections affichent un message explicite.
 
-## Installation locale
+## Build CI GitHub
 
-```bash
-# Frontend
-cd frontend
-npm install
-npm run dev
+Le workflow `.github/workflows/ci.yml` réalise :
 
-# Backend (optionnel)
-cd ../backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn backend.server:app --reload
+1. **Job frontend**
+   - Node 20 + Corepack, `yarn install --immutable` (génère `yarn.lock` si absent).
+   - `yarn build` puis upload de l'artefact `frontend/dist`.
+   - Support des variables `NPM_REGISTRY`, `HTTP(S)_PROXY`, `NO_PROXY`.
+2. **Job backend-audit**
+   - Python 3.11, installation des dépendances puis `pip-audit`.
+   - Support des variables `PIP_INDEX_URL`, `HTTP(S)_PROXY`, `NO_PROXY`.
+3. **Job docker-image**
+   - buildx multi-arch, build context enrichi avec `frontend/dist`.
+   - `build-args`: `NPM_REGISTRY`, `USE_LOCAL_DIST=1`.
+   - Push optionnel vers GHCR via `secrets.GHCR_PUSH`.
+
+> ⚠️ Aucun `yarn.lock` n'est commité ici : il sera généré et persistant via la CI lors du premier run (`yarn install`).
+
+## Docker (CI ou prod)
+
+Le `Dockerfile` multi-stage :
+
+1. Stage build (Node 20) avec `ARG NPM_REGISTRY`, build Vite si `USE_LOCAL_DIST=0`.
+2. Stage runtime (Caddy 2.8) servant `/srv/app`, healthcheck `GET /health`.
+3. Si un `frontend/dist` est présent dans le contexte (artefact CI), il est copié tel quel (`USE_LOCAL_DIST=1`).
+
+`docker/docker-compose.yml` fournit :
+
+- Labels Traefik v3 (`cyberfront-headers` middleware de sécurité).
+- Réseau externe `traefik-net` (à créer côté infra).
+- Variables de branding (`SITE_NAME`, `SITE_DOMAIN`, `SITE_THEME`, `SITE_TAGLINE`).
+
+### Build dans la CI
+
+```
+# dans GitHub Actions (job docker-image)
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --build-arg NPM_REGISTRY=${{ vars.NPM_REGISTRY }} \
+  --build-arg USE_LOCAL_DIST=1 \
+  -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
 ```
 
-Les données statiques sont servies depuis `frontend/public/data/*.json`. Le terminal embarqué communique uniquement avec ces fichiers ; le backend est destiné à des intégrations futures.
+## Backend FastAPI
 
-## Tests
-
-```bash
-# Vérifier que le build passe
-cd frontend
-npm run build
-
-# Tests Python
-cd ../
-pytest
-```
-
-## Configuration
-
-Copiez `.env.example` vers `.env` à la racine et complétez les variables :
-
-- `SITE_NAME`, `SITE_THEME`, `SITE_DOMAIN` : branding du site.
-- `MONGO_URL`, `DB_NAME` : connexion MongoDB (laisser vide pour stocker en mémoire).
-- `TRUSTED_ORIGINS` : origines autorisées par le CORS backend.
-- `TRAEFIK_ROUTER_RULE`, `TRAEFIK_ENTRYPOINT` : intégration Traefik.
-
-Le backend lit automatiquement `.env` s'il est présent ; Caddy récupère `SITE_*` via les variables d'environnement du conteneur.
-
-## Docker (production)
-
-```bash
-# Build de l'image
-docker build -t cyber-front-page .
-
-# Démarrage via compose (répertoire docker/)
-cd docker
-docker compose up -d
-```
-
-L'image finale (~80 Mo) expose le port 80 et publie un endpoint `/health` utilisé par le healthcheck. Le fichier `docker/docker-compose.yml` inclut des labels Traefik v3 prêts à l'emploi et mappe le port 8080 pour des tests locaux (supprimez la section `ports` lorsque Traefik gère l'exposition publique).
+- Fonctionne sans MongoDB (`memory_status_checks`).
+- `backend/requirements.txt` contient des versions indicatives, la CI (`pip-audit`) est responsable du pinning définitif.
+- Variables pertinentes : `MONGO_URL`, `DB_NAME`, `TRUSTED_ORIGINS`.
 
 ## Traefik
 
-Assurez-vous que le réseau Docker `traefik-net` existe (externe) et que Traefik 3.x importe les labels suivants :
+- Réseau externe : `traefik-net`.
+- Labels principaux :
+  - `traefik.http.routers.${TRAEFIK_SERVICE_NAME}.rule`
+  - `traefik.http.routers.${TRAEFIK_SERVICE_NAME}.middlewares=${TRAEFIK_MIDDLEWARE_HEADERS}`
+  - Middleware `headers` appliquant CSP, HSTS, Referrer-Policy.
+- Ajuster `.env` (`TRAEFIK_ROUTER_RULE`, `TRAEFIK_ENTRYPOINT`) selon l'environnement.
 
-- `traefik.enable=true`
-- `traefik.http.routers.cyberfront.rule=Host("example.com")`
-- `traefik.http.routers.cyberfront.entrypoints=web`
-- `traefik.http.services.cyberfront.loadbalancer.server.port=80`
+## Dépendances & scripts
 
-Adaptez `TRAEFIK_ROUTER_RULE` / `TRAEFIK_ENTRYPOINT` dans `.env` pour refléter votre configuration réelle.
+```
+frontend/package.json
+  dev      → vite
+  build    → vite build
+  preview  → vite preview
+  lint     → placeholder (configurer ESLint en CI)
+```
 
-## Structure propre
+Backend : `python -m venv .venv && pip install -r backend/requirements.txt` (optionnel, via CI uniquement).
 
-- Aucun secret ni dossier `node_modules` commité.
-- `.gitignore` et `.dockerignore` excluent les artefacts lourds.
-- `CHANGELOG.md` consigne les évolutions dès cette branche `dev`.
-- `docs/README.md` centralise les futures documentations techniques.
+## Génération de la CI
 
-Bon hack !
+- `yarn.lock` : généré par le job frontend et stocké en cache/artifact avant commit manuel.
+- `pip-audit` : assure la compatibilité et le pinning des dépendances Python.
+- Artefact `frontend/dist` réinjecté dans l'image Docker.
+
+## Commandes Git (local sans réseau)
+
+```
+git status
+git add .
+git commit -m "offline-ready dev"
+# push à réaliser sur machine connectée
+git push origin dev
+```
+
+Bon hack et bon routage offline !

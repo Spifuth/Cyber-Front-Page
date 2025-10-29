@@ -1,0 +1,94 @@
+{
+  "certifications": [
+    {
+      "id": "cert_001",
+      "name": "CISSP",
+      "fullName": "Certified Information Systems Security Professional",
+      "issuer": "ISC2",
+      "status": "✅",
+      "dateObtained": "2023-08-15",
+      "expiryDate": "2026-08-15",
+      "credentialId": "CISSP-789456123",
+      "description": "Advanced cybersecurity certification covering security engineering, asset security, and risk management",
+      "category": "Security Management"
+    },
+    {
+      "id": "cert_002", 
+      "name": "GCIH",
+      "fullName": "GIAC Certified Incident Handler",
+      "issuer": "SANS/GIAC",
+      "status": "✅",
+      "dateObtained": "2022-11-20",
+      "expiryDate": "2026-11-20",
+      "credentialId": "GCIH-4567891234",
+      "description": "Expert-level incident handling and digital forensics certification",
+      "category": "Incident Response"
+    },
+    {
+      "id": "cert_003",
+      "name": "OSCP",
+      "fullName": "Offensive Security Certified Professional",
+      "issuer": "Offensive Security",
+      "status": "✅",
+      "dateObtained": "2023-03-10",
+      "expiryDate": "2026-03-10",
+      "credentialId": "OSCP-PWK-987654321",
+      "description": "Hands-on penetration testing certification with practical exploitation skills",
+      "category": "Penetration Testing"
+    },
+    {
+      "id": "cert_004",
+      "name": "GSEC",
+      "fullName": "GIAC Security Essentials",
+      "issuer": "SANS/GIAC",
+      "status": "✅",
+      "dateObtained": "2022-05-18",
+      "expiryDate": "2026-05-18",
+      "credentialId": "GSEC-1234567890",
+      "description": "Core security knowledge across multiple domains",
+      "category": "Security Fundamentals"
+    },
+    {
+      "id": "cert_005",
+      "name": "CKA",
+      "fullName": "Certified Kubernetes Administrator",
+      "issuer": "CNCF",
+      "status": "🕓",
+      "dateObtained": null,
+      "expiryDate": null,
+      "credentialId": null,
+      "description": "Kubernetes administration and orchestration skills - In Progress",
+      "category": "Cloud/DevOps"
+    },
+    {
+      "id": "cert_006",
+      "name": "RHCE",
+      "fullName": "Red Hat Certified Engineer",
+      "issuer": "Red Hat",
+      "status": "🚧",
+      "dateObtained": null,
+      "expiryDate": null,
+      "credentialId": null,
+      "description": "Advanced Linux system administration - Scheduled for Q2 2025",
+      "category": "System Administration"
+    },
+    {
+      "id": "cert_007",
+      "name": "AWS SAA",
+      "fullName": "AWS Solutions Architect Associate",
+      "issuer": "Amazon Web Services",
+      "status": "❌",
+      "dateObtained": null,
+      "expiryDate": null,
+      "credentialId": null,
+      "description": "Cloud architecture certification - Failed attempt, retaking soon",
+      "category": "Cloud/DevOps"
+    }
+  ],
+  "legend": {
+    "✅": "Obtained",
+    "🕓": "In Progress", 
+    "🚧": "Scheduled",
+    "❌": "Failed/Retaking"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "systemLogs": [
+    {
+      "timestamp": "2025-01-06T14:23:17Z",
+      "level": "INFO",
+      "service": "traefik", 
+      "message": "SSL certificate renewed successfully for nebulahost.tech",
+      "source": "cert-manager"
+    },
+    {
+      "timestamp": "2025-01-06T14:18:42Z",
+      "level": "WARN",
+      "service": "fail2ban",
+      "message": "Blocked 17 suspicious login attempts from 203.0.113.45",
+      "source": "ssh-filter"
+    },
+    {
+      "timestamp": "2025-01-06T13:55:31Z", 
+      "level": "INFO",
+      "service": "docker",
+      "message": "Container 'portfolio-frontend' health check passed",
+      "source": "health-monitor"
+    },
+    {
+      "timestamp": "2025-01-06T13:45:08Z",
+      "level": "ERROR",
+      "service": "suricata",
+      "message": "Potential SQL injection attempt detected from 198.51.100.23",
+      "source": "ids-engine"
+    },
+    {
+      "timestamp": "2025-01-06T13:30:15Z",
+      "level": "INFO", 
+      "service": "zabbix",
+      "message": "System performance metrics within normal parameters",
+      "source": "monitoring"
+    },
+    {
+      "timestamp": "2025-01-06T13:15:44Z",
+      "level": "WARN",
+      "service": "elasticsearch",
+      "message": "Disk usage at 78% - cleanup scheduled", 
+      "source": "log-rotation"
+    },
+    {
+      "timestamp": "2025-01-06T12:58:22Z",
+      "level": "INFO",
+      "service": "misp",
+      "message": "Threat intelligence feed updated: 247 new IoCs imported",
+      "source": "feed-processor"
+    },
+    {
+      "timestamp": "2025-01-06T12:42:17Z",
+      "level": "CRITICAL",
+      "service": "velox-sandbox",
+      "message": "Malware sample analysis complete: Trojan.Win32.Emotet variant detected",
+      "source": "analysis-engine"
+    },
+    {
+      "timestamp": "2025-01-06T12:30:05Z",
+      "level": "INFO",
+      "service": "backup-system", 
+      "message": "Daily backup completed successfully - 2.4GB archived",
+      "source": "backup-scheduler"
+    },
+    {
+      "timestamp": "2025-01-06T12:15:33Z",
+      "level": "WARN",
+      "service": "network-monitor",
+      "message": "Unusual traffic pattern detected on port 443 - investigating",
+      "source": "anomaly-detector"
+    },
+    {
+      "timestamp": "2025-01-06T11:45:18Z",
+      "level": "INFO",
+      "service": "pfSense",
+      "message": "Firewall rules updated - 14 new threat signatures added",
+      "source": "rule-updater"
+    },
+    {
+      "timestamp": "2025-01-06T11:20:27Z",
+      "level": "ERROR",
+      "service": "yara-scanner",
+      "message": "Malicious file detected: /tmp/suspicious_payload.exe [SCORE: 95/100]",
+      "source": "file-scanner"
+    },
+    {
+      "timestamp": "2025-01-06T10:55:41Z",
+      "level": "INFO",
+      "service": "grafana",
+      "message": "Dashboard metrics refreshed - all services operational",
+      "source": "dashboard-updater"
+    },
+    {
+      "timestamp": "2025-01-06T10:30:12Z",
+      "level": "WARN", 
+      "service": "honeypot",
+      "message": "Brute force attack detected on SSH honeypot from 192.0.2.187",
+      "source": "honeypot-sensor"
+    },
+    {
+      "timestamp": "2025-01-06T10:15:58Z",
+      "level": "INFO",
+      "service": "system",
+      "message": "System uptime: 45 days, 12 hours, 23 minutes",
+      "source": "uptime-monitor"
+    }
+  ],
+  "securityEvents": [
+    {
+      "timestamp": "2025-01-06T14:25:33Z",
+      "eventType": "INTRUSION_ATTEMPT",
+      "severity": "HIGH",
+      "source": "203.0.113.67",
+      "target": "SSH-22",
+      "description": "Multiple failed authentication attempts",
+      "action": "IP_BLOCKED"
+    },
+    {
+      "timestamp": "2025-01-06T13:42:17Z", 
+      "eventType": "MALWARE_DETECTED",
+      "severity": "CRITICAL",
+      "source": "email-gateway",
+      "target": "attachment.exe",
+      "description": "Ransomware signature matched",
+      "action": "QUARANTINED"
+    },
+    {
+      "timestamp": "2025-01-06T12:18:45Z",
+      "eventType": "ANOMALY_DETECTED",
+      "severity": "MEDIUM",
+      "source": "internal-network",
+      "target": "workstation-07",
+      "description": "Unusual outbound traffic to TOR exit node",
+      "action": "INVESTIGATING"
+    },
+    {
+      "timestamp": "2025-01-06T11:33:21Z",
+      "eventType": "VULNERABILITY_SCAN", 
+      "severity": "LOW",
+      "source": "192.168.1.100",
+      "target": "web-server",
+      "description": "Automated vulnerability scanner detected",
+      "action": "MONITORED"
+    }
+  ],
+  "uptime": {
+    "startTime": "2024-11-21T08:30:00Z",
+    "currentUptime": "45 days, 12 hours, 23 minutes",
+    "lastReboot": "Planned maintenance - security updates",
+    "uptimePercentage": 99.7
+  }
+}

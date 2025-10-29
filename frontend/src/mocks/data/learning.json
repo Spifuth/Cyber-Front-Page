@@ -1,0 +1,149 @@
+{
+  "learning": {
+    "courses": [
+      {
+        "id": "course_001",
+        "title": "SANS SEC504: Hacker Tools, Techniques & Incident Handling",
+        "provider": "SANS Institute",
+        "status": "completed",
+        "completionDate": "2022-09-15",
+        "rating": 5,
+        "description": "Advanced incident response and digital forensics techniques",
+        "category": "Security"
+      },
+      {
+        "id": "course_002", 
+        "title": "Offensive Security PEN-200 (PWK)",
+        "provider": "Offensive Security",
+        "status": "completed",
+        "completionDate": "2023-02-28", 
+        "rating": 5,
+        "description": "Hands-on penetration testing methodology and exploitation techniques",
+        "category": "Penetration Testing"
+      },
+      {
+        "id": "course_003",
+        "title": "Docker Deep Dive",
+        "provider": "Pluralsight",
+        "status": "completed",
+        "completionDate": "2023-11-20",
+        "rating": 4,
+        "description": "Advanced container orchestration and security best practices",
+        "category": "DevOps"
+      },
+      {
+        "id": "course_004",
+        "title": "Kubernetes Security Fundamentals",
+        "provider": "Linux Academy",
+        "status": "in-progress",
+        "progress": 67,
+        "description": "Container orchestration security, RBAC, and network policies",
+        "category": "DevOps"
+      },
+      {
+        "id": "course_005",
+        "title": "Malware Analysis Bootcamp",
+        "provider": "Cybrary",
+        "status": "planned",
+        "description": "Reverse engineering and dynamic analysis techniques",
+        "category": "Malware Analysis"
+      }
+    ],
+    "platforms": [
+      {
+        "name": "TryHackMe",
+        "type": "Hands-on Labs",
+        "description": "Cybersecurity challenges and CTF practice",
+        "usage": "active",
+        "progress": {
+          "rank": "Top 1%",
+          "completedRooms": 156,
+          "streakDays": 42
+        }
+      },
+      {
+        "name": "Hack The Box",
+        "type": "Penetration Testing",
+        "description": "Realistic penetration testing labs and challenges",
+        "usage": "active", 
+        "progress": {
+          "rank": "Hacker",
+          "machinesOwned": 23,
+          "points": 1847
+        }
+      },
+      {
+        "name": "SANS Cyber Ranges",
+        "type": "Professional Training",
+        "description": "Enterprise-grade simulation environments",
+        "usage": "periodic",
+        "progress": {
+          "completedRanges": 8,
+          "specialization": "Incident Response"
+        }
+      },
+      {
+        "name": "VulnHub",
+        "type": "CTF Practice",
+        "description": "Vulnerable virtual machines for learning",
+        "usage": "active",
+        "progress": {
+          "machinesCompleted": 34,
+          "difficulty": "Advanced"
+        }
+      }
+    ],
+    "blogs": [
+      {
+        "name": "Krebs on Security",
+        "url": "https://krebsonsecurity.com",
+        "category": "Threat Intelligence",
+        "description": "Investigative cybersecurity journalism and threat analysis"
+      },
+      {
+        "name": "SANS Reading Room", 
+        "url": "https://sans.org/reading-room",
+        "category": "Research",
+        "description": "White papers and research on cybersecurity topics"
+      },
+      {
+        "name": "Dark Reading",
+        "url": "https://darkreading.com", 
+        "category": "Industry News",
+        "description": "Enterprise security news and analysis"
+      },
+      {
+        "name": "The Hacker News",
+        "url": "https://thehackernews.com",
+        "category": "Breaking News", 
+        "description": "Latest cybersecurity news and vulnerabilities"
+      },
+      {
+        "name": "Malwarebytes Labs",
+        "url": "https://blog.malwarebytes.com",
+        "category": "Malware Research",
+        "description": "Malware analysis and threat research"
+      }
+    ],
+    "podcasts": [
+      {
+        "name": "Security Now",
+        "host": "Steve Gibson",
+        "category": "Technical Deep Dives",
+        "description": "Weekly security news and technical analysis"
+      },
+      {
+        "name": "Darknet Diaries",
+        "host": "Jack Rhysider",
+        "category": "True Crime Tech",
+        "description": "Stories from the dark side of the internet"
+      },
+      {
+        "name": "SANS StormCast",
+        "host": "SANS Internet Storm Center",
+        "category": "Daily Briefings",
+        "description": "5-minute daily cybersecurity updates"
+      }
+    ]
+  }
+}

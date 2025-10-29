@@ -1,0 +1,97 @@
+{
+  "infrastructure": {
+    "title": "NebulaHost Infrastructure",
+    "description": "Self-hosted cybersecurity lab and production environment",
+    "ascii_diagram": [
+      "    ┌─────────────────────────────────────────────────┐",
+      "    │                  INTERNET                       │", 
+      "    └─────────────────┬───────────────────────────────┘",
+      "                      │",
+      "    ┌─────────────────┴───────────────────────────────┐",
+      "    │              FIREWALL/ROUTER                    │",
+      "    │         pfSense + Suricata IDS                  │", 
+      "    └─────────────────┬───────────────────────────────┘",
+      "                      │",
+      "    ┌─────────────────┴───────────────────────────────┐",
+      "    │               DMZ ZONE                          │",
+      "    │  ┌─────────────┐    ┌─────────────┐            │",
+      "    │  │   TRAEFIK   │    │   FAIL2BAN  │            │", 
+      "    │  │ Reverse     │    │ Intrusion   │            │",
+      "    │  │ Proxy       │    │ Prevention  │            │",
+      "    │  └─────────────┘    └─────────────┘            │",
+      "    └─────────────────┬───────────────────────────────┘",
+      "                      │",  
+      "    ┌─────────────────┴───────────────────────────────┐",
+      "    │              INTERNAL LAN                       │",
+      "    │                                                 │",
+      "    │  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │",
+      "    │  │  MAIN NODE  │  │ MONITORING  │  │ SECURITY │ │",
+      "    │  │ Debian 12   │  │   STACK     │  │   TOOLS  │ │",
+      "    │  │             │  │             │  │          │ │",
+      "    │  │ Docker      │  │ ┌─────────┐ │  │ ┌──────┐ │ │",
+      "    │  │ Services:   │  │ │ Zabbix  │ │  │ │ MISP │ │ │",
+      "    │  │ • Web Apps  │  │ └─────────┘ │  │ └──────┘ │ │", 
+      "    │  │ • APIs      │  │ ┌─────────┐ │  │ ┌──────┐ │ │",
+      "    │  │ • Databases │  │ │ Grafana │ │  │ │ SIEM │ │ │",
+      "    │  │ • Tools     │  │ └─────────┘ │  │ └──────┘ │ │",
+      "    │  └─────────────┘  │ ┌─────────┐ │  │ ┌──────┐ │ │",
+      "    │                   │ │   ELK   │ │  │ │Velox │ │ │",
+      "    │                   │ │  Stack  │ │  │ │ Lab  │ │ │",
+      "    │                   │ └─────────┘ │  │ └──────┘ │ │", 
+      "    │                   └─────────────┘  └──────────┘ │",
+      "    └─────────────────────────────────────────────────┘"
+    ],
+    "components": [
+      {
+        "name": "Firewall/Router",
+        "technology": "pfSense + Suricata IDS",
+        "description": "Network security gateway with intrusion detection",
+        "status": "active",
+        "uptime": "99.8%"
+      },
+      {
+        "name": "Reverse Proxy",
+        "technology": "Traefik v3.0",  
+        "description": "SSL termination, load balancing, and service discovery",
+        "status": "active",
+        "uptime": "99.9%"
+      },
+      {
+        "name": "Main Node",
+        "technology": "Debian 12 + Docker",
+        "description": "Primary application host with containerized services",
+        "status": "active",
+        "uptime": "99.7%"
+      },
+      {
+        "name": "Monitoring Stack",
+        "technology": "Zabbix + Grafana + ELK",
+        "description": "Infrastructure monitoring and log analysis",
+        "status": "active", 
+        "uptime": "99.5%"
+      },
+      {
+        "name": "Security Tools",
+        "technology": "MISP + Custom SIEM",
+        "description": "Threat intelligence and security operations center",
+        "status": "active",
+        "uptime": "99.6%"
+      },
+      {
+        "name": "Velox Lab",
+        "technology": "Isolated Testing Environment",
+        "description": "Malware analysis and penetration testing sandbox",
+        "status": "active",
+        "uptime": "95.2%"
+      }
+    ],
+    "metrics": {
+      "totalUptime": "99.6%",
+      "totalServices": 24,
+      "activeContainers": 18,
+      "monthlyData": "2.4TB",
+      "securityEvents": 1247,
+      "blockedThreats": 89
+    }
+  }
+}

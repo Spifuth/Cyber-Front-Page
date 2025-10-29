@@ -1,0 +1,172 @@
+{
+  "stack": {
+    "frontend": {
+      "category": "Frontend Development",
+      "icon": "🎨",
+      "technologies": [
+        {
+          "name": "React",
+          "level": "Expert",
+          "years": 4,
+          "description": "Component-based UI development with hooks and context"
+        },
+        {
+          "name": "JavaScript/TypeScript", 
+          "level": "Expert",
+          "years": 6,
+          "description": "Modern ES6+ features, async programming, type safety"
+        },
+        {
+          "name": "Tailwind CSS",
+          "level": "Advanced",
+          "years": 2,
+          "description": "Utility-first CSS framework for rapid UI development"
+        },
+        {
+          "name": "HTML5/CSS3",
+          "level": "Expert",
+          "years": 7,
+          "description": "Semantic markup, responsive design, CSS animations"
+        }
+      ]
+    },
+    "backend": {
+      "category": "Backend Development",
+      "icon": "⚙️",
+      "technologies": [
+        {
+          "name": "Python",
+          "level": "Expert", 
+          "years": 5,
+          "description": "Automation scripts, data analysis, security tools"
+        },
+        {
+          "name": "FastAPI",
+          "level": "Advanced",
+          "years": 2,
+          "description": "High-performance API development with automatic docs"
+        },
+        {
+          "name": "Node.js",
+          "level": "Intermediate",
+          "years": 3,
+          "description": "Server-side JavaScript for REST APIs and real-time apps"
+        },
+        {
+          "name": "Bash Scripting",
+          "level": "Expert",
+          "years": 6,
+          "description": "System automation, log parsing, security analysis"
+        }
+      ]
+    },
+    "infrastructure": {
+      "category": "Infrastructure & DevOps",
+      "icon": "🏗️",
+      "technologies": [
+        {
+          "name": "Docker",
+          "level": "Advanced",
+          "years": 4,
+          "description": "Containerization, multi-stage builds, orchestration"
+        },
+        {
+          "name": "Traefik",
+          "level": "Advanced", 
+          "years": 3,
+          "description": "Reverse proxy, SSL termination, load balancing"
+        },
+        {
+          "name": "Debian Linux",
+          "level": "Expert",
+          "years": 8,
+          "description": "System administration, hardening, service management"
+        },
+        {
+          "name": "nginx",
+          "level": "Advanced",
+          "years": 4,
+          "description": "Web server configuration, performance optimization"
+        },
+        {
+          "name": "Git",
+          "level": "Expert",
+          "years": 6,
+          "description": "Version control, branching strategies, CI/CD integration"
+        }
+      ]
+    },
+    "security": {
+      "category": "Security & Monitoring",
+      "icon": "🛡️",
+      "technologies": [
+        {
+          "name": "ELK Stack",
+          "level": "Expert",
+          "years": 4,
+          "description": "Log analysis, SIEM operations, threat hunting"
+        },
+        {
+          "name": "Splunk",
+          "level": "Advanced",
+          "years": 3,
+          "description": "Enterprise SIEM, correlation rules, dashboard creation"
+        },
+        {
+          "name": "Wireshark",
+          "level": "Expert", 
+          "years": 5,
+          "description": "Network protocol analysis, traffic investigation"
+        },
+        {
+          "name": "Zabbix",
+          "level": "Advanced",
+          "years": 3,
+          "description": "Infrastructure monitoring, alerting, performance metrics"
+        },
+        {
+          "name": "Kali Linux",
+          "level": "Advanced",
+          "years": 4,
+          "description": "Penetration testing, vulnerability assessment"
+        },
+        {
+          "name": "YARA",
+          "level": "Advanced",
+          "years": 2,
+          "description": "Malware detection rules, threat hunting signatures"
+        }
+      ]
+    },
+    "databases": {
+      "category": "Data & Databases",
+      "icon": "🗄️",
+      "technologies": [
+        {
+          "name": "MongoDB",
+          "level": "Intermediate",
+          "years": 2,
+          "description": "NoSQL document database for flexible data storage"
+        },
+        {
+          "name": "PostgreSQL",
+          "level": "Advanced",
+          "years": 3,
+          "description": "Relational database, complex queries, performance tuning"
+        },
+        {
+          "name": "Elasticsearch",
+          "level": "Advanced",
+          "years": 3,
+          "description": "Search engine, log indexing, real-time analytics"
+        }
+      ]
+    }
+  },
+  "skillLevels": {
+    "Expert": "5+ years, can teach others",
+    "Advanced": "3-5 years, independent work",  
+    "Intermediate": "1-3 years, some guidance needed",
+    "Beginner": "<1 year, learning basics"
+  }
+}

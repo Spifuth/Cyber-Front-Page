@@ -1,0 +1,156 @@
+{
+  "skills": {
+    "technical": [
+      {
+        "name": "Linux Administration",
+        "level": 9,
+        "category": "Systems",
+        "experience_years": 8,
+        "color": "#ff6b35"
+      },
+      {
+        "name": "SOC Operations",
+        "level": 9,
+        "category": "Security", 
+        "experience_years": 5,
+        "color": "#00ff41"
+      },
+      {
+        "name": "Threat Hunting",
+        "level": 8,
+        "category": "Security",
+        "experience_years": 4,
+        "color": "#0084ff"
+      },
+      {
+        "name": "Python Scripting",
+        "level": 8,
+        "category": "Development",
+        "experience_years": 5,
+        "color": "#ff9500"
+      },
+      {
+        "name": "Bash Scripting",
+        "level": 9,
+        "category": "Development",
+        "experience_years": 6,
+        "color": "#8b5cf6"
+      },
+      {
+        "name": "SIEM Management",
+        "level": 8,
+        "category": "Security",
+        "experience_years": 4,
+        "color": "#06d6a0"
+      },
+      {
+        "name": "Digital Forensics",
+        "level": 7,
+        "category": "Security",
+        "experience_years": 3,
+        "color": "#f72585"
+      },
+      {
+        "name": "Network Security",
+        "level": 8,
+        "category": "Security",
+        "experience_years": 5,
+        "color": "#4cc9f0"
+      },
+      {
+        "name": "Docker/Containers",
+        "level": 7,
+        "category": "DevOps",
+        "experience_years": 4,
+        "color": "#7209b7"
+      },
+      {
+        "name": "Incident Response",
+        "level": 9,
+        "category": "Security",
+        "experience_years": 5,
+        "color": "#ff006e"
+      },
+      {
+        "name": "Malware Analysis",
+        "level": 6,
+        "category": "Security",
+        "experience_years": 2,
+        "color": "#fb8500"
+      },
+      {
+        "name": "Penetration Testing",
+        "level": 7,
+        "category": "Security",
+        "experience_years": 3,
+        "color": "#023047"
+      }
+    ],
+    "soft_skills": [
+      {
+        "name": "Problem Solving",
+        "level": 9,
+        "category": "Analytical",
+        "color": "#00ff41"
+      },
+      {
+        "name": "Communication",
+        "level": 8,
+        "category": "Interpersonal", 
+        "color": "#0084ff"
+      },
+      {
+        "name": "Team Leadership",
+        "level": 7,
+        "category": "Management",
+        "color": "#ff9500"
+      },
+      {
+        "name": "Critical Thinking",
+        "level": 9,
+        "category": "Analytical",
+        "color": "#8b5cf6"
+      },
+      {
+        "name": "Time Management",
+        "level": 8,
+        "category": "Organizational",
+        "color": "#06d6a0"
+      },
+      {
+        "name": "Adaptability",
+        "level": 9,
+        "category": "Personal",
+        "color": "#f72585"
+      }
+    ],
+    "categories": {
+      "Security": {
+        "icon": "🛡️",
+        "color": "#00ff41",
+        "description": "Cybersecurity and threat analysis"
+      },
+      "Systems": {
+        "icon": "🖥️", 
+        "color": "#0084ff",
+        "description": "System administration and infrastructure"
+      },
+      "Development": {
+        "icon": "💻",
+        "color": "#ff9500", 
+        "description": "Programming and automation"
+      },
+      "DevOps": {
+        "icon": "🔧",
+        "color": "#8b5cf6",
+        "description": "Deployment and orchestration"
+      }
+    },
+    "radar_config": {
+      "max_level": 10,
+      "grid_lines": 5,
+      "show_values": true,
+      "animate_on_load": true
+    }
+  }
+}

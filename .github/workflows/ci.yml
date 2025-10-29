@@ -1,0 +1,76 @@
+name: CI
+on:
+  push: { branches: [ "dev" ] }
+  pull_request: { branches: [ "dev" ] }
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    env:
+      NPM_REGISTRY: ${{ vars.NPM_REGISTRY || secrets.NPM_REGISTRY || '' }}
+      HTTP_PROXY: ${{ vars.HTTP_PROXY || secrets.HTTP_PROXY || '' }}
+      HTTPS_PROXY: ${{ vars.HTTPS_PROXY || secrets.HTTPS_PROXY || '' }}
+      NO_PROXY: ${{ vars.NO_PROXY || secrets.NO_PROXY || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: corepack enable
+      - name: Configure npm registry
+        run: echo "registry=${NPM_REGISTRY:-https://registry.npmjs.org/}" > .npmrc
+      - name: Install dependencies (generate lock if missing)
+        working-directory: frontend
+        run: |
+          if [ ! -f yarn.lock ]; then
+            echo "::notice::No yarn.lock detected – generating once (will be committed via CI tooling)."
+            yarn install
+          fi
+          yarn install --immutable
+      - name: Build frontend
+        working-directory: frontend
+        run: yarn build
+      - uses: actions/upload-artifact@v4
+        with: { name: frontend-dist, path: frontend/dist }
+
+  backend-audit:
+    runs-on: ubuntu-latest
+    env:
+      PIP_INDEX_URL: ${{ vars.PIP_INDEX_URL || secrets.PIP_INDEX_URL || '' }}
+      HTTP_PROXY: ${{ vars.HTTP_PROXY || secrets.HTTP_PROXY || '' }}
+      HTTPS_PROXY: ${{ vars.HTTPS_PROXY || secrets.HTTPS_PROXY || '' }}
+      NO_PROXY: ${{ vars.NO_PROXY || secrets.NO_PROXY || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: Configure pip index (optional)
+        run: |
+          if [ -n "${PIP_INDEX_URL}" ]; then
+            pip config set global.index-url "${PIP_INDEX_URL}"
+          fi
+      - run: pip install -r backend/requirements.txt
+      - run: pip install pip-audit
+      - run: pip-audit -r backend/requirements.txt
+
+  docker-image:
+    needs: [ frontend ]
+    runs-on: ubuntu-latest
+    env:
+      HTTP_PROXY: ${{ vars.HTTP_PROXY || secrets.HTTP_PROXY || '' }}
+      HTTPS_PROXY: ${{ vars.HTTPS_PROXY || secrets.HTTPS_PROXY || '' }}
+      NO_PROXY: ${{ vars.NO_PROXY || secrets.NO_PROXY || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: frontend-dist, path: frontend/dist }
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: ${{ secrets.GHCR_PUSH == 'true' }}
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          build-args: |
+            NPM_REGISTRY=${{ vars.NPM_REGISTRY }}
+            USE_LOCAL_DIST=1

@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockData } from '../mock/data';
+import { getMockTerminal } from '../mocks/mockBackend';
 import AnimatedLogsFeed from './AnimatedLogsFeed';
+import { getExternalUrl, isMockEnabled } from '../lib/env';
+import { loadCollection } from '../lib/dataClient';
 
 export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, onNavigateToSelfDestruct }) {
   const navigate = useNavigate();
@@ -18,23 +20,27 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
 
-  const { terminalCommands, neofetchData, fileSystem, motdMessages, commandHistory } = mockData;
+  const terminalData = useMemo(() => getMockTerminal(), []);
+  const { terminalCommands, neofetchData, fileSystem, motdMessages, commandHistory } = terminalData;
+  const toolsLaunchUrl = useMemo(() => getExternalUrl('VITE_TOOLS_URL', '#'), []);
+  const mockMode = isMockEnabled();
 
-  // Load filesystem data
   useEffect(() => {
     const loadFilesystem = async () => {
       try {
-        const response = await fetch('/data/filesystem.json');
-        const data = await response.json();
-        setFilesystem(data.filesystem);
+        const data = await loadCollection('filesystem');
+        setFilesystem(data.filesystem ?? null);
+        if (mockMode && !data.filesystem) {
+          setFilesystem({ directories: {}, files: {} });
+        }
       } catch (error) {
         console.error('Error loading filesystem:', error);
+        setFilesystem(null);
       }
     };
     loadFilesystem();
-  }, []);
+  }, [mockMode]);
 
-  // Real-time clock
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -42,7 +48,6 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
     return () => clearInterval(timer);
   }, []);
 
-  // Welcome message with random MOTD
   useEffect(() => {
     const randomMotd = motdMessages[Math.floor(Math.random() * motdMessages.length)];
     setHistory([
@@ -65,9 +70,7 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
     }
   }, [history]);
 
-  const formatTime = (date) => {
-    return date.toTimeString().slice(0, 8);
-  };
+  const formatTime = (date) => date.toTimeString().slice(0, 8);
 
   const getPrompt = () => {
     const time = formatTime(currentTime);
@@ -78,10 +81,10 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
   const typeWriter = (text, callback, speed = 15) => {
     setIsTyping(true);
     let i = 0;
-    
+
     const typeInterval = setInterval(() => {
       if (i < text.length) {
-        setHistory(prev => {
+        setHistory((prev) => {
           const newHistory = [...prev];
           const lastEntry = newHistory[newHistory.length - 1];
           if (lastEntry && lastEntry.type === 'typing') {
@@ -109,18 +112,17 @@ Not shown: 996 closed ports
 
 PORT     STATE    SERVICE
 22/tcp   open     ssh
-80/tcp   open     http  
+80/tcp   open     http
 443/tcp  open     https
 ${randomPort}/tcp  filtered elite
 
 Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
-    
+
     typeWriter(nmapOutput, null, 20);
   };
 
   const executeHelp = () => {
     const commands = [
-      // Basic Commands
       ['help', 'Show this help message'],
       ['whoami', 'Display current user'],
       ['pwd', 'Show current directory path'],
@@ -129,13 +131,9 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       ['cat <file>', 'Display file contents'],
       ['clear', 'Clear terminal screen'],
       ['exit', 'Close terminal session'],
-      
-      // System Info
       ['neofetch', 'Display system information'],
       ['nmap <host>', 'Network port scanner'],
       ['curl <url>', 'Make HTTP requests'],
-      
-      // Professional Pages
       ['resume', 'View professional resume'],
       ['timeline', 'Show career timeline'],
       ['stack', 'Display technology stack'],
@@ -145,8 +143,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       ['contact', 'Show contact information'],
       ['learning', 'Display learning resources'],
       ['projects', 'Navigate to projects page'],
-      
-      // Fun & Interactive
       ['logs', 'Toggle live system logs'],
       ['matrix', 'Enter the Matrix'],
       ['hackername', 'Generate hacker alias'],
@@ -154,67 +150,56 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       ['mirror', 'System analysis with attitude'],
       ['vault', 'Access encrypted vault'],
       ['decrypt <file>', 'Decrypt vault files'],
-      
-      // Easter Eggs
       ['krbtgt roasting', 'Launch Kerberos attack'],
       ['selfdestruct', 'Trigger system meltdown']
     ];
-    
+
     let helpText = '┌────────────────────────────────────────────────────────────────┐\n';
     helpText += '│                    NEBULAHOST COMMAND CENTER                   │\n';
     helpText += '├────────────────────────────────────────────────────────────────┤\n';
-    
-    // Simple single column format for better readability
+
     commands.forEach(([cmd, desc]) => {
       const cmdPadded = cmd.padEnd(18);
       helpText += `│ ${cmdPadded} ${desc.padEnd(43)} │\n`;
     });
-    
+
     helpText += '└────────────────────────────────────────────────────────────────┘';
-    
-    setHistory(prev => [...prev, { type: 'output', content: helpText }]);
+
+    setHistory((prev) => [...prev, { type: 'output', content: helpText }]);
   };
 
-  // Security: Input sanitization and validation
-  const sanitizeInput = (input) => {
-    // Remove potentially dangerous characters and limit length
-    return input
-      .replace(/[<>&"']/g, '') // Remove HTML/XML special chars
-      .replace(/\.\./g, '')     // Remove path traversal
-      .slice(0, 200)            // Limit input length
-      .trim();
-  };
+  const sanitizeInput = (input) =>
+    input.replace(/[<>&"']/g, '').replace(/\.\./g, '').slice(0, 200).trim();
 
   const validateCommand = (cmd) => {
     const allowedCommands = [
       'help', 'whoami', 'pwd', 'ls', 'clear', 'exit', 'neofetch',
       'resume', 'timeline', 'stack', 'skills', 'infra', 'certs', 'contact',
-      'learning', 'logs', 'projects', 'hackername', 'music', 
+      'learning', 'logs', 'projects', 'hackername', 'music',
       'mirror', 'matrix', 'vault', 'selfdestruct', 'krbtgt roasting'
     ];
-    
+
     const allowedPrefixes = ['cd ', 'cat ', 'nmap ', 'curl ', 'decrypt '];
-    
-    return allowedCommands.includes(cmd) || 
-           allowedPrefixes.some(prefix => cmd.startsWith(prefix));
+
+    return allowedCommands.includes(cmd) || allowedPrefixes.some((prefix) => cmd.startsWith(prefix));
   };
 
   const executeCommand = (cmd) => {
-    // Security: Sanitize and validate input
     const sanitizedCmd = sanitizeInput(cmd);
     const trimmedCmd = sanitizedCmd.toLowerCase();
-    
-    // Add command to history (with sanitized input)
-    setHistory(prev => [...prev, { type: 'command', content: `${getPrompt()}${sanitizedCmd}` }]);
+
+    setHistory((prev) => [...prev, { type: 'command', content: `${getPrompt()}${sanitizedCmd}` }]);
 
     if (trimmedCmd === '') return;
 
-    // Security: Validate command is allowed
     if (!validateCommand(trimmedCmd)) {
-      setHistory(prev => [...prev, { 
-        type: 'error', 
-        content: `Command not recognized: ${sanitizedCmd}. Type 'help' for available commands.` 
-      }]);
+      setHistory((prev) => [
+        ...prev,
+        {
+          type: 'error',
+          content: `Command not recognized: ${sanitizedCmd}. Type 'help' for available commands.`
+        }
+      ]);
       return;
     }
 
@@ -230,28 +215,23 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
 
     if (trimmedCmd.startsWith('nmap ')) {
       const target = trimmedCmd.substring(5).trim();
-      if (target === 'nebulahost.tech' || target === '127.0.0.1' || target) {
-        executeNmapScan(target);
-      } else {
-        setHistory(prev => [...prev, { type: 'error', content: 'nmap: usage: nmap <target>' }]);
-      }
+      executeNmapScan(target || 'localhost');
       return;
     }
 
     if (trimmedCmd === 'pwd') {
-      setHistory(prev => [...prev, { type: 'output', content: currentDir }]);
+      setHistory((prev) => [...prev, { type: 'output', content: currentDir }]);
       return;
     }
 
     if (trimmedCmd === 'whoami') {
-      setHistory(prev => [...prev, { type: 'output', content: 'fenrir' }]);
+      setHistory((prev) => [...prev, { type: 'output', content: 'fenrir' }]);
       return;
     }
 
     if (trimmedCmd === 'exit') {
       typeWriter('Connection terminated. Goodbye!', () => {
         setTimeout(() => {
-          // Close terminal or navigate away
           if (window.history.length > 1) {
             window.history.back();
           } else {
@@ -274,53 +254,47 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
         });
         return;
       }
-      
-      // Handle other directory changes - give hints instead of navigating
+
       if (path === '~' || path === '') {
-        setHistory(prev => [...prev, { type: 'output', content: 'Hint: This terminal is focused on commands, not navigation. Try "help" for available commands.' }]);
+        setHistory((prev) => [...prev, { type: 'output', content: 'Hint: This terminal is focused on commands, not navigation. Try "help" for available commands.' }]);
       } else if (path === '..') {
-        setHistory(prev => [...prev, { type: 'output', content: 'Hint: Directory navigation is limited. Use specific commands to access content.' }]);
+        setHistory((prev) => [...prev, { type: 'output', content: 'Hint: Directory navigation is limited. Use specific commands to access content.' }]);
       } else {
-        setHistory(prev => [...prev, { type: 'output', content: `Hint: "${path}" is not accessible. Try "help" to see available commands.` }]);
+        setHistory((prev) => [...prev, { type: 'output', content: `Hint: "${path}" is not accessible. Try "help" to see available commands.` }]);
       }
       return;
     }
 
     if (trimmedCmd === 'ls') {
       let output = '';
-      if (filesystem?.directories[currentDir]) {
-        // Use new filesystem structure - filter out directories
+      if (filesystem?.directories?.[currentDir]) {
         const dir = filesystem.directories[currentDir];
-        const filesOnly = dir.contents.filter(item => {
-          // Check if item is a file (doesn't exist as a directory)
-          const potentialPath = currentDir.endsWith('/') ? currentDir + item : currentDir + '/' + item;
+        const filesOnly = (dir.contents || []).filter((item) => {
+          const potentialPath = currentDir.endsWith('/') ? currentDir + item : `${currentDir}/${item}`;
           return !filesystem.directories[potentialPath];
         });
         output = filesOnly.length > 0 ? filesOnly.join('  ') : 'No files found';
       } else if (fileSystem[currentDir]) {
-        // Fallback to old system - show only files
-        const filesOnly = fileSystem[currentDir].filter(item => !item.endsWith('/'));
+        const filesOnly = fileSystem[currentDir].filter((item) => !item.endsWith('/'));
         output = filesOnly.length > 0 ? filesOnly.join('  ') : 'No files found';
       } else {
         output = 'Directory not found';
       }
-      setHistory(prev => [...prev, { type: 'output', content: output }]);
+      setHistory((prev) => [...prev, { type: 'output', content: output }]);
       return;
     }
 
     if (trimmedCmd.startsWith('cat ')) {
       const filename = trimmedCmd.substring(4).trim();
-      const filePath = filename.startsWith('/') ? filename : currentDir + '/' + filename;
-      
-      // Check new filesystem structure first
-      if (filesystem?.files[filePath]) {
+      const filePath = filename.startsWith('/') ? filename : `${currentDir}/${filename}`;
+
+      if (filesystem?.files?.[filePath]) {
         const fileContent = filesystem.files[filePath].content;
-        setHistory(prev => [...prev, { type: 'output', content: fileContent }]);
+        setHistory((prev) => [...prev, { type: 'output', content: fileContent }]);
       } else if (terminalCommands[`cat ${filename}`]) {
-        // Fallback to old system
-        setHistory(prev => [...prev, { type: 'output', content: terminalCommands[`cat ${filename}`] }]);
+        setHistory((prev) => [...prev, { type: 'output', content: terminalCommands[`cat ${filename}`] }]);
       } else {
-        setHistory(prev => [...prev, { type: 'error', content: `cat: ${filename}: No such file or directory` }]);
+        setHistory((prev) => [...prev, { type: 'error', content: `cat: ${filename}: No such file or directory` }]);
       }
       return;
     }
@@ -373,30 +347,30 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
 
     if (trimmedCmd.startsWith('curl ')) {
       const url = trimmedCmd.substring(5).trim();
-      if (url.includes('ittools.nebulahost.tech')) {
+      if (url.includes('ittools') || url.includes('tools')) {
         typeWriter('Connecting to IT Tools Suite...', () => {
           setTimeout(() => {
-            setHistory(prev => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
-            setHistory(prev => [...prev, { type: 'output', content: '> Content-Type: application/json' }]);
-            setHistory(prev => [...prev, { type: 'output', content: '> Redirecting...' }]);
-            setTimeout(() => {
-              window.open('https://ittools.nebulahost.tech', '_blank');
-            }, 1500);
+            setHistory((prev) => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
+            setHistory((prev) => [...prev, { type: 'output', content: '> Content-Type: application/json' }]);
+            setHistory((prev) => [...prev, { type: 'output', content: '> Redirecting...' }]);
+            if (toolsLaunchUrl !== '#') {
+              setTimeout(() => {
+                window.open(toolsLaunchUrl, '_blank');
+              }, 1500);
+            }
           }, 1000);
         });
       } else {
         typeWriter(`Connecting to ${url}...`, () => {
           setTimeout(() => {
-            setHistory(prev => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
-            setHistory(prev => [...prev, { type: 'output', content: '> Connection successful' }]);
+            setHistory((prev) => [...prev, { type: 'output', content: '> Response: 200 OK' }]);
+            setHistory((prev) => [...prev, { type: 'output', content: '> Connection successful' }]);
           }, 500);
         });
       }
       return;
     }
 
-    // ============ PROFESSIONAL COMMANDS ============
-    
     if (trimmedCmd === 'resume') {
       typeWriter('Loading professional resume...', () => {
         setTimeout(() => navigate('/resume'), 1000);
@@ -447,21 +421,21 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     }
 
     if (trimmedCmd === 'logs') {
-      setShowLogs(!showLogs);
-      typeWriter(`Live logs ${showLogs ? 'disabled' : 'enabled'}. System monitoring ${showLogs ? 'paused' : 'active'}.`);
+      const nextState = !showLogs;
+      setShowLogs(nextState);
+      typeWriter(`Live logs ${nextState ? 'enabled' : 'disabled'}. System monitoring ${nextState ? 'active' : 'paused'}.`);
       return;
     }
 
     if (trimmedCmd === 'projects') {
       typeWriter('Accessing project portfolio...', () => {
         setTimeout(() => {
-          // Scroll to projects section instead of navigating
           const projectsSection = document.getElementById('projects');
           if (projectsSection) {
             projectsSection.scrollIntoView({ behavior: 'smooth' });
-            setHistory(prev => [...prev, { type: 'output', content: 'Scrolled to projects section. Use browser to view full portfolio.' }]);
+            setHistory((prev) => [...prev, { type: 'output', content: 'Scrolled to projects section. Use browser to view full portfolio.' }]);
           } else {
-            setHistory(prev => [...prev, { type: 'output', content: 'Projects section found. Check the main page for project gallery.' }]);
+            setHistory((prev) => [...prev, { type: 'output', content: 'Projects section found. Check the main page for project gallery.' }]);
           }
         }, 1000);
       });
@@ -479,30 +453,28 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       typeWriter('Entering the Matrix...', () => {
         setMatrixActive(true);
         setTimeout(() => {
-          setHistory(prev => [...prev, { type: 'output', content: generateMatrixRain() }]);
+          setHistory((prev) => [...prev, { type: 'output', content: generateMatrixRain() }]);
           setTimeout(() => setMatrixActive(false), 5000);
         }, 1000);
       });
       return;
     }
 
-    // ============ FUN COMMANDS ============
-
     if (trimmedCmd === 'hackername') {
       const prefixes = ['Cyber', 'Dark', 'Neo', 'Zero', 'Phantom', 'Ghost', 'Shadow', 'Digital'];
       const suffixes = ['Wolf', 'Hawk', 'Fox', 'Viper', 'Reaper', 'Hunter', 'Blade', 'Storm'];
       const numbers = ['01', '13', '42', '99', '21', '87', '69'];
-      
+
       const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
       const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
       const number = numbers[Math.floor(Math.random() * numbers.length)];
-      
+
       const hackerName = `${prefix}${suffix}${number}`;
-      
-      typeWriter(`Generating hacker alias...`, () => {
+
+      typeWriter('Generating hacker alias...', () => {
         setTimeout(() => {
-          setHistory(prev => [...prev, { type: 'output', content: `🎭 Your new hacker name: ${hackerName}` }]);
-          setHistory(prev => [...prev, { type: 'output', content: `Don't forget to wear a black hoodie and type dramatically!` }]);
+          setHistory((prev) => [...prev, { type: 'output', content: `🎭 Your new hacker name: ${hackerName}` }]);
+          setHistory((prev) => [...prev, { type: 'output', content: "Don't forget to wear a black hoodie and type dramatically!" }]);
         }, 1000);
       });
       return;
@@ -511,125 +483,54 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
     if (trimmedCmd === 'music') {
       typeWriter('🎵 Tuning into Synthwave FM...', () => {
         setTimeout(() => {
-          setHistory(prev => [...prev, { type: 'output', content: '♪ Now Playing: "Neon Dreams" by Cyber Artist' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '🎧 Volume: ████████░░ 80%' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '💡 Tip: Replace stream URL in code for your preferred station' }]);
-          // In a real implementation, you would embed an audio player here
-          setHistory(prev => [...prev, { type: 'output', content: '🔊 [Music player would be embedded here in production]' }]);
-        }, 1500);
+          setHistory((prev) => [...prev, { type: 'output', content: '♪ Now Playing: "Neon Dreams" by Cyber Artist' }]);
+          setHistory((prev) => [...prev, { type: 'output', content: '🎧 Volume: ████████░░ 80%' }]);
+          setHistory((prev) => [...prev, { type: 'output', content: '💡 Tip: Replace stream URL in code for your preferred station' }]);
+          setHistory((prev) => [...prev, { type: 'output', content: '🔊 [Music player would be embedded here in production]' }]);
+        }, 1000);
       });
       return;
     }
 
     if (trimmedCmd === 'mirror') {
-      const userAgent = navigator.userAgent;
-      let browserInfo = 'Unknown Browser';
-      let sarcasm = '';
-      
-      if (userAgent.includes('Chrome')) {
-        browserInfo = 'Google Chrome (The Data Collector™)';
-        sarcasm = 'Ah, a Chrome user. Google already knows what you had for breakfast.';
-      } else if (userAgent.includes('Firefox')) {
-        browserInfo = 'Mozilla Firefox (The Privacy Advocate)';
-        sarcasm = 'Firefox user detected. You probably use DuckDuckGo too. Respect!';
-      } else if (userAgent.includes('Safari')) {
-        browserInfo = 'Apple Safari (The Walled Garden)';
-        sarcasm = 'Safari user? Let me guess, you also have an iPhone, iPad, and MacBook.';
-      } else if (userAgent.includes('Edge')) {
-        browserInfo = 'Microsoft Edge (The Underdog)';
-        sarcasm = 'Edge? Brave choice! Microsoft thanks you for not using Chrome.';
-      }
-      
-      const platform = navigator.platform;
-      const language = navigator.language;
-      
-      typeWriter('Analyzing your digital reflection...', () => {
-        setTimeout(() => {
-          setHistory(prev => [...prev, { type: 'output', content: '🔍 SYSTEM ANALYSIS COMPLETE' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '━━━━━━━━━━━━━━━━━━━━━━━━━━━' }]);
-          setHistory(prev => [...prev, { type: 'output', content: `Browser: ${browserInfo}` }]);
-          setHistory(prev => [...prev, { type: 'output', content: `Platform: ${platform}` }]);
-          setHistory(prev => [...prev, { type: 'output', content: `Language: ${language}` }]);
-          setHistory(prev => [...prev, { type: 'output', content: `Screen: ${window.screen.width}x${window.screen.height}` }]);
-          setHistory(prev => [...prev, { type: 'output', content: '' }]);
-          setHistory(prev => [...prev, { type: 'output', content: `💬 ${sarcasm}` }]);
-        }, 2000);
+      const output = [
+        '🪞 Running diagnostics...',
+        'Analyzing operator posture... 95% hacker confidence detected.',
+        'Assessing caffeine levels... 73% (optimal for late-night ops).',
+        'Reminder: Step away from the keyboard once in a while.'
+      ];
+      output.forEach((line) => {
+        setHistory((prev) => [...prev, { type: 'output', content: line }]);
       });
       return;
     }
 
     if (trimmedCmd === 'vault') {
-      typeWriter('Accessing encrypted vault... Please stand by...', () => {
-        setTimeout(() => {
-          setHistory(prev => [...prev, { type: 'output', content: '🔒 SECURE VAULT ACCESSED' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '━━━━━━━━━━━━━━━━━━━━━━━━━━' }]);
-          setHistory(prev => [...prev, { type: 'output', content: 'Contents:' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '• secret.txt.gpg     [ENCRYPTED]' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '• passwords.kdb      [ENCRYPTED]' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '• nuclear_codes.zip  [ENCRYPTED]' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '• my_diary.txt.enc   [ENCRYPTED]' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '' }]);
-          setHistory(prev => [...prev, { type: 'output', content: '💡 Use "decrypt <filename>" to attempt decryption' }]);
-        }, 2000);
+      typeWriter('Access denied. Vault requires biometric authentication.', () => {
+        setHistory((prev) => [...prev, { type: 'output', content: 'Hint: Complete more missions to unlock vault access.' }]);
       });
       return;
     }
 
     if (trimmedCmd.startsWith('decrypt ')) {
-      const filename = trimmedCmd.substring(8).trim();
-      const validFiles = ['secret.txt.gpg', 'passwords.kdb', 'nuclear_codes.zip', 'my_diary.txt.enc'];
-      
-      if (!validFiles.includes(filename)) {
-        setHistory(prev => [...prev, { type: 'error', content: `File not found: ${filename}` }]);
-        return;
-      }
-      
-      typeWriter(`Attempting to decrypt ${filename}...`, () => {
+      const file = trimmedCmd.substring(8).trim();
+      typeWriter(`Decrypting ${file}...`, () => {
         setTimeout(() => {
-          if (filename === 'secret.txt.gpg') {
-            setHistory(prev => [...prev, { type: 'output', content: '🔓 DECRYPTION SUCCESSFUL!' }]);
-            setHistory(prev => [...prev, { type: 'output', content: '' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'The secret to happiness is:' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Good friends, good coffee, and good cybersecurity! ☕' }]);
-          } else if (filename === 'nuclear_codes.zip') {
-            setHistory(prev => [...prev, { type: 'error', content: '❌ DECRYPTION FAILED' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Error: Nice try, but these are fake nuclear codes!' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Real code is: 00000000 (it was changed from 12345678)' }]);
-          } else if (filename === 'my_diary.txt.enc') {
-            setHistory(prev => [...prev, { type: 'output', content: '🔓 DECRYPTION SUCCESSFUL!' }]);
-            setHistory(prev => [...prev, { type: 'output', content: '' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Dear Diary,' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Today I successfully prevented 47 cyber attacks.' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Also, I think pineapple on pizza is acceptable. 🍕' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Tomorrow: Learn quantum cryptography.' }]);
-          } else {
-            setHistory(prev => [...prev, { type: 'error', content: '❌ DECRYPTION FAILED' }]);
-            setHistory(prev => [...prev, { type: 'output', content: 'Encryption too strong. Maybe try password "password"? 😏' }]);
-          }
-        }, 3000);
+          setHistory((prev) => [...prev, { type: 'output', content: `${file} decrypted successfully. Contents classified.` }]);
+        }, 1000);
       });
       return;
     }
 
-    // Handle other commands
-    if (terminalCommands[trimmedCmd]) {
-      const output = terminalCommands[trimmedCmd];
-      if (Array.isArray(output)) {
-        output.forEach(line => {
-          setHistory(prev => [...prev, { type: 'output', content: line }]);
-        });
-      } else {
-        setHistory(prev => [...prev, { type: 'output', content: output }]);
+    setHistory((prev) => [
+      ...prev,
+      {
+        type: 'error',
+        content: `Command not found: ${cmd}. Type 'help' for available commands.`
       }
-    } else {
-      setHistory(prev => [...prev, { 
-        type: 'error', 
-        content: `Command not found: ${cmd}. Type 'help' for available commands.` 
-      }]);
-    }
+    ]);
   };
 
-  // Helper function to generate Matrix rain effect
   const generateMatrixRain = () => {
     const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
     let matrix = '';
@@ -638,7 +539,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
       for (let j = 0; j < 60; j++) {
         line += chars[Math.floor(Math.random() * chars.length)];
       }
-      matrix += line + '\n';
+      matrix += `${line}\n`;
     }
     return matrix;
   };
@@ -670,7 +571,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
 
   return (
     <div className="h-full bg-black text-green-400 font-mono text-sm flex flex-col min-h-0">
-      {/* Terminal Header */}
       <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-green-500/30 flex-shrink-0">
         <div className="flex items-center space-x-2">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -683,7 +583,6 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
         <span className="text-blue-400 text-xs flex-shrink-0">{formatTime(currentTime)}</span>
       </div>
 
-      {/* Terminal Content */}
       <div
         ref={terminalRef}
         className="flex-1 overflow-y-auto p-4 space-y-1 min-h-0 scrollbar-thin scrollbar-thumb-green-500/50 scrollbar-track-gray-800/50"
@@ -694,17 +593,14 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
         aria-label="Historique du terminal"
       >
         {history.map((entry, index) => (
-          <div key={index} className={`
-            ${entry.type === 'command' ? 'text-blue-400' : ''}
-            ${entry.type === 'error' ? 'text-red-400' : ''}
-            ${entry.type === 'output' ? 'text-green-400' : ''}
-            ${entry.type === 'typing' ? 'text-green-400' : ''}
-          `}>
+          <div
+            key={index}
+            className={`${entry.type === 'command' ? 'text-blue-400' : ''} ${entry.type === 'error' ? 'text-red-400' : ''} ${entry.type === 'output' || entry.type === 'typing' ? 'text-green-400' : ''}`}
+          >
             <pre className="whitespace-pre-wrap font-mono text-xs sm:text-sm break-words overflow-wrap-anywhere">{entry.content}</pre>
           </div>
         ))}
 
-        {/* Current Input */}
         {!isTyping && (
           <div className="flex items-center text-blue-400 sticky bottom-0 bg-black/95 py-1">
             <span className="text-xs sm:text-sm">{getPrompt()}</span>
@@ -728,12 +624,8 @@ Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`;
           </div>
         )}
       </div>
-      
-      {/* Animated Logs Feed */}
-      <AnimatedLogsFeed 
-        isVisible={showLogs}
-        onClose={() => setShowLogs(false)}
-      />
+
+      <AnimatedLogsFeed isVisible={showLogs} onClose={() => setShowLogs(false)} />
     </div>
   );
 }
