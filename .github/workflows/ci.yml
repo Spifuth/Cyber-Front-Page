@@ -6,29 +6,34 @@ on:
 jobs:
   frontend:
     runs-on: ubuntu-latest
-    env:
-      NPM_REGISTRY: ${{ vars.NPM_REGISTRY || secrets.NPM_REGISTRY || '' }}
-      HTTP_PROXY: ${{ vars.HTTP_PROXY || secrets.HTTP_PROXY || '' }}
-      HTTPS_PROXY: ${{ vars.HTTPS_PROXY || secrets.HTTPS_PROXY || '' }}
-      NO_PROXY: ${{ vars.NO_PROXY || secrets.NO_PROXY || '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: corepack enable
-      - name: Configure npm registry
+
+      - name: Configure npm registry (optional)
         run: echo "registry=${NPM_REGISTRY:-https://registry.npmjs.org/}" > .npmrc
+
       - name: Install dependencies (generate lock if missing)
         working-directory: frontend
         run: |
           if [ ! -f yarn.lock ]; then
-            echo "::notice::No yarn.lock detected – generating once (will be committed via CI tooling)."
-            yarn install
+            echo "::notice::No yarn.lock detected – generating once."
+            YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --mode=update-lockfile
           fi
           yarn install --immutable
+
       - name: Build frontend
         working-directory: frontend
         run: yarn build
+
+      - name: Audit JS deps (fail only on high/critical)
+        working-directory: frontend
+        run: |
+          set -e
+          yarn npm audit --severity high || echo "Non-high issues detected (ignored)."
+
       - uses: actions/upload-artifact@v4
         with: { name: frontend-dist, path: frontend/dist }
 

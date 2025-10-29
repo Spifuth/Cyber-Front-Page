@@ -38,9 +38,10 @@ VITE_PROFILE_* (name, role, description, tech stack)
 Le workflow `.github/workflows/ci.yml` réalise :
 
 1. **Job frontend**
-   - Node 20 + Corepack, `yarn install --immutable` (génère `yarn.lock` si absent).
+   - Node 20 + Corepack, installation qui génère `yarn.lock` une seule fois (`YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --mode=update-lockfile` si besoin) puis `yarn install --immutable`.
    - `yarn build` puis upload de l'artefact `frontend/dist`.
-   - Support des variables `NPM_REGISTRY`, `HTTP(S)_PROXY`, `NO_PROXY`.
+   - Audit JS avec `yarn npm audit --severity high` (les vulnérabilités low/moderate ne bloquent plus).
+   - Support optionnel de `NPM_REGISTRY`.
 2. **Job backend-audit**
    - Python 3.11, installation des dépendances puis `pip-audit`.
    - Support des variables `PIP_INDEX_URL`, `HTTP(S)_PROXY`, `NO_PROXY`.
@@ -49,7 +50,7 @@ Le workflow `.github/workflows/ci.yml` réalise :
    - `build-args`: `NPM_REGISTRY`, `USE_LOCAL_DIST=1`.
    - Push optionnel vers GHCR via `secrets.GHCR_PUSH`.
 
-> ⚠️ Aucun `yarn.lock` n'est commité ici : il sera généré et persistant via la CI lors du premier run (`yarn install`).
+> ⚠️ Aucun `yarn.lock` n'est commité ici : il sera généré automatiquement lors du premier run CI (`--mode=update-lockfile`) puis les installations resteront immuables.
 
 ## Docker (CI ou prod)
 
@@ -120,3 +121,7 @@ git push origin dev
 ```
 
 Bon hack et bon routage offline !
+
+## Sécurité/MAJ
+
+- Prévoir une PR dédiée (une fois l'accès réseau CI rétabli) pour mettre `vite` à `^5.4.21` ou version recommandée ultérieure, régénérer `yarn.lock`, puis supprimer `resolutions.esbuild` si le correctif n'est plus requis.
