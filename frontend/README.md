@@ -1,15 +1,13 @@
 # Frontend
 
-This project uses [Vite](https://vitejs.dev/) for development and build.
+Application Vite/React servant l'interface Cyber Front Page.
 
-## Available Scripts
+## Scripts disponibles
 
-- `yarn start` – start the development server.
-- `yarn build` – build the application for production.
-- `yarn preview` – preview the built application locally.
-- `yarn test` – run tests with [Vitest](https://vitest.dev/).
+- `npm run dev` : lance le serveur de développement Vite.
+- `npm run build` : produit le bundle de production dans `dist/`.
+- `npm run preview` : prévisualise le bundle localement.
 
-## Learn More
+## Configuration
 
-- [Vite Documentation](https://vitejs.dev/)
-- [React Documentation](https://react.dev/)
+Le frontend lit les variables `SITE_NAME`, `SITE_THEME` et `SITE_DOMAIN` via l'environnement au moment du build (transmises dans le conteneur Caddy). Les données dynamiques proviennent de `public/data/*.json`.

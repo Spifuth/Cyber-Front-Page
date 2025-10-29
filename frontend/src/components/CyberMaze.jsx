@@ -1,162 +1,185 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+
+const COLOR_MAP = {
+  green: { primary: '34, 197, 94', secondary: '59, 130, 246', tertiary: '139, 92, 246' },
+  blue: { primary: '59, 130, 246', secondary: '34, 197, 94', tertiary: '139, 92, 246' },
+  purple: { primary: '139, 92, 246', secondary: '59, 130, 246', tertiary: '34, 197, 94' },
+  red: { primary: '239, 68, 68', secondary: '249, 115, 22', tertiary: '245, 158, 11' },
+  yellow: { primary: '245, 158, 11', secondary: '34, 197, 94', tertiary: '59, 130, 246' }
+};
+
+const GRID_SIZE = 60;
+const PACKET_COUNT = 4;
+
+class Cell {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.walls = { top: true, right: true, bottom: true, left: true };
+    this.visited = false;
+    this.pulseOffset = Math.random() * Math.PI * 2;
+  }
+
+  draw(ctx, time, palette, mouseDistance, opacity) {
+    const xPos = this.x * GRID_SIZE;
+    const yPos = this.y * GRID_SIZE;
+
+    const pulse = Math.sin(time * 0.0004 + this.pulseOffset) * 0.2 + 0.35;
+    const proximity = Math.max(0, 1 - mouseDistance / 280);
+    const intensity = (pulse + proximity * 0.6) * opacity;
+
+    const layers = [
+      `rgba(${palette.primary}, ${intensity * 0.5})`,
+      `rgba(${palette.secondary}, ${intensity * 0.35})`,
+      `rgba(${palette.tertiary}, ${intensity * 0.2})`
+    ];
+
+    layers.forEach((color, index) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.6 - index * 0.3;
+
+      if (this.walls.top) {
+        ctx.beginPath();
+        ctx.moveTo(xPos, yPos);
+        ctx.lineTo(xPos + GRID_SIZE, yPos);
+        ctx.stroke();
+      }
+      if (this.walls.right) {
+        ctx.beginPath();
+        ctx.moveTo(xPos + GRID_SIZE, yPos);
+        ctx.lineTo(xPos + GRID_SIZE, yPos + GRID_SIZE);
+        ctx.stroke();
+      }
+      if (this.walls.bottom) {
+        ctx.beginPath();
+        ctx.moveTo(xPos + GRID_SIZE, yPos + GRID_SIZE);
+        ctx.lineTo(xPos, yPos + GRID_SIZE);
+        ctx.stroke();
+      }
+      if (this.walls.left) {
+        ctx.beginPath();
+        ctx.moveTo(xPos, yPos + GRID_SIZE);
+        ctx.lineTo(xPos, yPos);
+        ctx.stroke();
+      }
+    });
+
+    if (intensity > 0.25) {
+      ctx.fillStyle = `rgba(${palette.primary}, ${intensity * 0.6})`;
+      ctx.beginPath();
+      ctx.arc(xPos + GRID_SIZE / 2, yPos + GRID_SIZE / 2, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+const createPackets = (width, height, palette) =>
+  Array.from({ length: PACKET_COUNT }, () => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    dx: (Math.random() - 0.5) * 0.18,
+    dy: (Math.random() - 0.5) * 0.18,
+    size: Math.random() * 1.5 + 0.5,
+    pulseOffset: Math.random() * Math.PI * 2,
+    color: Math.random() > 0.5 ? palette.primary : palette.secondary
+  }));
 
 export default function CyberMaze({ isEnabled = true, color = 'green', opacity = 0.25 }) {
   const canvasRef = useRef(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const mazeRef = useRef(null);
-
-  // Color mappings
-  const colorMap = {
-    green: { primary: '34, 197, 94', secondary: '59, 130, 246', tertiary: '139, 92, 246' },
-    blue: { primary: '59, 130, 246', secondary: '34, 197, 94', tertiary: '139, 92, 246' },
-    purple: { primary: '139, 92, 246', secondary: '59, 130, 246', tertiary: '34, 197, 94' },
-    red: { primary: '239, 68, 68', secondary: '249, 115, 22', tertiary: '245, 158, 11' },
-    yellow: { primary: '245, 158, 11', secondary: '34, 197, 94', tertiary: '59, 130, 246' }
-  };
+  const animationRef = useRef(null);
+  const resizeRafRef = useRef(null);
+  const mouseUpdateRef = useRef(null);
+  const pendingMouseRef = useRef({ x: 0, y: 0 });
+  const mousePosRef = useRef({ x: 0, y: 0 });
+  const mazeRef = useRef({ grid: [], cols: 0, rows: 0 });
+  const packetsRef = useRef([]);
 
   useEffect(() => {
-    if (!isEnabled) return;
-    
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Maze generation parameters - increased grid size for better performance
-    const gridSize = 60; // Increased from 40
-    const cols = Math.floor(canvas.width / gridSize);
-    const rows = Math.floor(canvas.height / gridSize);
-
-    class Cell {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.walls = { top: true, right: true, bottom: true, left: true };
-        this.visited = false;
-        this.glowIntensity = 0;
-        this.pulseOffset = Math.random() * Math.PI * 2;
-        this.baseOpacity = 0.15 + Math.random() * 0.1; // Reduced base opacity
-      }
-
-      draw(ctx, time, mouseDistance = 1) {
-        const x = this.x * gridSize;
-        const y = this.y * gridSize;
-
-        // Much slower animation - reduced time multiplier by 5x
-        const pulseValue = Math.sin(time * 0.0006 + this.pulseOffset) * 0.2 + 0.3; // Slower pulse
-        const proximityGlow = Math.max(0, 1 - mouseDistance / 300); // Larger proximity radius
-        this.glowIntensity = (pulseValue * 0.2 + proximityGlow * 0.4) * this.baseOpacity;
-
-        // Draw walls with softer neon effect using selected colors
-        ctx.lineWidth = 1.5; // Thinner lines
-        
-        const currentColors = colorMap[color];
-        const colors = [
-          `rgba(${currentColors.primary}, ${this.glowIntensity * 0.4})`,
-          `rgba(${currentColors.secondary}, ${this.glowIntensity * 0.3})`,
-          `rgba(${currentColors.tertiary}, ${this.glowIntensity * 0.2})`,
-        ];
-
-        colors.forEach((colorValue, index) => {
-          ctx.strokeStyle = colorValue;
-          ctx.lineWidth = 2 - index * 0.5;
-          
-          if (this.walls.top) {
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + gridSize, y);
-            ctx.stroke();
-          }
-          if (this.walls.right) {
-            ctx.beginPath();
-            ctx.moveTo(x + gridSize, y);
-            ctx.lineTo(x + gridSize, y + gridSize);
-            ctx.stroke();
-          }
-          if (this.walls.bottom) {
-            ctx.beginPath();
-            ctx.moveTo(x + gridSize, y + gridSize);
-            ctx.lineTo(x, y + gridSize);
-            ctx.stroke();
-          }
-          if (this.walls.left) {
-            ctx.beginPath();
-            ctx.moveTo(x, y + gridSize);
-            ctx.lineTo(x, y);
-            ctx.stroke();
-          }
-        });
-
-        // Smaller, subtler circuit nodes
-        if (this.glowIntensity > 0.3) {
-          ctx.fillStyle = `rgba(${currentColors.primary}, ${this.glowIntensity * 0.6})`;
-          ctx.beginPath();
-          ctx.arc(x + gridSize/2, y + gridSize/2, 1, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      getNeighbors(grid, cols, rows) {
-        const neighbors = [];
-        const { x, y } = this;
-        
-        if (y > 0) neighbors.push(grid[x][y - 1]); // top
-        if (x < cols - 1) neighbors.push(grid[x + 1][y]); // right
-        if (y < rows - 1) neighbors.push(grid[x][y + 1]); // bottom
-        if (x > 0) neighbors.push(grid[x - 1][y]); // left
-        
-        return neighbors.filter(neighbor => !neighbor.visited);
-      }
+    if (!canvas) {
+      return;
     }
 
-    // Generate maze
-    const generateMaze = () => {
-      const grid = [];
-      const stack = [];
-
-      // Create grid
-      for (let x = 0; x < cols; x++) {
-        grid[x] = [];
-        for (let y = 0; y < rows; y++) {
-          grid[x][y] = new Cell(x, y);
-        }
+    if (!isEnabled) {
+      mazeRef.current = { grid: [], cols: 0, rows: 0 };
+      packetsRef.current = [];
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
+      canvas.style.opacity = '0';
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      return;
+    }
 
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) {
+      return;
+    }
+
+    const palette = COLOR_MAP[color] ?? COLOR_MAP.green;
+    const safeOpacity = Math.max(0, Math.min(opacity, 1));
+
+    const resizeCanvas = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+    };
+
+    const generateMaze = () => {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const cols = Math.max(1, Math.floor(width / GRID_SIZE));
+      const rows = Math.max(1, Math.floor(height / GRID_SIZE));
+      const grid = Array.from({ length: cols }, (_, x) =>
+        Array.from({ length: rows }, (_, y) => new Cell(x, y))
+      );
+
+      const stack = [];
       let current = grid[0][0];
       current.visited = true;
 
-      while (true) {
-        const neighbors = current.getNeighbors(grid, cols, rows);
-        
+      const getUnvisited = (cell) => {
+        const neighbors = [];
+        const { x, y } = cell;
+        if (y > 0) neighbors.push(grid[x][y - 1]);
+        if (x < cols - 1) neighbors.push(grid[x + 1][y]);
+        if (y < rows - 1) neighbors.push(grid[x][y + 1]);
+        if (x > 0) neighbors.push(grid[x - 1][y]);
+        return neighbors.filter((neighbor) => !neighbor.visited);
+      };
+
+      while (current) {
+        const neighbors = getUnvisited(current);
         if (neighbors.length > 0) {
           const next = neighbors[Math.floor(Math.random() * neighbors.length)];
           stack.push(current);
-          
-          // Remove walls between current and next
-          const dx = current.x - next.x;
-          const dy = current.y - next.y;
-          
-          if (dx === 1) {
+
+          if (current.x > next.x) {
             current.walls.left = false;
             next.walls.right = false;
-          } else if (dx === -1) {
+          } else if (current.x < next.x) {
             current.walls.right = false;
             next.walls.left = false;
-          } else if (dy === 1) {
+          } else if (current.y > next.y) {
             current.walls.top = false;
             next.walls.bottom = false;
-          } else if (dy === -1) {
+          } else if (current.y < next.y) {
             current.walls.bottom = false;
             next.walls.top = false;
           }
-          
+
           current = next;
           current.visited = true;
         } else if (stack.length > 0) {
@@ -166,125 +189,136 @@ export default function CyberMaze({ isEnabled = true, color = 'green', opacity =
         }
       }
 
-      return grid;
+      mazeRef.current = { grid, cols, rows };
     };
 
-    mazeRef.current = generateMaze();
+    const renderPackets = (time) => {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
 
-    // Animation loop
-    let animationId;
-    const animate = (time) => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw maze with glow effects
-      for (let x = 0; x < cols; x++) {
-        for (let y = 0; y < rows; y++) {
-          const cell = mazeRef.current[x][y];
-          const cellCenterX = x * gridSize + gridSize / 2;
-          const cellCenterY = y * gridSize + gridSize / 2;
-          const mouseDistance = Math.sqrt(
-            Math.pow(cellCenterX - mousePos.x, 2) + 
-            Math.pow(cellCenterY - mousePos.y, 2)
-          );
-          
-          cell.draw(ctx, time, mouseDistance);
-        }
-      }
-
-      // Draw floating data packets (fewer and slower)
-      drawDataPackets(ctx, time);
-      
-      animationId = requestAnimationFrame(animate);
-    };
-
-    // Fewer, slower data packets with color support
-    const currentColors = colorMap[color];
-    const dataPackets = Array.from({ length: 4 }, () => ({ // Reduced from 8 to 4
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      dx: (Math.random() - 0.5) * 0.2, // Much slower movement
-      dy: (Math.random() - 0.5) * 0.2,
-      size: Math.random() * 2 + 0.5, // Smaller particles
-      color: Math.random() > 0.5 ? `rgba(${currentColors.primary}, 0.3)` : `rgba(${currentColors.secondary}, 0.3)`,
-      pulseOffset: Math.random() * Math.PI * 2
-    }));
-
-    const drawDataPackets = (ctx, time) => {
-      dataPackets.forEach(packet => {
-        // Update position (slower)
+      packetsRef.current.forEach((packet) => {
         packet.x += packet.dx;
         packet.y += packet.dy;
-        
-        // Bounce off edges
-        if (packet.x <= 0 || packet.x >= canvas.width) packet.dx *= -1;
-        if (packet.y <= 0 || packet.y >= canvas.height) packet.dy *= -1;
-        
-        // Slower pulse effect
-        const pulse = Math.sin(time * 0.001 + packet.pulseOffset) * 0.3 + 0.4;
-        const size = packet.size * (1 + pulse * 0.3);
-        
-        // Draw packet with less glow
-        ctx.fillStyle = packet.color;
-        ctx.shadowColor = packet.color;
-        ctx.shadowBlur = 5; // Reduced glow
+
+        if (packet.x <= 0 || packet.x >= width) packet.dx *= -1;
+        if (packet.y <= 0 || packet.y >= height) packet.dy *= -1;
+
+        const pulse = Math.sin(time * 0.001 + packet.pulseOffset) * 0.3 + 0.5;
+        const size = packet.size * (1 + pulse * 0.25);
+        const fillColor = `rgba(${packet.color}, ${0.3 * safeOpacity})`;
+
+        ctx.fillStyle = fillColor;
+        ctx.shadowColor = fillColor;
+        ctx.shadowBlur = 6;
         ctx.beginPath();
         ctx.arc(packet.x, packet.y, size, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
-        
-        // Shorter, more subtle trail
-        ctx.strokeStyle = packet.color.replace('0.3', '0.15');
-        ctx.lineWidth = 0.5;
+
+        ctx.strokeStyle = `rgba(${packet.color}, ${0.12 * safeOpacity})`;
+        ctx.lineWidth = 0.6;
         ctx.beginPath();
-        ctx.moveTo(packet.x - packet.dx * 5, packet.y - packet.dy * 5);
+        ctx.moveTo(packet.x - packet.dx * 6, packet.y - packet.dy * 6);
         ctx.lineTo(packet.x, packet.y);
         ctx.stroke();
       });
     };
 
-    animate(0);
+    const drawFrame = (time) => {
+      const { grid, cols, rows } = mazeRef.current;
+      if (!grid.length) {
+        animationRef.current = requestAnimationFrame(drawFrame);
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+      const { x, y } = mousePosRef.current;
+
+      for (let col = 0; col < cols; col += 1) {
+        for (let row = 0; row < rows; row += 1) {
+          const cell = grid[col][row];
+          const centerX = col * GRID_SIZE + GRID_SIZE / 2;
+          const centerY = row * GRID_SIZE + GRID_SIZE / 2;
+          const distance = Math.hypot(centerX - x, centerY - y);
+          cell.draw(ctx, time, palette, distance, safeOpacity);
+        }
+      }
+
+      renderPackets(time);
+      animationRef.current = requestAnimationFrame(drawFrame);
+    };
+
+    resizeCanvas();
+    generateMaze();
+    packetsRef.current = createPackets(canvas.clientWidth, canvas.clientHeight, palette);
+    canvas.style.opacity = safeOpacity;
+
+    animationRef.current = requestAnimationFrame(drawFrame);
+
+    const handleResize = () => {
+      if (resizeRafRef.current) {
+        cancelAnimationFrame(resizeRafRef.current);
+      }
+
+      resizeRafRef.current = requestAnimationFrame(() => {
+        resizeCanvas();
+        generateMaze();
+        packetsRef.current = createPackets(canvas.clientWidth, canvas.clientHeight, palette);
+        resizeRafRef.current = null;
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      if (animationId) {
-        cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', handleResize);
+      if (resizeRafRef.current) {
+        cancelAnimationFrame(resizeRafRef.current);
+        resizeRafRef.current = null;
+      }
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
       }
     };
-  }, [mousePos, isEnabled, color, opacity]);
+  }, [color, isEnabled, opacity]);
 
-  // Mouse tracking (throttled for better performance)
   useEffect(() => {
-    if (!isEnabled) return;
-    
-    let mouseTimeout;
-    const handleMouseMove = (e) => {
-      if (mouseTimeout) return;
-      
-      mouseTimeout = setTimeout(() => {
-        setMousePos({ x: e.clientX, y: e.clientY });
-        mouseTimeout = null;
-      }, 50); // Throttle mouse updates
+    if (!isEnabled) {
+      return;
+    }
+
+    const handleMouseMove = (event) => {
+      pendingMouseRef.current = { x: event.clientX, y: event.clientY };
+      if (!mouseUpdateRef.current) {
+        mouseUpdateRef.current = requestAnimationFrame(() => {
+          mousePosRef.current = pendingMouseRef.current;
+          mouseUpdateRef.current = null;
+        });
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      if (mouseTimeout) clearTimeout(mouseTimeout);
+      if (mouseUpdateRef.current) {
+        cancelAnimationFrame(mouseUpdateRef.current);
+        mouseUpdateRef.current = null;
+      }
     };
   }, [isEnabled]);
 
-  if (!isEnabled) return null;
+  if (!isEnabled) {
+    return null;
+  }
 
   return (
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none"
-      style={{ 
-        zIndex: 1,
-        opacity: opacity,
-        mixBlendMode: 'screen',
-        filter: 'blur(0.5px)' // Added subtle blur
-      }}
+      style={{ zIndex: 1, mixBlendMode: 'screen', filter: 'blur(0.4px)' }}
+      aria-hidden="true"
     />
   );
 }

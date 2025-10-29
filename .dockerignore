@@ -1,70 +1,29 @@
-# =============================================
-# DOCKER IGNORE FILE
-# Security: Exclude sensitive files from build
-# =============================================
-
-# Backend files (not needed for frontend-only deployment)
-backend/
-backend.py
-requirements.txt
-
-# Development files
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Testing
-/coverage
-*.test.js
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Git
-.git/
+# Git metadata
+.git
 .gitignore
 
-# Logs
-*.log
+# Editor settings
+.vscode/
+.idea/
 
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
+# Dependency caches
+node_modules/
+frontend/node_modules/
+frontend/.vite/
 
-# Build artifacts (will be rebuilt)
-build/
-dist/
+# Test and tooling directories
+tests/
 
-# Documentation
-README.md
+# Documentation and local configs
 docs/
+README.md
+CHANGELOG.md
 
-# Docker files
-Dockerfile*
-docker-compose*
+# Logs and temporary files
+*.log
+.DS_Store
 
-# Security-sensitive files
-.ssh/
-.gnupg/
-*.key
-*.pem
-*.p12
-*.crt
+# Python caches
+__pycache__/
+.venv/
+venv/
