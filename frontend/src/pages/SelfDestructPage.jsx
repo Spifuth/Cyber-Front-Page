@@ -21,7 +21,6 @@ export default function SelfDestructPage() {
    */
   const registerTimeout = (callback, delay) => {
     const id = setTimeout(() => {
-      timeoutIdsRef.current.delete(id);
       callback();
     }, delay);
     timeoutIdsRef.current.add(id);
