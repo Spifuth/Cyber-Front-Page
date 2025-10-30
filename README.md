@@ -1,5 +1,45 @@
 # Cyber Front Page
 
+## Badges
+
+![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)
+![Release](https://github.com/<owner>/<repo>/actions/workflows/release.yml/badge.svg)
+
+## What is shipped
+
+- SPA Vite/React servie par Caddy sur le port 80, prête pour des labels Traefik v3.
+- Frontend offline-first (`VITE_USE_MOCK=1`) avec backend FastAPI optionnel.
+- Artefacts `frontend/dist` priorisés : l'image Docker consomme l'artefact quand disponible.
+
+## How CI works
+
+- **CI (PRs / branche dev)** : installe les dépendances (lockfile initial puis mode immutable), construit le frontend, audite les dépendances JS (échec uniquement si vulnérabilité high/critical), audite Python, construit l'image Docker et réalise un smoke test `/health`. Aucun push d'image.
+- **Release (main & tags)** : reconstruit le frontend, construit et pousse des images multi-arch vers GHCR avec tags semver lors des tags `v*.*.*`.
+
+## Triggers
+
+- Ouvrir une PR → le workflow CI valide les builds et audits.
+- Merger sur `main` → le workflow Release pousse des tags `:sha` et `:main`.
+- Pousser un tag `vX.Y.Z` → le workflow Release pousse également `:X.Y.Z` et `:X.Y`.
+
+## Pulling the image
+
+```bash
+docker pull ghcr.io/<owner>/<repo>:vX.Y.Z
+docker run -p 8080:80 ghcr.io/<owner>/<repo>:vX.Y.Z
+```
+
+## Config & env
+
+- `.env.example` définit `SITE_DOMAIN`, `SITE_NAME`, `SITE_THEME`, `VITE_USE_MOCK`.
+- Derrière Traefik v3, le service écoute sur le port 80.
+
+## Troubleshooting
+
+- Blank page → assurez-vous que `VITE_USE_MOCK=1` ou fournissez des fichiers `/public/data/*.json`.
+- High CPU → désactivez CyberMaze dans l'UI ; le changement d'onglet met en pause les animations.
+- CI fails on audit → seuls les niveaux high/critical doivent échouer (`npm audit --audit-level=high`).
+
 Branche `dev` pour une vitrine cyberpunk offline-ready : frontend Vite/React, backend FastAPI optionnel et livraison via Caddy + Traefik. Cette branche est pensée pour fonctionner sans accès réseau local, tout en restant prête pour une CI GitHub connectée.
 
 ## Aperçu du projet
@@ -38,27 +78,6 @@ VITE_PROFILE_* (name, role, description, tech stack)
 - Les liens externes sont neutralisés (`href="#"`) tant que le mode mock est actif.
 - Les assets sont des SVG statiques (pas de screenshots dynamiques).
 - L'audio/streaming n'est pas embarqué ; les sections affichent un message explicite.
-
-> **Troubleshooting**
-> - **Blank page?** Assurez-vous que `VITE_USE_MOCK=1` ou fournissez des JSON dans `/public/data/*.json`.
-> - **High CPU?** Désactivez CyberMaze dans l'interface ou basculez d'onglet (pause auto).
-
-## Build CI GitHub
-
-Le workflow `.github/workflows/ci.yml` réalise :
-
-1. **Job frontend**
-   - Node 20 + Corepack, génération unique de `yarn.lock` si absent (`YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --mode=update-lockfile`) puis `yarn install --immutable`.
-   - `yarn build` puis upload de l'artefact `frontend/dist`.
-   - Audit JS via `npm audit --audit-level=high` (les vulnérabilités low/moderate n'échouent pas le job).
-2. **Job backend-audit**
-   - Python 3.11, installation des dépendances puis `pip-audit -r backend/requirements.txt`.
-3. **Job docker-image**
-   - buildx, récupération de l'artefact `frontend-dist` et build `linux/amd64` avec `outputs: type=docker` pour charger l'image localement.
-   - Smoke test : `docker run -p 8080:80` puis `curl -fsS http://localhost:8080/health`.
-   - Push multi-arch optionnel (amd64/arm64) vers GHCR si `secrets.GHCR_PUSH == 'true'`.
-
-> ⚠️ Aucun `yarn.lock` n'est commité ici : il sera généré automatiquement lors du premier run CI (`--mode=update-lockfile`) puis les installations resteront immuables.
 
 ## Docker (CI ou prod)
 
