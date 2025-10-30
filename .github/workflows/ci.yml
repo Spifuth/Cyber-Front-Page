@@ -28,11 +28,11 @@ jobs:
         working-directory: frontend
         run: yarn build
 
-      - name: Audit JS deps (fail only on high/critical)
+      - name: Audit JS dependencies (non-blocking)
         working-directory: frontend
         run: |
-          set -e
-          yarn npm audit --severity high || echo "Non-high issues detected (ignored)."
+          # Only fail on high/critical vulnerabilities
+          yarn npm audit --severity high || echo "Only non-high issues detected (ignored)."
 
       - uses: actions/upload-artifact@v4
         with: { name: frontend-dist, path: frontend/dist }

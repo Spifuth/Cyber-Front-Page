@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.x",
+  "packageManager": "yarn@4.4.1",
   "resolutions": {
     "esbuild": "^0.24.3"
   },
