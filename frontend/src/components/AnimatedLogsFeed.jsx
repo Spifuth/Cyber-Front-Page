@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const AnimatedLogsFeed = ({ isVisible, onClose }) => {
   const [logs, setLogs] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const logsRef = useRef(null);
   const logIdRef = useRef(0);
 
@@ -120,7 +121,24 @@ const AnimatedLogsFeed = ({ isVisible, onClose }) => {
   };
 
   useEffect(() => {
-    if (!isVisible || isPaused) return;
+    if (typeof document === 'undefined') {
+      return undefined;
+    }
+
+    const handleVisibilityChange = () => {
+      setIsTabHidden(document.visibilityState === 'hidden');
+    };
+
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible || isPaused || isTabHidden) return;
 
     const interval = setInterval(() => {
       const newLog = generateRandomLog();
@@ -132,7 +150,7 @@ const AnimatedLogsFeed = ({ isVisible, onClose }) => {
     }, Math.random() * 2000 + 1000); // Random interval between 1-3 seconds
 
     return () => clearInterval(interval);
-  }, [isVisible, isPaused]);
+  }, [isVisible, isPaused, isTabHidden]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -144,7 +162,11 @@ const AnimatedLogsFeed = ({ isVisible, onClose }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-4 right-4 w-96 h-80 bg-black/90 border border-green-500/50 rounded-lg overflow-hidden backdrop-blur-sm z-30">
+    <div
+      className="fixed top-4 right-4 w-96 h-80 bg-black/90 border border-green-500/50 rounded-lg overflow-hidden backdrop-blur-sm z-30"
+      role="region"
+      aria-label="Flux de logs en direct"
+    >
       {/* Header */}
       <div className="flex items-center justify-between bg-gray-800/90 px-4 py-2 border-b border-green-500/30">
         <div className="flex items-center space-x-2">
@@ -153,20 +175,27 @@ const AnimatedLogsFeed = ({ isVisible, onClose }) => {
         </div>
         <div className="flex items-center space-x-2">
           <button
+            type="button"
             onClick={() => setIsPaused(!isPaused)}
             className="text-yellow-400 hover:text-yellow-300 text-xs px-2 py-1 border border-yellow-400/50 rounded"
+            aria-pressed={isPaused}
+            aria-label={isPaused ? 'Reprendre le flux de logs' : 'Mettre en pause le flux de logs'}
           >
             {isPaused ? '▶️' : '⏸️'}
           </button>
           <button
+            type="button"
             onClick={() => setLogs([])}
             className="text-red-400 hover:text-red-300 text-xs px-2 py-1 border border-red-400/50 rounded"
+            aria-label="Effacer les logs visibles"
           >
             🗑️
           </button>
           <button
+            type="button"
             onClick={onClose}
             className="text-gray-400 hover:text-gray-300 text-xs px-2 py-1 border border-gray-400/50 rounded"
+            aria-label="Fermer le flux de logs"
           >
             ✕
           </button>
@@ -174,9 +203,13 @@ const AnimatedLogsFeed = ({ isVisible, onClose }) => {
       </div>
 
       {/* Logs Content */}
-      <div 
+      <div
         ref={logsRef}
         className="h-full overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-green-500/50 scrollbar-track-gray-800/50"
+        role="log"
+        aria-live="polite"
+        aria-relevant="additions"
+        aria-label="Événements système"
       >
         {logs.map((log) => (
           <div key={log.id} className="text-xs font-mono flex items-start space-x-2 animate-fadeIn">

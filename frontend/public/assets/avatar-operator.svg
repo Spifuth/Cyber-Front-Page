@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" fill="#0f172a" rx="16" />
+  <circle cx="60" cy="44" r="24" fill="#22c55e" opacity="0.85" />
+  <rect x="26" y="70" width="68" height="34" rx="12" fill="#0ea5e9" opacity="0.65" />
+  <text x="60" y="48" font-family="monospace" font-size="16" text-anchor="middle" fill="#0f172a">fenrir</text>
+</svg>

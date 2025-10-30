@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Shield, Server, Code, Monitor } from 'lucide-react';
-import { mockData } from '../mock/data';
+import { getMockProfile } from '../mocks/mockBackend';
+import { getEnvVar, isMockEnabled } from '../lib/env';
 
 export default function About() {
-  const { profile } = mockData;
+  const mockMode = isMockEnabled();
+  const profile = useMemo(() => {
+    const baseProfile = getMockProfile();
+    if (!mockMode) {
+      return {
+        ...baseProfile,
+        name: getEnvVar('VITE_PROFILE_NAME', baseProfile.name),
+        role: getEnvVar('VITE_PROFILE_ROLE', baseProfile.role),
+        description: getEnvVar('VITE_PROFILE_DESCRIPTION', baseProfile.description),
+        techStack: getEnvVar('VITE_PROFILE_TECH_STACK', baseProfile.techStack.join(', '))
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean),
+        avatar: getEnvVar('VITE_PROFILE_AVATAR', baseProfile.avatar)
+      };
+    }
+    return baseProfile;
+  }, [mockMode]);
 
   const skills = [
     { icon: Shield, name: 'Cybersécurité', color: 'text-red-400' },

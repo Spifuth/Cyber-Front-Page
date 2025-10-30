@@ -1,24 +1,13 @@
-# Caddyfile for Cyberpunk Portfolio
 :80 {
-    root * /usr/share/caddy
-    file_server
-    try_files {path} {path}/ /index.html
-    
-    # Security headers
-    header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options DENY
-        X-XSS-Protection "1; mode=block"
-        Referrer-Policy strict-origin-when-cross-origin
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self';"
-    }
-    
-    # Compression
-    encode gzip
-    
-    # Cache static assets
-    @static {
-        path *.css *.js *.png *.jpg *.jpeg *.gif *.ico *.svg *.woff *.woff2
-    }
-    header @static Cache-Control "public, max-age=31536000"
+  root * /srv/app
+  encode zstd gzip
+
+  # Health endpoint
+  route /health {
+    respond "OK" 200
+  }
+
+  # Static file routing
+  try_files {path} /index.html
+  file_server
 }

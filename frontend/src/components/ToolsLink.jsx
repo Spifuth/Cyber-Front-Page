@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Wrench, ExternalLink, Zap } from 'lucide-react';
-import { mockData } from '../mock/data';
+import { getMockTools } from '../mocks/mockBackend';
+import { getEnvVar, getExternalUrl } from '../lib/env';
 
 export default function ToolsLink() {
-  const { tools } = mockData;
+  const tools = useMemo(() => {
+    const fallback = getMockTools();
+    return {
+      name: getEnvVar('VITE_TOOLS_NAME', fallback.name),
+      description: getEnvVar('VITE_TOOLS_DESCRIPTION', fallback.description),
+      url: getExternalUrl('VITE_TOOLS_URL', '#')
+    };
+  }, []);
 
   return (
     <div className="group">

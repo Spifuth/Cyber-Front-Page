@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Skull, Zap, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,47 @@ export default function SelfDestructPage() {
   const [countdown, setCountdown] = useState(3);
   const [showCountdown, setShowCountdown] = useState(false);
   const [allLinesShown, setAllLinesShown] = useState(false);
+  const timeoutIdsRef = useRef(new Set());
+  const intervalIdsRef = useRef(new Set());
+
+  /**
+   * Registers a timeout and tracks it for automatic cleanup on unmount.
+   * Prevents memory leaks by ensuring all timeouts are cleared when the component unmounts.
+   * @param {Function} callback - The function to execute after the delay
+   * @param {number} delay - The delay in milliseconds before executing the callback
+   * @returns {number} The timeout ID that can be used to cancel the timeout
+   */
+  const registerTimeout = (callback, delay) => {
+    const id = setTimeout(() => {
+      callback();
+    }, delay);
+    timeoutIdsRef.current.add(id);
+    return id;
+  };
+
+  /**
+   * Registers an interval and tracks it for automatic cleanup on unmount.
+   * Prevents memory leaks by ensuring all intervals are cleared when the component unmounts.
+   * @param {Function} callback - The function to execute repeatedly at the specified interval
+   * @param {number} delay - The delay in milliseconds between each callback execution
+   * @returns {number} The interval ID that can be used to cancel the interval
+   */
+  const registerInterval = (callback, delay) => {
+    const id = setInterval(callback, delay);
+    intervalIdsRef.current.add(id);
+    return id;
+  };
+
+  /**
+   * Clears a registered interval and removes it from the tracking set.
+   * Should be used instead of clearInterval directly to maintain proper cleanup tracking.
+   * @param {number} id - The interval ID returned from registerInterval
+   * @returns {void}
+   */
+  const clearRegisteredInterval = (id) => {
+    clearInterval(id);
+    intervalIdsRef.current.delete(id);
+  };
 
   const lines = [
     { text: '[!] WARNING: UNAUTHORIZED SYSTEM ACCESS DETECTED', delay: 800, type: 'warning' },
@@ -38,25 +79,28 @@ export default function SelfDestructPage() {
 
   useEffect(() => {
     if (currentLine < lines.length) {
-      const timer = setTimeout(() => {
+      const timer = registerTimeout(() => {
         setCurrentLine(prev => prev + 1);
       }, lines[currentLine]?.delay || 1000);
-      
-      return () => clearTimeout(timer);
+
+      return () => {
+        clearTimeout(timer);
+        timeoutIdsRef.current.delete(timer);
+      };
     } else {
       // Start meltdown
-      const meltdownTimer = setTimeout(() => {
+      const meltdownTimer = registerTimeout(() => {
         setShowMeltdown(true);
-        
-        setTimeout(() => {
+
+        registerTimeout(() => {
           setShowCountdown(true);
-          
+
           // Countdown timer
-          const countdownInterval = setInterval(() => {
+          const countdownInterval = registerInterval(() => {
             setCountdown(prev => {
               if (prev <= 1) {
-                clearInterval(countdownInterval);
-                setTimeout(() => {
+                clearRegisteredInterval(countdownInterval);
+                registerTimeout(() => {
                   setAllLinesShown(true);
                 }, 1000);
                 return 0;
@@ -66,10 +110,21 @@ export default function SelfDestructPage() {
           }, 1000);
         }, 2000);
       }, 1000);
-      
-      return () => clearTimeout(meltdownTimer);
+
+      return () => {
+        clearTimeout(meltdownTimer);
+        timeoutIdsRef.current.delete(meltdownTimer);
+      };
     }
   }, [currentLine, lines]);
+
+  useEffect(() => () => {
+    // Cleanup all registered timers on component unmount
+    timeoutIdsRef.current.forEach((id) => clearTimeout(id));
+    intervalIdsRef.current.forEach((id) => clearInterval(id));
+    timeoutIdsRef.current.clear();
+    intervalIdsRef.current.clear();
+  }, []);
 
   const getLineColor = (type) => {
     switch (type) {

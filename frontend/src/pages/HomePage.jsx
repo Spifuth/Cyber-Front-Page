@@ -17,6 +17,25 @@ export default function HomePage() {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const navigate = useNavigate();
   const colorPickerRef = useRef(null);
+  const terminalButtonRef = useRef(null);
+  const terminalDialogRef = useRef(null);
+
+  useEffect(() => {
+    if (!isTerminalOpen) {
+      terminalButtonRef.current?.focus();
+      return;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setIsTerminalOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isTerminalOpen]);
 
   const colorOptions = [
     { name: 'green', color: 'rgb(34, 197, 94)', label: 'Matrix Green' },
@@ -62,9 +81,12 @@ export default function HomePage() {
       {/* Maze Control Panel */}
       <div className="fixed top-8 right-8 z-50 flex flex-col gap-2">
         <button
+          type="button"
           onClick={() => setIsMazeEnabled(!isMazeEnabled)}
           className="bg-gray-900/90 border border-blue-500/50 text-blue-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-blue-400 transition-all duration-300 backdrop-blur-sm group"
           title={`${isMazeEnabled ? 'Disable' : 'Enable'} Cyber Maze`}
+          aria-pressed={isMazeEnabled}
+          aria-label={isMazeEnabled ? 'Désactiver le fond Cyber Maze' : 'Activer le fond Cyber Maze'}
         >
           {isMazeEnabled ? (
             <EyeOff className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
@@ -77,16 +99,25 @@ export default function HomePage() {
           <>
             <div className="relative" ref={colorPickerRef}>
               <button
+                type="button"
                 onClick={() => setShowColorPicker(!showColorPicker)}
                 className="bg-gray-900/90 border border-violet-500/50 text-violet-400 p-3 rounded-lg hover:bg-gray-800/90 hover:border-violet-400 transition-all duration-300 backdrop-blur-sm group"
                 title="Change Maze Color"
+                aria-haspopup="menu"
+                aria-expanded={showColorPicker}
+                aria-controls="maze-color-menu"
+                aria-label="Changer la couleur du fond Cyber Maze"
               >
                 <Palette className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
               </button>
               
               {/* Color Picker Menu */}
               {showColorPicker && (
-                <div className="absolute right-0 top-full mt-2 bg-gray-900/95 border border-violet-500/30 rounded-lg p-3 backdrop-blur-sm min-w-[200px] shadow-lg animate-fade-in">
+                <div
+                  id="maze-color-menu"
+                  role="menu"
+                  className="absolute right-0 top-full mt-2 bg-gray-900/95 border border-violet-500/30 rounded-lg p-3 backdrop-blur-sm min-w-[200px] shadow-lg animate-fade-in"
+                >
                   <div className="text-violet-400 text-xs font-mono mb-3 text-center">
                     Select Maze Color
                   </div>
@@ -94,10 +125,14 @@ export default function HomePage() {
                     {colorOptions.map((option) => (
                       <button
                         key={option.name}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={mazeColor === option.name}
+                        aria-label={option.label}
                         onClick={() => selectColor(option.name)}
                         className={`w-full flex items-center space-x-3 p-2 rounded-lg transition-all duration-300 hover:bg-gray-800/50 ${
-                          mazeColor === option.name 
-                            ? 'bg-gray-700/50 border border-violet-400/30' 
+                          mazeColor === option.name
+                            ? 'bg-gray-700/50 border border-violet-400/30'
                             : 'border border-transparent'
                         }`}
                       >
@@ -119,9 +154,11 @@ export default function HomePage() {
             </div>
             
             <button
+              type="button"
               onClick={toggleOpacity}
               className="bg-gray-900/90 border border-green-500/50 text-green-400 p-2 rounded-lg hover:bg-gray-800/90 hover:border-green-400 transition-all duration-300 backdrop-blur-sm group text-xs font-mono"
               title="Toggle Opacity"
+              aria-label="Basculer l'opacité du fond Cyber Maze"
             >
               {Math.round(mazeOpacity * 100)}%
             </button>
@@ -364,8 +401,15 @@ export default function HomePage() {
         {/* Terminal Toggle Button */}
         <div className="fixed bottom-8 right-8 z-50">
           <button
+            type="button"
+            ref={terminalButtonRef}
             onClick={() => setIsTerminalOpen(!isTerminalOpen)}
             className="bg-gray-900/90 border border-green-500/50 text-green-400 p-4 rounded-lg hover:bg-gray-800/90 hover:border-green-400 transition-all duration-300 backdrop-blur-sm group"
+            aria-pressed={isTerminalOpen}
+            aria-haspopup="dialog"
+            aria-expanded={isTerminalOpen}
+            aria-controls="cyber-terminal-modal"
+            aria-label={isTerminalOpen ? 'Fermer le terminal interactif' : 'Ouvrir le terminal interactif'}
           >
             {isTerminalOpen ? (
               <X className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
@@ -377,9 +421,17 @@ export default function HomePage() {
 
         {/* Terminal Modal */}
         {isTerminalOpen && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center p-2 sm:p-4">
-            <div className="w-full h-full sm:h-[85vh] md:h-[90vh] lg:h-[85vh] xl:max-w-6xl xl:h-[80vh] bg-gray-900 border border-green-500/50 rounded-lg overflow-hidden flex flex-col">
-              <Terminal 
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center p-2 sm:p-4" role="presentation">
+            <div
+              id="cyber-terminal-modal"
+              ref={terminalDialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="terminal-window-title"
+              className="w-full h-full sm:h-[85vh] md:h-[90vh] lg:h-[85vh] xl:max-w-6xl xl:h-[80vh] bg-gray-900 border border-green-500/50 rounded-lg overflow-hidden flex flex-col"
+              tabIndex={-1}
+            >
+              <Terminal
                 onNavigateToUnderground={() => {
                   setIsTerminalOpen(false);
                   navigate('/underground');
