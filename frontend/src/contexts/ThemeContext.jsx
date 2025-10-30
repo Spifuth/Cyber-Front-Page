@@ -2,6 +2,10 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
+/**
+ * Hook exposing the current theme state managed by {@link ThemeProvider}.
+ * @returns {{theme: string, setTheme: (next: string) => void}}
+ */
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
@@ -10,6 +14,10 @@ export function useTheme() {
   return context;
 }
 
+/**
+ * Provides theme state to the application and syncs it with the document root.
+ * Defaults to the "dark" theme to preserve the intended styling offline.
+ */
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('dark');
 
@@ -30,3 +38,4 @@ export function ThemeProvider({ children }) {
     </ThemeContext.Provider>
   );
 }
+

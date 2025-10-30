@@ -107,6 +107,10 @@ const collectionMap = {
   certs
 };
 
+/**
+ * Returns a deep-cloned mock collection matching the given name.
+ * Throws when the requested fixture is missing to surface configuration issues early.
+ */
 export const getMockCollection = (name) => {
   const payload = collectionMap[name];
   if (!payload) {
@@ -115,7 +119,11 @@ export const getMockCollection = (name) => {
   return clone(payload);
 };
 
+/** Deep clones the mock profile payload. */
 export const getMockProfile = () => clone(mockData.profile);
+/** Deep clones the mock GitHub payload. */
 export const getMockGithub = () => clone(mockData.github);
+/** Deep clones the mock tools payload. */
 export const getMockTools = () => clone(mockData.tools);
+/** Deep clones the mock terminal payload. */
 export const getMockTerminal = () => clone(mockData.terminal);

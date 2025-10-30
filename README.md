@@ -9,6 +9,12 @@ Branche `dev` pour une vitrine cyberpunk offline-ready : frontend Vite/React, ba
 - **docker/** : Dockerfile multi-stage (Node → Caddy) + docker-compose avec labels Traefik v3.
 - **.github/** : pipeline CI orchestrant build frontend, audit Python et image Docker multi-arch.
 
+## Architecture en un coup d'œil
+
+- Cartographie complète et catalogue des fonctions disponibles dans [`docs/LOGIC_AUDIT.md`](docs/LOGIC_AUDIT.md).
+- Résumé des flux de données (mocks vs backend), invariants critiques et TODOs priorisés.
+- À utiliser comme point d'entrée rapide avant toute contribution technique.
+
 ## Mode offline
 
 Le frontend bascule automatiquement sur des mocks lorsque `VITE_USE_MOCK=1` (valeur par défaut). Les données sont servies depuis `frontend/public/data/*.json` et des placeholders locaux (`frontend/public/assets`).
@@ -38,17 +44,15 @@ VITE_PROFILE_* (name, role, description, tech stack)
 Le workflow `.github/workflows/ci.yml` réalise :
 
 1. **Job frontend**
-   - Node 20 + Corepack, installation qui génère `yarn.lock` une seule fois (`YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --mode=update-lockfile` si besoin) puis `yarn install --immutable`.
+   - Node 20 + Corepack, génération unique de `yarn.lock` si absent (`YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --mode=update-lockfile`) puis `yarn install --immutable`.
    - `yarn build` puis upload de l'artefact `frontend/dist`.
-   - Audit JS avec `yarn npm audit --severity high` (les vulnérabilités low/moderate ne bloquent plus).
-   - Support optionnel de `NPM_REGISTRY`.
+   - Audit JS via `npm audit --audit-level=high` (les vulnérabilités low/moderate n'échouent pas le job).
 2. **Job backend-audit**
-   - Python 3.11, installation des dépendances puis `pip-audit`.
-   - Support des variables `PIP_INDEX_URL`, `HTTP(S)_PROXY`, `NO_PROXY`.
+   - Python 3.11, installation des dépendances puis `pip-audit -r backend/requirements.txt`.
 3. **Job docker-image**
-   - buildx multi-arch, build context enrichi avec `frontend/dist`.
-   - `build-args`: `NPM_REGISTRY`, `USE_LOCAL_DIST=1`.
-   - Push optionnel vers GHCR via `secrets.GHCR_PUSH`.
+   - buildx, récupération de l'artefact `frontend-dist` et build `linux/amd64` avec `outputs: type=docker` pour charger l'image localement.
+   - Smoke test : `docker run -p 8080:80` puis `curl -fsS http://localhost:8080/health`.
+   - Push multi-arch optionnel (amd64/arm64) vers GHCR si `secrets.GHCR_PUSH == 'true'`.
 
 > ⚠️ Aucun `yarn.lock` n'est commité ici : il sera généré automatiquement lors du premier run CI (`--mode=update-lockfile`) puis les installations resteront immuables.
 
@@ -72,7 +76,6 @@ Le `Dockerfile` multi-stage :
 # dans GitHub Actions (job docker-image)
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  --build-arg NPM_REGISTRY=${{ vars.NPM_REGISTRY }} \
   --build-arg USE_LOCAL_DIST=1 \
   -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
 ```
