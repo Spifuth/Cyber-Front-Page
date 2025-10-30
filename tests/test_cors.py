@@ -5,6 +5,8 @@ from backend.server import app
 
 client = TestClient(app)
 
+# Use only the first origin from TRUSTED_ORIGINS for testing
+# The actual application supports multiple origins, but tests only need one
 TRUSTED_ORIGIN = os.getenv("TRUSTED_ORIGINS", "http://localhost:5173").split(",")[0].strip()
 
 
