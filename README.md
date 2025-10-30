@@ -2,6 +2,45 @@
 
 Branche `dev` pour une vitrine cyberpunk offline-ready : frontend Vite/React, backend FastAPI optionnel et livraison via Caddy + Traefik. Cette branche est pensée pour fonctionner sans accès réseau local, tout en restant prête pour une CI GitHub connectée.
 
+## Badges
+
+![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)
+![Release](https://github.com/<owner>/<repo>/actions/workflows/release.yml/badge.svg)
+
+## What is shipped
+
+- SPA built with Vite, served by Caddy (port 80), Traefik v3 labels ready.
+- Offline-first (`VITE_USE_MOCK=1`), backend optional.
+
+## How CI works
+
+- **CI (PRs / dev branch)** : installs (first-lock then immutable), builds frontend, audits JS (fail only high/critical), audits Python, builds Docker, smoke-tests `/health`. Does not push images.
+- **Release (main & tags)** : rebuilds frontend, builds & pushes multi-arch images to GHCR avec semver tags on `v*.*.*`.
+
+## Triggers
+
+- Open a PR → CI runs verification.
+- Merge to main → Release workflow pushes `:sha` and `:branch` tags.
+- Push a tag `vX.Y.Z` → also pushes `:X.Y.Z` et `:X.Y`.
+
+## Pulling the image
+
+```bash
+docker pull ghcr.io/<owner>/<repo>:vX.Y.Z
+docker run -p 8080:80 ghcr.io/<owner>/<repo>:vX.Y.Z
+```
+
+## Config & env
+
+- `.env.example` shows `SITE_DOMAIN`, `SITE_NAME`, `SITE_THEME`, `VITE_USE_MOCK`.
+- Behind Traefik v3, service listens on port 80.
+
+## Troubleshooting
+
+- Blank page → ensure `VITE_USE_MOCK=1` or provide `/public/data/*.json`.
+- High CPU → disable CyberMaze in UI; tab switch auto-pauses animations.
+- CI fails on audit → only high/critical should fail (`npm audit --audit-level=high`).
+
 ## Aperçu du projet
 
 - **frontend/** : SPA Vite + Tailwind, thèmes et terminal interactif.
@@ -56,7 +95,8 @@ Le workflow `.github/workflows/ci.yml` réalise :
 3. **Job docker-image**
    - buildx, récupération de l'artefact `frontend-dist` et build `linux/amd64` avec `outputs: type=docker` pour charger l'image localement.
    - Smoke test : `docker run -p 8080:80` puis `curl -fsS http://localhost:8080/health`.
-   - Push multi-arch optionnel (amd64/arm64) vers GHCR si `secrets.GHCR_PUSH == 'true'`.
+
+Le workflow `.github/workflows/release.yml` reconstruit le frontend et pousse automatiquement une image multi-arch (amd64/arm64) vers GHCR avec tags `:sha`, `:branch`, `:X.Y.Z` et `:X.Y` pour les tags `v*.*.*`.
 
 > ⚠️ Aucun `yarn.lock` n'est commité ici : il sera généré automatiquement lors du premier run CI (`--mode=update-lockfile`) puis les installations resteront immuables.
 
