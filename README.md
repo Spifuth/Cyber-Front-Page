@@ -1,174 +1,74 @@
 # Cyber Front Page
 
-Branche `dev` pour une vitrine cyberpunk offline-ready : frontend Vite/React, backend FastAPI optionnel et livraison via Caddy + Traefik. Cette branche est pensée pour fonctionner sans accès réseau local, tout en restant prête pour une CI GitHub connectée.
-
-## Badges
+Cyber Front Page is a cyberpunk-themed portfolio web app built with Vite + React, served statically by Caddy and optionally backed by FastAPI.
 
 ![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)
 ![Release](https://github.com/<owner>/<repo>/actions/workflows/release.yml/badge.svg)
 
-## What is shipped
+## Overview
 
-- SPA built with Vite, served by Caddy (port 80), Traefik v3 labels ready.
-- Offline-first (`VITE_USE_MOCK=1`), backend optional.
+Cyber Front Page showcases interactive portfolio content with an offline-first experience. The frontend ships as a Vite SPA with
+Tailwind styling, while an optional FastAPI backend augments data when mocks are disabled. Assets are designed for static hosting
+behind Caddy or Traefik, making the app easy to deploy across environments.
 
-## How CI works
-
-- **CI (PRs / dev branch)** : installs (first-lock then immutable), builds frontend, audits JS (fail only high/critical), audits Python, builds Docker, smoke-tests `/health`. Does not push images.
-- **Release (main & tags)** : rebuilds frontend, builds & pushes multi-arch images to GHCR avec semver tags on `v*.*.*`.
-
-## Triggers
-
-- Open a PR → CI runs verification.
-- Merge to main → Release workflow pushes `:sha` and `:branch` tags.
-- Push a tag `vX.Y.Z` → also pushes `:X.Y.Z` et `:X.Y`.
-
-## Pulling the image
+## Quick Start
 
 ```bash
-docker pull ghcr.io/<owner>/<repo>:vX.Y.Z
-docker run -p 8080:80 ghcr.io/<owner>/<repo>:vX.Y.Z
+# Clone the repository
+git clone https://github.com/<owner>/<repo>.git
+cd Cyber-Front-Page
+
+# Install dependencies (frontend)
+corepack enable
+yarn install --immutable
+
+# Build the production bundle
+yarn build
+
+# Run the container locally
+docker build -t cyber-front-page .
+docker run -p 8080:80 cyber-front-page
 ```
 
-## Config & env
+For additional setup scenarios, see [Installation](docs/INSTALLATION.md).
 
-- `.env.example` shows `SITE_DOMAIN`, `SITE_NAME`, `SITE_THEME`, `VITE_USE_MOCK`.
-- Behind Traefik v3, service listens on port 80.
+## Features
+
+- Offline-ready mode with mock data (`VITE_USE_MOCK=1`).
+- Interactive cyberpunk UI with ambient animations and CyberMaze screensaver.
+- Optional FastAPI backend with health checks for observability.
+- Docker image with Caddy serving static assets and `/health` endpoint.
+- Traefik v3 labels and security headers prepared for edge deployment.
+- GitHub Actions CI, release automation, and security audits.
+
+## Architecture
+
+The frontend and backend share a modular structure that separates presentation, data mocks, and API integrations. Static assets
+can be delivered directly from the built `frontend/dist` directory, while the backend extends functionality for connected installs.
+Explore diagrams and component relationships in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## CI / CD
+
+Automated GitHub Actions pipelines cover linting, builds, dependency audits, Docker packaging, and multi-arch releases.
+Review workflow triggers, artifacts, and release tagging in [docs/CI-CD.md](docs/CI-CD.md).
+
+## Configuration
+
+Environment flags control branding, data sources, and integrations. Refer to [docs/CONFIG.md](docs/CONFIG.md) for the full variable list.
+
+## Deployment
+
+Deploy as a Docker container served by Caddy with optional Traefik routing rules. See
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for Docker build flags, Traefik labels, and runtime guidance.
 
 ## Troubleshooting
 
-- Blank page → ensure `VITE_USE_MOCK=1` or provide `/public/data/*.json`.
-- High CPU → disable CyberMaze in UI; tab switch auto-pauses animations.
-- CI fails on audit → only high/critical should fail (`npm audit --audit-level=high`).
+Common fixes include enabling mock mode for offline demos, pausing CyberMaze to reduce CPU usage, and validating `/health` in CI.
+More scenarios are documented in [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
 
-## Aperçu du projet
+## License / Credits
 
-- **frontend/** : SPA Vite + Tailwind, thèmes et terminal interactif.
-- **backend/** : API FastAPI (MongoDB facultatif, stockage mémoire par défaut).
-- **docker/** : Dockerfile multi-stage (Node → Caddy) + docker-compose avec labels Traefik v3.
-- **.github/** : pipeline CI orchestrant build frontend, audit Python et image Docker multi-arch.
+Released under the MIT License. Crafted by the Cyber Front Page contributors.
 
-## Architecture en un coup d'œil
-
-- Cartographie complète et catalogue des fonctions disponibles dans [`docs/LOGIC_AUDIT.md`](docs/LOGIC_AUDIT.md).
-- Résumé des flux de données (mocks vs backend), invariants critiques et TODOs priorisés.
-- À utiliser comme point d'entrée rapide avant toute contribution technique.
-
-## Mode offline
-
-Le frontend bascule automatiquement sur des mocks lorsque `VITE_USE_MOCK=1` (valeur par défaut). Les données sont servies depuis `frontend/public/data/*.json` et des placeholders locaux (`frontend/public/assets`).
-
-- Les requêtes réseau sont neutralisées en mode offline (`Projects`, `Learning`, etc.).
-- `frontend/src/mocks/mockBackend.js` expose des collections statiques alignées sur les JSON publics.
-- Les URLs externes peuvent être réactivées via les variables `.env` (`VITE_TOOLS_URL`, `VITE_GITHUB_URL`, ...).
-
-### Variables clés
-
-```
-VITE_USE_MOCK=1
-VITE_CONTACT_* (email, linkedin, github, ...)
-VITE_TOOLS_* (name, url, description)
-VITE_GITHUB_* (profile, url, avatar)
-VITE_PROFILE_* (name, role, description, tech stack)
-```
-
-### Limites offline
-
-- Les liens externes sont neutralisés (`href="#"`) tant que le mode mock est actif.
-- Les assets sont des SVG statiques (pas de screenshots dynamiques).
-- L'audio/streaming n'est pas embarqué ; les sections affichent un message explicite.
-
-> **Troubleshooting**
-> - **Blank page?** Assurez-vous que `VITE_USE_MOCK=1` ou fournissez des JSON dans `/public/data/*.json`.
-> - **High CPU?** Désactivez CyberMaze dans l'interface ou basculez d'onglet (pause auto).
-
-## Build CI GitHub
-
-Le workflow `.github/workflows/ci.yml` réalise :
-
-1. **Job frontend**
-   - Node 20 + Corepack, génération unique de `yarn.lock` si absent (`YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --mode=update-lockfile`) puis `yarn install --immutable`.
-   - `yarn build` puis upload de l'artefact `frontend/dist`.
-   - Audit JS via `npm audit --audit-level=high` (les vulnérabilités low/moderate n'échouent pas le job).
-2. **Job backend-audit**
-   - Python 3.11, installation des dépendances puis `pip-audit -r backend/requirements.txt`.
-3. **Job docker-image**
-   - buildx, récupération de l'artefact `frontend-dist` et build `linux/amd64` avec `outputs: type=docker` pour charger l'image localement.
-   - Smoke test : `docker run -p 8080:80` puis `curl -fsS http://localhost:8080/health`.
-
-Le workflow `.github/workflows/release.yml` reconstruit le frontend et pousse automatiquement une image multi-arch (amd64/arm64) vers GHCR avec tags `:sha`, `:branch`, `:X.Y.Z` et `:X.Y` pour les tags `v*.*.*`.
-
-> ⚠️ Aucun `yarn.lock` n'est commité ici : il sera généré automatiquement lors du premier run CI (`--mode=update-lockfile`) puis les installations resteront immuables.
-
-## Docker (CI ou prod)
-
-Le `Dockerfile` multi-stage :
-
-1. Stage build (Node 20) avec `ARG NPM_REGISTRY`, build Vite si `USE_LOCAL_DIST=0`.
-2. Stage runtime (Caddy 2.8) servant `/srv/app`, healthcheck `GET /health`.
-3. Si un `frontend/dist` est présent dans le contexte (artefact CI), il est copié tel quel (`USE_LOCAL_DIST=1`).
-
-`docker/docker-compose.yml` fournit :
-
-- Labels Traefik v3 (`cyberfront-headers` middleware de sécurité).
-- Réseau externe `traefik-net` (à créer côté infra).
-- Variables de branding (`SITE_NAME`, `SITE_DOMAIN`, `SITE_THEME`, `SITE_TAGLINE`).
-
-### Build dans la CI
-
-```
-# dans GitHub Actions (job docker-image)
-docker buildx build \
-  --platform linux/amd64,linux/arm64 \
-  --build-arg USE_LOCAL_DIST=1 \
-  -t ghcr.io/${{ github.repository }}:${{ github.sha }} .
-```
-
-## Backend FastAPI
-
-- Fonctionne sans MongoDB (`memory_status_checks`).
-- `backend/requirements.txt` contient des versions indicatives, la CI (`pip-audit`) est responsable du pinning définitif.
-- Variables pertinentes : `MONGO_URL`, `DB_NAME`, `TRUSTED_ORIGINS`.
-
-## Traefik
-
-- Réseau externe : `traefik-net`.
-- Labels principaux :
-  - `traefik.http.routers.${TRAEFIK_SERVICE_NAME}.rule`
-  - `traefik.http.routers.${TRAEFIK_SERVICE_NAME}.middlewares=${TRAEFIK_MIDDLEWARE_HEADERS}`
-  - Middleware `headers` appliquant CSP, HSTS, Referrer-Policy.
-- Ajuster `.env` (`TRAEFIK_ROUTER_RULE`, `TRAEFIK_ENTRYPOINT`) selon l'environnement.
-
-## Dépendances & scripts
-
-```
-frontend/package.json
-  dev      → vite
-  build    → vite build
-  preview  → vite preview
-  lint     → placeholder (configurer ESLint en CI)
-```
-
-Backend : `python -m venv .venv && pip install -r backend/requirements.txt` (optionnel, via CI uniquement).
-
-## Génération de la CI
-
-- `yarn.lock` : généré par le job frontend et stocké en cache/artifact avant commit manuel.
-- `pip-audit` : assure la compatibilité et le pinning des dépendances Python.
-- Artefact `frontend/dist` réinjecté dans l'image Docker.
-
-## Commandes Git (local sans réseau)
-
-```
-git status
-git add .
-git commit -m "offline-ready dev"
-# push à réaliser sur machine connectée
-git push origin dev
-```
-
-Bon hack et bon routage offline !
-
-## Sécurité/MAJ
-
-- Prévoir une PR dédiée (une fois l'accès réseau CI rétabli) pour mettre `vite` à `^5.4.21` ou version recommandée ultérieure, régénérer `yarn.lock`, puis supprimer `resolutions.esbuild` si le correctif n'est plus requis.
+---
+📚 **Documentation:** [Installation](docs/INSTALLATION.md) · [Deployment](docs/DEPLOYMENT.md) · [Architecture](docs/ARCHITECTURE.md) · [CI/CD](docs/CI-CD.md)
