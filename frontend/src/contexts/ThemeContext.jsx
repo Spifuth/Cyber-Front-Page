@@ -1,5 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+/**
+ * @typedef {{theme: string, setTheme: (next: string) => void}} ThemeContextValue
+ */
+
+/**
+ * React context storing the current visual theme and its setter.
+ * @type {React.Context<ThemeContextValue | undefined>}
+ */
 const ThemeContext = createContext();
 
 /**
@@ -17,6 +25,8 @@ export function useTheme() {
 /**
  * Provides theme state to the application and syncs it with the document root.
  * Defaults to the "dark" theme to preserve the intended styling offline.
+ * @param {{children: React.ReactNode}} props
+ * @returns {JSX.Element}
  */
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('dark');
