@@ -14,16 +14,17 @@ jobs:
         with:
           node-version: 20
 
-      # npm audit requires package-lock.json; we don't commit it, so generate it on-the-fly here.
       - name: Ensure package-lock.json exists (for npm audit)
         working-directory: frontend
         run: |
-          # Generate a lockfile only for audit if missing; do not modify node_modules
           npm i --package-lock-only --no-audit --no-fund
 
-      - name: Run npm audit (fail on high/critical only)
+      # Do NOT mask audit exit codes; --audit-level=high already ignores low/moderate.
+      - name: Audit JS dependencies (fail on high/critical only)
         working-directory: frontend
-        run: npm audit --audit-level=high || echo "Non-high issues detected (ignored)"
+        run: |
+          set -e
+          npm audit --audit-level=high
 
       - name: Set up Python
         uses: actions/setup-python@v5
