@@ -1,3 +1,8 @@
+/**
+ * Normalizes an environment value to a trimmed string.
+ * @param {unknown} value
+ * @returns {string}
+ */
 const normalize = (value) => String(value ?? '').trim();
 
 /**
