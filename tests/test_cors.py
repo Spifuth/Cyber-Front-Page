@@ -1,10 +1,11 @@
+import os
 from fastapi.testclient import TestClient
 from backend.server import app
 
 
 client = TestClient(app)
 
-TRUSTED_ORIGIN = "http://localhost:5173"
+TRUSTED_ORIGIN = os.getenv("TRUSTED_ORIGINS", "http://localhost:5173").split(",")[0].strip()
 
 
 def test_cors_allows_trusted_origin():
