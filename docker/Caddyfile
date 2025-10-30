@@ -1,25 +1,13 @@
-{
-  admin off
-}
-
 :80 {
-  encode zstd gzip
   root * /srv/app
+  encode zstd gzip
 
-  header {
-    Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-    Content-Security-Policy "default-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';"
-    Referrer-Policy "strict-origin-when-cross-origin"
-    X-Content-Type-Options "nosniff"
+  # Health endpoint
+  route /health {
+    respond "OK" 200
   }
 
-  handle_path /health {
-    respond 200 {
-      body "{\"status\":\"ok\"}"
-      header Content-Type application/json
-    }
-  }
-
+  # Static file routing
   try_files {path} /index.html
   file_server
 }
