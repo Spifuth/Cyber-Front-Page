@@ -40,6 +40,13 @@ jobs:
         working-directory: frontend
         run: yarn build
 
+      - name: Ensure package-lock.json exists
+        working-directory: frontend
+        run: |
+          if [ ! -f package-lock.json ]; then
+            npm i --package-lock-only
+          fi
+
       - name: Audit JS dependencies (fail on high/critical only)
         working-directory: frontend
         run: npm audit --audit-level=high || echo "Non-high issues detected (ignored)"
