@@ -12,6 +12,13 @@ export default function SelfDestructPage() {
   const timeoutIdsRef = useRef(new Set());
   const intervalIdsRef = useRef(new Set());
 
+  /**
+   * Registers a timeout and tracks it for automatic cleanup on unmount.
+   * Prevents memory leaks by ensuring all timeouts are cleared when the component unmounts.
+   * @param {Function} callback - The function to execute after the delay
+   * @param {number} delay - The delay in milliseconds before executing the callback
+   * @returns {number} The timeout ID that can be used to cancel the timeout
+   */
   const registerTimeout = (callback, delay) => {
     const id = setTimeout(() => {
       timeoutIdsRef.current.delete(id);
@@ -21,12 +28,25 @@ export default function SelfDestructPage() {
     return id;
   };
 
+  /**
+   * Registers an interval and tracks it for automatic cleanup on unmount.
+   * Prevents memory leaks by ensuring all intervals are cleared when the component unmounts.
+   * @param {Function} callback - The function to execute repeatedly at the specified interval
+   * @param {number} delay - The delay in milliseconds between each callback execution
+   * @returns {number} The interval ID that can be used to cancel the interval
+   */
   const registerInterval = (callback, delay) => {
     const id = setInterval(callback, delay);
     intervalIdsRef.current.add(id);
     return id;
   };
 
+  /**
+   * Clears a registered interval and removes it from the tracking set.
+   * Should be used instead of clearInterval directly to maintain proper cleanup tracking.
+   * @param {number} id - The interval ID returned from registerInterval
+   * @returns {void}
+   */
   const clearRegisteredInterval = (id) => {
     clearInterval(id);
     intervalIdsRef.current.delete(id);
