@@ -28,7 +28,6 @@ TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv("TRUSTED_ORIGINS", "ht
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("cyberfront.backend")
 
-mongo_client: Optional[AsyncIOMotorClient] = None
 status_collection = None
 memory_status_checks: list[dict] = []
 
@@ -45,7 +44,8 @@ class StatusCheckCreate(BaseModel):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global mongo_client, status_collection
+    global status_collection
+    mongo_client: Optional[AsyncIOMotorClient] = None
     if MONGO_URL:
         try:
             mongo_client = AsyncIOMotorClient(MONGO_URL, serverSelectionTimeoutMS=2000)
