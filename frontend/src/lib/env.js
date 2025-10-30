@@ -3,6 +3,7 @@ const normalize = (value) => String(value ?? '').trim();
 /**
  * Returns true when the UI should rely on local mocks instead of network calls.
  * Missing or falsy `VITE_USE_MOCK` defaults to enabled mocks to preserve offline mode.
+ * @returns {boolean}
  */
 export const isMockEnabled = () => {
   const raw = normalize(import.meta.env.VITE_USE_MOCK);
@@ -23,6 +24,9 @@ export const getEnvVar = (key, fallback = '') => {
 /**
  * Returns an external URL only when mocks are disabled and the value is non-empty.
  * Guarantees a safe fallback ("#") while offline.
+ * @param {string} key
+ * @param {string} [fallback='#']
+ * @returns {string}
  */
 export const getExternalUrl = (key, fallback = '#') => {
   const value = normalize(getEnvVar(key, ''));

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 const AnimatedLogsFeed = ({ isVisible, onClose }) => {
   const [logs, setLogs] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const logsRef = useRef(null);
   const logIdRef = useRef(0);
 
@@ -120,7 +121,24 @@ const AnimatedLogsFeed = ({ isVisible, onClose }) => {
   };
 
   useEffect(() => {
-    if (!isVisible || isPaused) return;
+    if (typeof document === 'undefined') {
+      return undefined;
+    }
+
+    const handleVisibilityChange = () => {
+      setIsTabHidden(document.visibilityState === 'hidden');
+    };
+
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible || isPaused || isTabHidden) return;
 
     const interval = setInterval(() => {
       const newLog = generateRandomLog();
@@ -132,7 +150,7 @@ const AnimatedLogsFeed = ({ isVisible, onClose }) => {
     }, Math.random() * 2000 + 1000); // Random interval between 1-3 seconds
 
     return () => clearInterval(interval);
-  }, [isVisible, isPaused]);
+  }, [isVisible, isPaused, isTabHidden]);
 
   // Auto-scroll to bottom
   useEffect(() => {

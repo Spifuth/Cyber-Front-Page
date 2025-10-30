@@ -93,6 +93,7 @@ export default function CyberMaze({ isEnabled = true, color = 'green', opacity =
   const mousePosRef = useRef({ x: 0, y: 0 });
   const mazeRef = useRef({ grid: [], cols: 0, rows: 0 });
   const packetsRef = useRef([]);
+  const drawFrameRef = useRef(() => {});
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -225,6 +226,11 @@ export default function CyberMaze({ isEnabled = true, color = 'green', opacity =
     };
 
     const drawFrame = (time) => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+        animationRef.current = null;
+        return;
+      }
+
       const { grid, cols, rows } = mazeRef.current;
       if (!grid.length) {
         animationRef.current = requestAnimationFrame(drawFrame);
@@ -248,12 +254,16 @@ export default function CyberMaze({ isEnabled = true, color = 'green', opacity =
       animationRef.current = requestAnimationFrame(drawFrame);
     };
 
+    drawFrameRef.current = drawFrame;
+
     resizeCanvas();
     generateMaze();
     packetsRef.current = createPackets(canvas.clientWidth, canvas.clientHeight, palette);
     canvas.style.opacity = safeOpacity;
 
-    animationRef.current = requestAnimationFrame(drawFrame);
+    if (typeof document === 'undefined' || document.visibilityState !== 'hidden') {
+      animationRef.current = requestAnimationFrame(drawFrame);
+    }
 
     const handleResize = () => {
       if (resizeRafRef.current) {
@@ -282,6 +292,39 @@ export default function CyberMaze({ isEnabled = true, color = 'green', opacity =
       }
     };
   }, [color, isEnabled, opacity]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return undefined;
+    }
+
+    const handleVisibilityChange = () => {
+      const hidden = document.visibilityState === 'hidden';
+      if (hidden) {
+        if (resizeRafRef.current) {
+          cancelAnimationFrame(resizeRafRef.current);
+          resizeRafRef.current = null;
+        }
+        if (mouseUpdateRef.current) {
+          cancelAnimationFrame(mouseUpdateRef.current);
+          mouseUpdateRef.current = null;
+        }
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+      } else if (isEnabled && !animationRef.current) {
+        animationRef.current = requestAnimationFrame((time) => drawFrameRef.current(time));
+      }
+    };
+
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isEnabled]);
 
   useEffect(() => {
     if (!isEnabled) {

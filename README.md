@@ -39,6 +39,10 @@ VITE_PROFILE_* (name, role, description, tech stack)
 - Les assets sont des SVG statiques (pas de screenshots dynamiques).
 - L'audio/streaming n'est pas embarqué ; les sections affichent un message explicite.
 
+> **Troubleshooting**
+> - **Blank page?** Assurez-vous que `VITE_USE_MOCK=1` ou fournissez des JSON dans `/public/data/*.json`.
+> - **High CPU?** Désactivez CyberMaze dans l'interface ou basculez d'onglet (pause auto).
+
 ## Build CI GitHub
 
 Le workflow `.github/workflows/ci.yml` réalise :

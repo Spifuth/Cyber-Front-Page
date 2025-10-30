@@ -17,8 +17,11 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
   const [showLogs, setShowLogs] = useState(false);
   const [matrixActive, setMatrixActive] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('default');
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const inputRef = useRef(null);
   const terminalRef = useRef(null);
+  const typingIntervalRef = useRef(null);
+  const isTabHiddenRef = useRef(false);
 
   const terminalData = useMemo(() => getMockTerminal(), []);
   const { terminalCommands, neofetchData, fileSystem, motdMessages, commandHistory } = terminalData;
@@ -42,11 +45,34 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
   }, [mockMode]);
 
   useEffect(() => {
+    if (typeof document === 'undefined') {
+      return undefined;
+    }
+
+    const handleVisibilityChange = () => {
+      const hidden = document.visibilityState === 'hidden';
+      isTabHiddenRef.current = hidden;
+      setIsTabHidden(hidden);
+    };
+
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isTabHidden) {
+      return undefined;
+    }
+
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isTabHidden]);
 
   useEffect(() => {
     const randomMotd = motdMessages[Math.floor(Math.random() * motdMessages.length)];
@@ -82,7 +108,16 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
     setIsTyping(true);
     let i = 0;
 
-    const typeInterval = setInterval(() => {
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current);
+      typingIntervalRef.current = null;
+    }
+
+    typingIntervalRef.current = setInterval(() => {
+      if (isTabHiddenRef.current) {
+        return;
+      }
+
       if (i < text.length) {
         setHistory((prev) => {
           const newHistory = [...prev];
@@ -94,14 +129,22 @@ export default function Terminal({ onNavigateToUnderground, onNavigateToKrbtgt, 
           }
           return newHistory;
         });
-        i++;
+        i += 1;
       } else {
-        clearInterval(typeInterval);
+        clearInterval(typingIntervalRef.current);
+        typingIntervalRef.current = null;
         setIsTyping(false);
         if (callback) callback();
       }
     }, speed);
   };
+
+  useEffect(() => () => {
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current);
+      typingIntervalRef.current = null;
+    }
+  }, []);
 
   const executeNmapScan = (target = 'nebulahost.tech') => {
     const randomPort = Math.floor(Math.random() * 9000) + 1000;

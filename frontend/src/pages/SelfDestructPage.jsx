@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Skull, Zap, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,28 @@ export default function SelfDestructPage() {
   const [countdown, setCountdown] = useState(3);
   const [showCountdown, setShowCountdown] = useState(false);
   const [allLinesShown, setAllLinesShown] = useState(false);
+  const timeoutIdsRef = useRef(new Set());
+  const intervalIdsRef = useRef(new Set());
+
+  const registerTimeout = (callback, delay) => {
+    const id = setTimeout(() => {
+      timeoutIdsRef.current.delete(id);
+      callback();
+    }, delay);
+    timeoutIdsRef.current.add(id);
+    return id;
+  };
+
+  const registerInterval = (callback, delay) => {
+    const id = setInterval(callback, delay);
+    intervalIdsRef.current.add(id);
+    return id;
+  };
+
+  const clearRegisteredInterval = (id) => {
+    clearInterval(id);
+    intervalIdsRef.current.delete(id);
+  };
 
   const lines = [
     { text: '[!] WARNING: UNAUTHORIZED SYSTEM ACCESS DETECTED', delay: 800, type: 'warning' },
@@ -38,25 +60,28 @@ export default function SelfDestructPage() {
 
   useEffect(() => {
     if (currentLine < lines.length) {
-      const timer = setTimeout(() => {
+      const timer = registerTimeout(() => {
         setCurrentLine(prev => prev + 1);
       }, lines[currentLine]?.delay || 1000);
-      
-      return () => clearTimeout(timer);
+
+      return () => {
+        clearTimeout(timer);
+        timeoutIdsRef.current.delete(timer);
+      };
     } else {
       // Start meltdown
-      const meltdownTimer = setTimeout(() => {
+      const meltdownTimer = registerTimeout(() => {
         setShowMeltdown(true);
-        
-        setTimeout(() => {
+
+        registerTimeout(() => {
           setShowCountdown(true);
-          
+
           // Countdown timer
-          const countdownInterval = setInterval(() => {
+          const countdownInterval = registerInterval(() => {
             setCountdown(prev => {
               if (prev <= 1) {
-                clearInterval(countdownInterval);
-                setTimeout(() => {
+                clearRegisteredInterval(countdownInterval);
+                registerTimeout(() => {
                   setAllLinesShown(true);
                 }, 1000);
                 return 0;
@@ -66,10 +91,21 @@ export default function SelfDestructPage() {
           }, 1000);
         }, 2000);
       }, 1000);
-      
-      return () => clearTimeout(meltdownTimer);
+
+      return () => {
+        clearTimeout(meltdownTimer);
+        timeoutIdsRef.current.delete(meltdownTimer);
+      };
     }
   }, [currentLine, lines]);
+
+  useEffect(() => () => {
+    // cleanup timers
+    timeoutIdsRef.current.forEach((id) => clearTimeout(id));
+    intervalIdsRef.current.forEach((id) => clearInterval(id));
+    timeoutIdsRef.current.clear();
+    intervalIdsRef.current.clear();
+  }, []);
 
   const getLineColor = (type) => {
     switch (type) {

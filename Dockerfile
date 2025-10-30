@@ -17,7 +17,17 @@ RUN if [ "${USE_LOCAL_DIST}" != "1" ]; then \
 # ----- runtime -----
 FROM caddy:2.8-alpine AS runtime
 ARG USE_LOCAL_DIST=0
+ARG OCI_IMAGE_TITLE="Cyber Front Page"
+ARG OCI_IMAGE_DESCRIPTION="Static SPA served by Caddy"
+ARG OCI_IMAGE_REVISION=""
+ARG OCI_IMAGE_SOURCE=""
 WORKDIR /srv/app
+
+LABEL \
+  org.opencontainers.image.title="${OCI_IMAGE_TITLE}" \
+  org.opencontainers.image.description="${OCI_IMAGE_DESCRIPTION}" \
+  org.opencontainers.image.revision="${OCI_IMAGE_REVISION}" \
+  org.opencontainers.image.source="${OCI_IMAGE_SOURCE}"
 
 # Copy artefact first when provided by CI (frontend/dist)
 COPY frontend/dist/ /srv/app/
