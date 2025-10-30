@@ -100,7 +100,7 @@ export default function SelfDestructPage() {
   }, [currentLine, lines]);
 
   useEffect(() => () => {
-    // cleanup timers
+    // Cleanup all registered timers on component unmount
     timeoutIdsRef.current.forEach((id) => clearTimeout(id));
     intervalIdsRef.current.forEach((id) => clearInterval(id));
     timeoutIdsRef.current.clear();
