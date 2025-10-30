@@ -1,22 +1,22 @@
 # ----- build -----
 FROM node:20-alpine AS build
-ARG NPM_REGISTRY=https://registry.npmjs.org/
-ARG USE_LOCAL_DIST=0
-ENV NODE_ENV=production
-RUN corepack enable && npm config set registry ${NPM_REGISTRY}
 WORKDIR /app
+
 COPY .yarnrc.yml ./
-COPY frontend/ ./
-RUN if [ "${USE_LOCAL_DIST}" != "1" ]; then \
-      if [ -f yarn.lock ]; then yarn install --frozen-lockfile; else yarn install; fi && \
-      yarn build; \
+COPY frontend/package.json ./
+ENV NODE_ENV=production
+RUN corepack enable
+
+COPY frontend/ .
+RUN if [ -f yarn.lock ]; then \
+      yarn install --frozen-lockfile; \
     else \
-      echo "Skipping frontend build (USE_LOCAL_DIST=${USE_LOCAL_DIST})" && mkdir -p dist; \
+      YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install; \
     fi
+RUN yarn build
 
 # ----- runtime -----
 FROM caddy:2.8-alpine AS runtime
-ARG USE_LOCAL_DIST=0
 ARG OCI_IMAGE_TITLE="Cyber Front Page"
 ARG OCI_IMAGE_DESCRIPTION="Static SPA served by Caddy"
 ARG OCI_IMAGE_REVISION=""
@@ -29,10 +29,6 @@ LABEL \
   org.opencontainers.image.revision="${OCI_IMAGE_REVISION}" \
   org.opencontainers.image.source="${OCI_IMAGE_SOURCE}"
 
-# Copy artefact first when provided by CI (frontend/dist)
-COPY frontend/dist/ /srv/app/
-
-# Fallback to build stage output when artefact is absent or empty
 COPY --from=build /app/dist/ /srv/app/
 
 COPY docker/Caddyfile /etc/caddy/Caddyfile
