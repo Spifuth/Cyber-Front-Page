@@ -9,7 +9,14 @@ const fetchJson = async (path) => {
   return response.json();
 };
 
+/**
+ * Loads a JSON collection either from the local mocks or from the network.
+ * @param {string} name collection identifier matching /public/data/*.json
+ */
 export const loadCollection = async (name) => {
+  if (!name) {
+    throw new Error('loadCollection requires a collection name');
+  }
   if (isMockEnabled()) {
     return getMockCollection(name);
   }
