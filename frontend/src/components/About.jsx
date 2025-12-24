@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Shield, Server, Code, Monitor } from 'lucide-react';
 import { getMockProfile } from '../mocks/mockBackend';
 import { getEnvVar, isMockEnabled } from '../lib/env';

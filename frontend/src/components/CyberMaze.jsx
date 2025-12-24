@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 const COLOR_MAP = {
   green: { primary: '34, 197, 94', secondary: '59, 130, 246', tertiary: '139, 92, 246' },

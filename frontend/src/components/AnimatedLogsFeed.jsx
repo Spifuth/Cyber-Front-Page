@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const AnimatedLogsFeed = ({ isVisible, onClose }) => {
   const [logs, setLogs] = useState([]);

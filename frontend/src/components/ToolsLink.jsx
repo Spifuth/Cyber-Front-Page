@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Wrench, ExternalLink, Zap } from 'lucide-react';
 import { getMockTools } from '../mocks/mockBackend';
 import { getEnvVar, getExternalUrl } from '../lib/env';

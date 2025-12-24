@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadCollection } from '../lib/dataClient';
+import { getLogLevelColor, getSeverityColor } from '../lib/utils';
 
 const LogsPage = () => {
   const navigate = useNavigate();
@@ -67,26 +68,6 @@ const LogsPage = () => {
       </div>
     );
   }
-
-  const getLevelColor = (level) => {
-    const colors = {
-      INFO: 'text-green-400 bg-green-900',
-      WARN: 'text-yellow-400 bg-yellow-900',
-      ERROR: 'text-red-400 bg-red-900',
-      CRITICAL: 'text-red-400 bg-red-900 animate-pulse'
-    };
-    return colors[level] || 'text-gray-400 bg-gray-900';
-  };
-
-  const getSeverityColor = (severity) => {
-    const colors = {
-      LOW: 'text-blue-400 bg-blue-900',
-      MEDIUM: 'text-yellow-400 bg-yellow-900',
-      HIGH: 'text-orange-400 bg-orange-900',
-      CRITICAL: 'text-red-400 bg-red-900'
-    };
-    return colors[severity] || 'text-gray-400 bg-gray-900';
-  };
 
   const filteredLogs =
     filter === 'all' ? logsData?.systemLogs || [] : logsData?.systemLogs?.filter((log) => log.level === filter) || [];
@@ -191,7 +172,7 @@ const LogsPage = () => {
               {filteredLogs.map((log, index) => (
                 <div key={index} className="mb-3 border-b border-gray-800 pb-3">
                   <div className="flex justify-between">
-                    <span className={`px-2 py-1 rounded text-xs ${getLevelColor(log.level)}`}>{log.level}</span>
+                    <span className={`px-2 py-1 rounded text-xs ${getLogLevelColor(log.level)}`}>{log.level}</span>
                     <span className="text-gray-500 text-xs">{formatTimestamp(log.timestamp)}</span>
                   </div>
                   <div className="mt-2">
