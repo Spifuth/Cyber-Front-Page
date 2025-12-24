@@ -15,3 +15,10 @@ export {
   useCopyToClipboard,
   useForm
 } from './useDataFetch';
+export {
+  useSequentialLines,
+  useGlitchText,
+  useDelayedState,
+  useCountdown,
+  useSafeTimers
+} from './useAnimatedEffects';
