@@ -12,7 +12,8 @@ http:
         - chain-no-auth
       service: cyberfront-svc
       tls:
-        certResolver: cloudflare
+        options: tls-opts@file
+        certResolver: dns-cloudflare
         
     # Optional: Internal router with auth (for admin features)
     # cyberfront-internal-rtr:
