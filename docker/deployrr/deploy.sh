@@ -29,12 +29,18 @@ echo "════════════════════════�
 
 # Check if running from repo or download
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(dirname "$SCRIPT_DIR")"
+REPO_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 if [[ -f "${REPO_DIR}/docker/deployrr/docker-compose-cyberfront.yml" ]]; then
     DEPLOY_DIR="${REPO_DIR}/docker/deployrr"
 else
-    error "Could not find deployment files. Run from repo directory."
+    # Maybe running from repo root
+    if [[ -f "./docker/deployrr/docker-compose-cyberfront.yml" ]]; then
+        REPO_DIR="$(pwd)"
+        DEPLOY_DIR="${REPO_DIR}/docker/deployrr"
+    else
+        error "Could not find deployment files. Run from repo directory."
+    fi
 fi
 
 # Step 1: Create appdata directory
