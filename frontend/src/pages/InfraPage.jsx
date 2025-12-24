@@ -1,4 +1,4 @@
-import { useDataFetch } from '../hooks/useDataFetch';
+import { useDataFetch } from '../hooks';
 import {
   PageLayout,
   PageHeader,
