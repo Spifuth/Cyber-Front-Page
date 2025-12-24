@@ -4,7 +4,8 @@
 # Usage: bash deployrr-audit.sh > deployrr-report.txt
 #
 
-set -euo pipefail
+# Don't use set -e because grep returns 1 when no match (breaks script)
+set -uo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -15,17 +16,20 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 header() {
-    echo -e "\n${CYAN}═══════════════════════════════════════════════════════════════${NC}"
-    echo -e "${GREEN}► $1${NC}"
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}\n"
+    echo ""
+    echo "═══════════════════════════════════════════════════════════════"
+    echo "► $1"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
 }
 
 subheader() {
-    echo -e "\n${YELLOW}▸ $1${NC}"
+    echo ""
+    echo "▸ $1"
 }
 
 info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    echo "[INFO] $1"
 }
 
 # Start report
@@ -100,7 +104,7 @@ docker network ls --format "table {{.Name}}\t{{.Driver}}\t{{.Scope}}"
 
 subheader "Network details (proxy/traefik networks)"
 for net in $(docker network ls --format '{{.Name}}' | grep -iE 'proxy|traefik|web|frontend'); do
-    echo -e "\n--- Network: $net ---"
+    echo "\n--- Network: $net ---"
     docker network inspect "$net" --format '{{json .}}' 2>/dev/null | python3 -m json.tool 2>/dev/null || docker network inspect "$net" 2>/dev/null | head -30
 done
 
@@ -129,15 +133,15 @@ TRAEFIK_DIR=""
 for dir in "$APPDATA/traefik3" "$APPDATA/traefik" "$DOCKERDIR/traefik" "/opt/traefik"; do
     if [[ -d "$dir" ]]; then
         TRAEFIK_DIR="$dir"
-        echo -e "\n--- Found: $dir ---"
+        echo "\n--- Found: $dir ---"
         ls -laR "$dir" 2>/dev/null | head -100
         
         # Show traefik.yml or traefik.toml (FULL)
         for cfg in "$dir/traefik.yml" "$dir/traefik.yaml" "$dir/traefik.toml"; do
             if [[ -f "$cfg" ]]; then
-                echo -e "\n########## $cfg (FULL) ##########"
+                echo "\n########## $cfg (FULL) ##########"
                 cat "$cfg" 2>/dev/null
-                echo -e "########## END $cfg ##########\n"
+                echo "########## END $cfg ##########\n"
             fi
         done
         break
@@ -157,14 +161,14 @@ header "4B. TRAEFIK RULES - COMPLETE DUMP"
 # Find all rules directories
 for rules_dir in "$TRAEFIK_DIR/rules" "$TRAEFIK_DIR/rules/$HOSTNAME" "$APPDATA/traefik3/rules" "$APPDATA/traefik3/rules/$HOSTNAME" "$APPDATA/traefik/rules"; do
     if [[ -d "$rules_dir" ]]; then
-        echo -e "\n${YELLOW}══════ Rules directory: $rules_dir ══════${NC}"
+        echo "\n══════ Rules directory: $rules_dir ══════"
         ls -la "$rules_dir" 2>/dev/null
         
         # Dump ALL rule files
         find "$rules_dir" -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.toml" \) 2>/dev/null | while read rulefile; do
-            echo -e "\n########## $rulefile ##########"
+            echo "\n########## $rulefile ##########"
             cat "$rulefile" 2>/dev/null
-            echo -e "########## END $(basename "$rulefile") ##########"
+            echo "########## END $(basename "$rulefile") ##########"
         done
     fi
 done
@@ -177,11 +181,11 @@ header "4C. TRAEFIK MIDDLEWARES"
 subheader "Middleware files"
 for mw_dir in "$TRAEFIK_DIR/middlewares" "$TRAEFIK_DIR/dynamic" "$TRAEFIK_DIR/conf.d"; do
     if [[ -d "$mw_dir" ]]; then
-        echo -e "\n--- Middleware dir: $mw_dir ---"
+        echo "\n--- Middleware dir: $mw_dir ---"
         find "$mw_dir" -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.toml" \) 2>/dev/null | while read mwfile; do
-            echo -e "\n########## $mwfile ##########"
+            echo "\n########## $mwfile ##########"
             cat "$mwfile" 2>/dev/null
-            echo -e "########## END $(basename "$mwfile") ##########"
+            echo "########## END $(basename "$mwfile") ##########"
         done
     fi
 done
@@ -203,9 +207,9 @@ header "4D. TRAEFIK TLS CONFIGURATION"
 subheader "TLS options and cert stores"
 for tls_file in "$TRAEFIK_DIR/tls.yml" "$TRAEFIK_DIR/certificates.yml" "$TRAEFIK_DIR/certs.yml"; do
     if [[ -f "$tls_file" ]]; then
-        echo -e "\n########## $tls_file ##########"
+        echo "\n########## $tls_file ##########"
         cat "$tls_file" 2>/dev/null
-        echo -e "########## END $(basename "$tls_file") ##########"
+        echo "########## END $(basename "$tls_file") ##########"
     fi
 done
 
@@ -235,9 +239,9 @@ subheader "Main compose file (deployrr master)"
 # Look for the main deployrr compose
 for main_compose in "$DOCKERDIR/docker-compose.yml" "$DOCKERDIR/compose/docker-compose.yml" "$DOCKERDIR/docker-compose-deployrr.yml"; do
     if [[ -f "$main_compose" ]]; then
-        echo -e "\n########## $main_compose (FULL) ##########"
+        echo "\n########## $main_compose (FULL) ##########"
         cat "$main_compose" 2>/dev/null
-        echo -e "########## END $(basename "$main_compose") ##########"
+        echo "########## END $(basename "$main_compose") ##########"
         break
     fi
 done
@@ -245,9 +249,9 @@ done
 subheader "All compose files content"
 echo "$COMPOSE_FILES" | while read compose_file; do
     if [[ -f "$compose_file" ]]; then
-        echo -e "\n########## $compose_file ##########"
+        echo "\n########## $compose_file ##########"
         cat "$compose_file" 2>/dev/null
-        echo -e "########## END $(basename "$compose_file") ##########"
+        echo "########## END $(basename "$compose_file") ##########"
     fi
 done
 
@@ -259,12 +263,12 @@ header "5B. DEPLOYRR-SPECIFIC CONFIGURATION"
 subheader "Deployrr secrets/shared"
 for secrets_dir in "$DOCKERDIR/secrets" "$DOCKERDIR/shared" "$DOCKERDIR/scripts"; do
     if [[ -d "$secrets_dir" ]]; then
-        echo -e "\n--- Directory: $secrets_dir ---"
+        echo "\n--- Directory: $secrets_dir ---"
         ls -la "$secrets_dir" 2>/dev/null
         # Show non-sensitive files
         find "$secrets_dir" -type f \( -name "*.yml" -o -name "*.yaml" -o -name "*.sh" -o -name "*.conf" \) 2>/dev/null | while read f; do
             if [[ ! "$f" =~ (password|secret|key|token) ]]; then
-                echo -e "\n########## $f ##########"
+                echo "\n########## $f ##########"
                 cat "$f" 2>/dev/null | head -100
             fi
         done
@@ -274,11 +278,11 @@ done
 subheader "Custom templates/includes"
 for tpl_dir in "$DOCKERDIR/templates" "$DOCKERDIR/include" "$DOCKERDIR/common"; do
     if [[ -d "$tpl_dir" ]]; then
-        echo -e "\n--- Templates: $tpl_dir ---"
+        echo "\n--- Templates: $tpl_dir ---"
         find "$tpl_dir" -type f 2>/dev/null | while read f; do
-            echo -e "\n########## $f ##########"
+            echo "\n########## $f ##########"
             cat "$f" 2>/dev/null
-            echo -e "########## END $(basename "$f") ##########"
+            echo "########## END $(basename "$f") ##########"
         done
     fi
 done
@@ -295,7 +299,7 @@ subheader "Container labels (Traefik-enabled apps)"
 for container in $(docker ps --format '{{.Names}}'); do
     LABELS=$(docker inspect "$container" --format '{{range $k, $v := .Config.Labels}}{{if contains $k "traefik"}}{{$k}}={{$v}}|{{end}}{{end}}' 2>/dev/null)
     if [[ -n "$LABELS" ]]; then
-        echo -e "\n--- $container ---"
+        echo "\n--- $container ---"
         echo "$LABELS" | tr '|' '\n' | grep -v '^$'
     fi
 done
@@ -305,7 +309,7 @@ subheader "Sample web app inspection"
 for pattern in "nginx" "caddy" "apache" "web" "frontend" "static"; do
     SAMPLE_APP=$(docker ps --format '{{.Names}}' | grep -i "$pattern" | head -1)
     if [[ -n "$SAMPLE_APP" ]]; then
-        echo -e "\n--- Inspecting: $SAMPLE_APP ---"
+        echo "\n--- Inspecting: $SAMPLE_APP ---"
         docker inspect "$SAMPLE_APP" --format '
 Image: {{.Config.Image}}
 WorkingDir: {{.Config.WorkingDir}}
@@ -370,7 +374,7 @@ docker volume ls --format "table {{.Name}}\t{{.Driver}}"
 
 subheader "Bind mount patterns"
 docker ps --format '{{.Names}}' | while read container; do
-    echo -e "\n--- $container ---"
+    echo "\n--- $container ---"
     docker inspect "$container" --format '{{range .Mounts}}{{.Type}}: {{.Source}} -> {{.Destination}}
 {{end}}' 2>/dev/null
 done | head -50
@@ -440,16 +444,16 @@ header "13. WEB SERVER CONFIGURATIONS"
 
 subheader "Caddyfile examples"
 find "$DOCKERDIR" -name "Caddyfile*" -o -name "*.caddy" 2>/dev/null | while read f; do
-    echo -e "\n########## $f ##########"
+    echo "\n########## $f ##########"
     cat "$f" 2>/dev/null
-    echo -e "########## END $(basename "$f") ##########"
+    echo "########## END $(basename "$f") ##########"
 done
 
 subheader "Nginx configs"
 find "$DOCKERDIR" -name "nginx*.conf" -o -name "default.conf" 2>/dev/null | while read f; do
-    echo -e "\n########## $f ##########"
+    echo "\n########## $f ##########"
     cat "$f" 2>/dev/null
-    echo -e "########## END $(basename "$f") ##########"
+    echo "########## END $(basename "$f") ##########"
 done
 
 ########################################
