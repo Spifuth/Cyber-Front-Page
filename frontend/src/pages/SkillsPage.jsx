@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadCollection } from '../lib/dataClient';
+import { getSkillLevelColor } from '../lib/utils';
 
 const SkillsPage = () => {
   const navigate = useNavigate();
@@ -39,16 +40,6 @@ const SkillsPage = () => {
 
   const categories = skillsData?.skills || {};
   const categoryKeys = Object.keys(categories);
-
-  const getLevelColor = (level) => {
-    const colors = {
-      Expert: 'bg-green-500',
-      Advanced: 'bg-blue-500',
-      Intermediate: 'bg-yellow-500',
-      Beginner: 'bg-gray-500'
-    };
-    return colors[level] || 'bg-gray-500';
-  };
 
   const activeSkills = categories[selectedCategory] || [];
 
@@ -93,7 +84,7 @@ const SkillsPage = () => {
               <div className="space-y-2">
                 {['Expert', 'Advanced', 'Intermediate', 'Beginner'].map((level) => (
                   <div key={level} className="flex items-center space-x-2">
-                    <span className={`w-3 h-3 rounded-full ${getLevelColor(level)}`}></span>
+                    <span className={`w-3 h-3 rounded-full ${getSkillLevelColor(level)}`}></span>
                     <span>{level}</span>
                   </div>
                 ))}
@@ -114,7 +105,7 @@ const SkillsPage = () => {
                         <h4 className="text-lg font-bold text-white">{skill.name}</h4>
                         <p className="text-gray-400 text-sm">{skill.description}</p>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded ${getLevelColor(skill.level)} text-black`}>{skill.level}</span>
+                      <span className={`px-2 py-1 text-xs rounded ${getSkillLevelColor(skill.level)} text-black`}>{skill.level}</span>
                     </div>
                     <div className="flex flex-wrap gap-2 text-xs text-gray-300">
                       {skill.tools?.map((tool) => (

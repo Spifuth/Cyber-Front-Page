@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMockTerminal } from '../mocks/mockBackend';
 import AnimatedLogsFeed from './AnimatedLogsFeed';

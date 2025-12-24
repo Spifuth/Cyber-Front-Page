@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
 
@@ -35,7 +35,7 @@ memory_status_checks: list[dict] = []
 class StatusCheck(BaseModel):
     id: str = Field(default_factory=lambda: os.urandom(8).hex())
     client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class StatusCheckCreate(BaseModel):
@@ -79,7 +79,8 @@ async def save_status(status: StatusCheck) -> StatusCheck:
         await status_collection.insert_one(status.model_dump())
     else:
         memory_status_checks.append(status.model_dump())
-        del memory_status_checks[:-100]  # keep last 100 entries
+        if len(memory_status_checks) > 100:
+            memory_status_checks[:] = memory_status_checks[-100:]
     return status
 
 

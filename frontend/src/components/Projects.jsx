@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ExternalLink, Github, X, ChevronLeft, ChevronRight, Activity, Code, Server, Shield } from 'lucide-react';
 import { loadCollection } from '../lib/dataClient';
 import { isMockEnabled } from '../lib/env';
+import { getStatusColor } from '../lib/utils';
 
 const ProjectCard = ({ project, featured }) => {
   const getProjectIcon = (title) => {
@@ -10,17 +11,6 @@ const ProjectCard = ({ project, featured }) => {
     if (title.includes('Bot')) return Server;
     if (title.includes('proxy')) return Shield;
     return Code;
-  };
-
-  const getStatusColor = (status) => {
-    const statusMap = {
-      active: 'text-green-400 border-green-500/30 bg-green-500/10',
-      completed: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
-      beta: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
-      in_development: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
-      archived: 'text-gray-400 border-gray-500/30 bg-gray-500/10'
-    };
-    return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
   };
 
   const IconComponent = getProjectIcon(project.title);
@@ -121,17 +111,6 @@ export default function Projects() {
 
     fetchProjects();
   }, []);
-
-  const getStatusColor = (status) => {
-    const statusMap = {
-      active: 'text-green-400 border-green-500/30 bg-green-500/10',
-      completed: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
-      beta: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
-      in_development: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
-      archived: 'text-gray-400 border-gray-500/30 bg-gray-500/10'
-    };
-    return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
-  };
 
   const getCategoryIcon = (category) => {
     const iconMap = {

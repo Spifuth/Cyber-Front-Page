@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Github, ExternalLink } from 'lucide-react';
 import { getMockGithub } from '../mocks/mockBackend';
 import { getEnvVar, getExternalUrl } from '../lib/env';
