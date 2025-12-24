@@ -5,12 +5,16 @@ import { loadCollection } from '../lib/dataClient';
  * useDataFetch - Generic hook for fetching data collections
  * 
  * @param {string} collectionName - Name of the collection to fetch
- * @param {Object} [options] - Options
- * @param {*} [options.defaultValue=null] - Default value if fetch fails
- * @param {boolean} [options.immediate=true] - Fetch immediately on mount
- * @returns {Object} - { data, loading, error, refetch }
+ * @param {Function|Object} [transformOrOptions] - Transform function or options object
+ * @param {Object} [options] - Options (if first arg is transform)
+ * @returns {Object} - { data, setData, loading, error, refetch }
  */
-export function useDataFetch(collectionName, { defaultValue = null, immediate = true } = {}) {
+export function useDataFetch(collectionName, transformOrOptions, options = {}) {
+  // Handle both signatures: useDataFetch(name, transform) and useDataFetch(name, { options })
+  const transform = typeof transformOrOptions === 'function' ? transformOrOptions : null;
+  const opts = typeof transformOrOptions === 'object' ? transformOrOptions : options;
+  const { defaultValue = null, immediate = true } = opts;
+
   const [data, setData] = useState(defaultValue);
   const [loading, setLoading] = useState(immediate);
   const [error, setError] = useState(null);
@@ -20,8 +24,9 @@ export function useDataFetch(collectionName, { defaultValue = null, immediate = 
     setError(null);
     try {
       const result = await loadCollection(collectionName);
-      setData(result);
-      return result;
+      const transformedResult = transform ? transform(result) : result;
+      setData(transformedResult);
+      return transformedResult;
     } catch (err) {
       console.error(`Error loading ${collectionName}:`, err);
       setError(err);
@@ -30,7 +35,7 @@ export function useDataFetch(collectionName, { defaultValue = null, immediate = 
     } finally {
       setLoading(false);
     }
-  }, [collectionName, defaultValue]);
+  }, [collectionName, defaultValue, transform]);
 
   useEffect(() => {
     if (immediate) {
@@ -38,7 +43,7 @@ export function useDataFetch(collectionName, { defaultValue = null, immediate = 
     }
   }, [immediate, fetchData]);
 
-  return { data, loading, error, refetch: fetchData };
+  return { data, setData, loading, error, refetch: fetchData };
 }
 
 /**
@@ -124,6 +129,47 @@ export function useDebounce(value, delay = 300) {
   }, [value, delay]);
 
   return debouncedValue;
+}
+
+/**
+ * useCopyToClipboard - Copy text to clipboard with feedback
+ * 
+ * @param {number} [resetDelay=2000] - Delay before resetting copied state
+ * @returns {Object} - { copiedField, copyToClipboard }
+ */
+export function useCopyToClipboard(resetDelay = 2000) {
+  const [copiedField, setCopiedField] = useState('');
+
+  const copyToClipboard = useCallback((text, field) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(''), resetDelay);
+    });
+  }, [resetDelay]);
+
+  return { copiedField, copyToClipboard };
+}
+
+/**
+ * useForm - Simple form state management
+ * 
+ * @param {Object} initialValues - Initial form values
+ * @returns {Object} - { values, handleChange, reset, setValues }
+ */
+export function useForm(initialValues) {
+  const [values, setValues] = useState(initialValues);
+
+  const handleChange = useCallback((e) => {
+    const { name, value, type, checked } = e.target;
+    setValues(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  }, []);
+
+  const reset = useCallback(() => setValues(initialValues), [initialValues]);
+
+  return { values, handleChange, reset, setValues };
 }
 
 export default {

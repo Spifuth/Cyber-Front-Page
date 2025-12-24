@@ -1,31 +1,26 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { loadCollection } from '../lib/dataClient';
+import { useDataFetch } from '../hooks/useDataFetch';
+import {
+  PageLayout,
+  PageHeader,
+  PageContent,
+  LoadingSpinner,
+  SectionCard,
+  SectionTitle,
+  FilterButton,
+  StatBox
+} from '../components/shared';
 import { getLogLevelColor, getSeverityColor } from '../lib/utils';
 
+/**
+ * LogsPage - System logs and security events monitoring
+ */
 const LogsPage = () => {
-  const navigate = useNavigate();
-  const [logsData, setLogsData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: logsData, setData: setLogsData, loading } = useDataFetch('logs', (data) => data);
   const [filter, setFilter] = useState('all');
   const [isLive, setIsLive] = useState(false);
 
-  useEffect(() => {
-    const loadLogsData = async () => {
-      try {
-        const data = await loadCollection('logs');
-        setLogsData(data);
-      } catch (error) {
-        console.error('Error loading logs data:', error);
-        setLogsData({ systemLogs: [], securityEvents: [] });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadLogsData();
-  }, []);
-
+  // Live mode simulation
   useEffect(() => {
     let interval;
     if (isLive && logsData) {
@@ -44,77 +39,65 @@ const LogsPage = () => {
           source: 'live-monitor'
         };
 
-        setLogsData((prev) => {
-          const current = prev || { systemLogs: [], securityEvents: [] };
-          return {
-            ...current,
-            systemLogs: [newLog, ...(current.systemLogs || []).slice(0, 49)]
-          };
-        });
+        setLogsData((prev) => ({
+          ...prev,
+          systemLogs: [newLog, ...(prev?.systemLogs || []).slice(0, 49)]
+        }));
       }, 3000);
     }
     return () => clearInterval(interval);
-  }, [isLive, logsData]);
+  }, [isLive, logsData, setLogsData]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-green-400 p-8 font-mono">
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-center">
-            <div className="animate-spin text-4xl mb-4">📊</div>
-            <p>Loading system logs...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner icon="📊" message="Loading system logs..." />;
   }
 
-  const filteredLogs =
-    filter === 'all' ? logsData?.systemLogs || [] : logsData?.systemLogs?.filter((log) => log.level === filter) || [];
-
+  const systemLogs = logsData?.systemLogs || [];
   const securityEvents = logsData?.securityEvents || [];
+  const filteredLogs = filter === 'all' 
+    ? systemLogs 
+    : systemLogs.filter((log) => log.level === filter);
 
-  const formatTimestamp = (timestamp) => new Date(timestamp).toLocaleString();
-
-  const getRelativeTime = (timestamp) => {
-    const diff = Date.now() - new Date(timestamp).getTime();
+  const formatTimestamp = (ts) => new Date(ts).toLocaleString();
+  
+  const getRelativeTime = (ts) => {
+    const diff = Date.now() - new Date(ts).getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-
     if (days > 0) return `${days}d ago`;
     if (hours > 0) return `${hours}h ago`;
     if (minutes > 0) return `${minutes}m ago`;
     return 'Just now';
   };
 
+  const getLogCount = (level) => level === 'all' 
+    ? systemLogs.length 
+    : systemLogs.filter((log) => log.level === level).length;
+
+  const errorCount = systemLogs.filter((l) => l.level === 'ERROR' || l.level === 'CRITICAL').length;
+
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono">
-      <div className="bg-gradient-to-r from-gray-900 to-black border-b-2 border-green-400 p-8">
-        <button
-          onClick={() => navigate('/')}
-          className="mb-6 px-4 py-2 bg-green-400 text-black hover:bg-green-300 transition-colors rounded"
-        >
-          ← Back to Terminal
-        </button>
+    <PageLayout>
+      <PageHeader 
+        title="SYSTEM LOGS" 
+        subtitle="Real-time Infrastructure Monitoring & Security Events" 
+      />
 
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2 text-green-400">► SYSTEM LOGS</h1>
-          <p className="text-gray-400">Real-time Infrastructure Monitoring & Security Events</p>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto p-8">
-        <div className="mb-8 bg-gray-900 bg-opacity-50 p-6 rounded-lg border border-green-400">
+      <PageContent>
+        {/* System Status Panel */}
+        <SectionCard borderColor="border-green-400" className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-green-400">🖥️ SYSTEM STATUS</h2>
+            <SectionTitle color="text-green-400">🖥️ SYSTEM STATUS</SectionTitle>
             <div className="flex items-center space-x-4">
               <span className="text-green-400">●</span>
               <span className="text-sm">All Systems Operational</span>
               <button
                 onClick={() => setIsLive(!isLive)}
                 className={`px-3 py-1 rounded text-sm transition-colors ${
-                  isLive ? 'bg-red-600 text-white animate-pulse' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                  isLive 
+                    ? 'bg-red-600 text-white animate-pulse' 
+                    : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
                 }`}
               >
                 {isLive ? '🔴 LIVE' : '▶️ Start Live Mode'}
@@ -122,57 +105,55 @@ const LogsPage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
-            <div>
-              <div className="text-green-400 text-2xl font-bold">{logsData?.uptime?.uptimePercentage}%</div>
-              <div className="text-gray-400">Uptime</div>
-            </div>
-            <div>
-              <div className="text-blue-400 text-2xl font-bold">{logsData?.systemLogs?.length || 0}</div>
-              <div className="text-gray-400">Log Entries</div>
-            </div>
-            <div>
-              <div className="text-yellow-400 text-2xl font-bold">{securityEvents.length}</div>
-              <div className="text-gray-400">Security Events</div>
-            </div>
-            <div>
-              <div className="text-red-400 text-2xl font-bold">
-                {logsData?.systemLogs?.filter((log) => log.level === 'ERROR' || log.level === 'CRITICAL').length || 0}
-              </div>
-              <div className="text-gray-400">Errors</div>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatBox 
+              value={`${logsData?.uptime?.uptimePercentage || 99.9}%`} 
+              label="Uptime" 
+              color="text-green-400" 
+            />
+            <StatBox 
+              value={systemLogs.length} 
+              label="Log Entries" 
+              color="text-blue-400" 
+            />
+            <StatBox 
+              value={securityEvents.length} 
+              label="Security Events" 
+              color="text-yellow-400" 
+            />
+            <StatBox 
+              value={errorCount} 
+              label="Errors" 
+              color="text-red-400" 
+            />
           </div>
-        </div>
+        </SectionCard>
 
+        {/* Filters */}
         <div className="mb-6 flex flex-wrap justify-center gap-4">
-          {['all', 'INFO', 'WARN', 'ERROR', 'CRITICAL'].map((level) => {
-            const count =
-              level === 'all'
-                ? logsData?.systemLogs?.length || 0
-                : logsData?.systemLogs?.filter((log) => log.level === level).length || 0;
-
-            return (
-              <button
-                key={level}
-                onClick={() => setFilter(level)}
-                className={`px-4 py-2 rounded transition-colors ${
-                  filter === level ? 'bg-green-400 text-black' : 'bg-gray-800 text-green-400 hover:bg-gray-700'
-                }`}
-              >
-                {level === 'all' ? 'All Logs' : level} ({count})
-              </button>
-            );
-          })}
+          {['all', 'INFO', 'WARN', 'ERROR', 'CRITICAL'].map((level) => (
+            <FilterButton
+              key={level}
+              active={filter === level}
+              onClick={() => setFilter(level)}
+            >
+              {level === 'all' ? 'All Logs' : level} ({getLogCount(level)})
+            </FilterButton>
+          ))}
         </div>
 
+        {/* Logs Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
+          {/* System Logs */}
           <div className="lg:col-span-2">
-            <h3 className="text-xl font-bold mb-4 text-blue-400">📋 SYSTEM LOGS</h3>
-            <div className="bg-gray-900 bg-opacity-50 p-4 rounded-lg border border-blue-400 max-h-96 overflow-y-auto">
+            <SectionTitle color="text-blue-400">📋 SYSTEM LOGS</SectionTitle>
+            <SectionCard borderColor="border-blue-400" className="max-h-96 overflow-y-auto p-4">
               {filteredLogs.map((log, index) => (
                 <div key={index} className="mb-3 border-b border-gray-800 pb-3">
                   <div className="flex justify-between">
-                    <span className={`px-2 py-1 rounded text-xs ${getLogLevelColor(log.level)}`}>{log.level}</span>
+                    <span className={`px-2 py-1 rounded text-xs ${getLogLevelColor(log.level)}`}>
+                      {log.level}
+                    </span>
                     <span className="text-gray-500 text-xs">{formatTimestamp(log.timestamp)}</span>
                   </div>
                   <div className="mt-2">
@@ -181,16 +162,19 @@ const LogsPage = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </SectionCard>
           </div>
 
+          {/* Security Events */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-red-400">⚠️ SECURITY EVENTS</h3>
-            <div className="bg-gray-900 bg-opacity-50 p-4 rounded-lg border border-red-400 max-h-96 overflow-y-auto">
+            <SectionTitle color="text-red-400">⚠️ SECURITY EVENTS</SectionTitle>
+            <SectionCard borderColor="border-red-400" className="max-h-96 overflow-y-auto p-4">
               {securityEvents.map((event) => (
                 <div key={event.id} className="mb-3 border-b border-gray-800 pb-3">
                   <div className="flex justify-between">
-                    <span className={`px-2 py-1 rounded text-xs ${getSeverityColor(event.severity)}`}>{event.severity}</span>
+                    <span className={`px-2 py-1 rounded text-xs ${getSeverityColor(event.severity)}`}>
+                      {event.severity}
+                    </span>
                     <span className="text-gray-500 text-xs">{getRelativeTime(event.timestamp)}</span>
                   </div>
                   <div className="mt-2">
@@ -200,11 +184,11 @@ const LogsPage = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </SectionCard>
           </div>
         </div>
-      </div>
-    </div>
+      </PageContent>
+    </PageLayout>
   );
 };
 
