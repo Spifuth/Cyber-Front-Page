@@ -1,15 +1,16 @@
 ## CyberFront - Cyber Portfolio Homepage
 ## Traefik dynamic configuration for nebulahost.tech
+## Place this file in: $DOCKERDIR/appdata/traefik3/rules/$HOSTNAME/
 
 http:
   routers:
     cyberfront-rtr:
-      rule: "Host(`{{env "DOMAINNAME_1"}}`)"  # Root domain - nebulahost.tech
+      rule: "Host(`{{env "DOMAINNAME_1"}}`) || Host(`www.{{env "DOMAINNAME_1"}}`)"
       entryPoints:
         - websecure-external
+        - websecure-internal
       middlewares:
         - chain-no-auth
-        - cyberfront-headers
       service: cyberfront-svc
       tls:
         certResolver: dns-cloudflare
@@ -20,14 +21,3 @@ http:
       loadBalancer:
         servers:
           - url: "http://cyberfront:80"
-
-  middlewares:
-    cyberfront-headers:
-      headers:
-        # Security headers specific to CyberFront
-        customResponseHeaders:
-          X-Content-Type-Options: "nosniff"
-          X-Frame-Options: "DENY"
-          Referrer-Policy: "strict-origin-when-cross-origin"
-          Permissions-Policy: "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
-          Content-Security-Policy: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"

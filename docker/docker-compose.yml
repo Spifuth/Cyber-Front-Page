@@ -1,5 +1,11 @@
 # docker-compose.yml – Deployrr compatible configuration
 # Deploy as homepage for nebulahost.tech
+#
+# Option 1: Use this file standalone with Traefik rules file
+# Option 2: Copy content to your Deployrr custom.yml
+#
+# Required in .env: CYBERFRONT_PORT=8090
+
 services:
   # CyberFront - Cyber Portfolio Homepage
   cyberfront:
@@ -16,4 +22,6 @@ services:
       - default
     ports:
       - "$CYBERFRONT_PORT:80"
+    environment:
+      - TZ=$TZ
     # DOCKER-LABELS-PLACEHOLDER
