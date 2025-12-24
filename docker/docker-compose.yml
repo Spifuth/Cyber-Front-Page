@@ -1,10 +1,11 @@
-# docker-compose.yml – Reviewed & updated for production readiness
-# Volume names, explicit network, env_file usage, restart policy, Traefik labels.
+# docker-compose.yml – Compatible with Deployrr stack management
+# Configured for nebulahost.tech domain behind Cloudflare + Traefik
 version: "3.9"
 
 services:
   cyberfront:
-    image: ${IMAGE_NAME:-cyber-front-page:dev}
+    image: ${IMAGE_NAME:-cyber-front-page:latest}
+    container_name: cyberfront
     build:
       context: ..
       dockerfile: Dockerfile
@@ -12,27 +13,38 @@ services:
         - NPM_REGISTRY=${NPM_REGISTRY:-https://registry.npmjs.org/}
         - USE_LOCAL_DIST=${USE_LOCAL_DIST:-0}
     env_file:
-      - ../.env # centralize runtime configuration without inline secrets
-    # Healthcheck provided by the Dockerfile (Caddy runtime stage) is used implicitly
+      - ../.env
+    expose:
+      - "80"
     labels:
-      - "traefik.enable=true" # ensure Traefik discovers the service
-      - "traefik.http.routers.cyberfront.rule=Host(`${SITE_DOMAIN:-example.com}`)" # route based on the configured domain
-      - "traefik.http.routers.cyberfront.entrypoints=${TRAEFIK_ENTRYPOINT:-web}"
+      # Traefik discovery
+      - "traefik.enable=true"
+      # HTTP Router (redirect to HTTPS)
+      - "traefik.http.routers.cyberfront.rule=Host(`${SITE_DOMAIN:-nebulahost.tech}`)"
+      - "traefik.http.routers.cyberfront.entrypoints=http"
+      - "traefik.http.routers.cyberfront.middlewares=https-redirect@file"
+      # HTTPS Router
+      - "traefik.http.routers.cyberfront-secure.rule=Host(`${SITE_DOMAIN:-nebulahost.tech}`)"
+      - "traefik.http.routers.cyberfront-secure.entrypoints=https"
+      - "traefik.http.routers.cyberfront-secure.tls=true"
+      - "traefik.http.routers.cyberfront-secure.tls.certresolver=${CERT_RESOLVER:-cloudflare}"
+      # Service
       - "traefik.http.services.cyberfront.loadbalancer.server.port=80"
-      - "traefik.http.middlewares.cyberfront-headers.headers.customResponseHeaders.Content-Security-Policy=default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; connect-src 'self';"
-      - "traefik.http.middlewares.cyberfront-headers.headers.customResponseHeaders.Strict-Transport-Security=max-age=63072000; includeSubDomains; preload"
+      # Security headers middleware
+      - "traefik.http.routers.cyberfront-secure.middlewares=cyberfront-headers,crowdsec@file"
+      - "traefik.http.middlewares.cyberfront-headers.headers.customResponseHeaders.X-Content-Type-Options=nosniff"
+      - "traefik.http.middlewares.cyberfront-headers.headers.customResponseHeaders.X-Frame-Options=DENY"
       - "traefik.http.middlewares.cyberfront-headers.headers.customResponseHeaders.Referrer-Policy=strict-origin-when-cross-origin"
-      - "traefik.http.routers.cyberfront.middlewares=cyberfront-headers"
-    restart: unless-stopped # keep the service resilient across restarts
-    volumes:
-      - cyberfront_data:/data # persist Caddy TLS assets and other runtime data
+      - "traefik.http.middlewares.cyberfront-headers.headers.customResponseHeaders.Content-Security-Policy=default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'"
+      - "traefik.http.middlewares.cyberfront-headers.headers.customResponseHeaders.Strict-Transport-Security=max-age=63072000; includeSubDomains; preload"
+      # Docker network
+      - "traefik.docker.network=${TRAEFIK_NETWORK:-proxy}"
+    restart: unless-stopped
     networks:
-      - traefik-net # join the shared Traefik network for routing
-
-volumes:
-  cyberfront_data: {} # named volume for persistent service data
+      - proxy
+    security_opt:
+      - no-new-privileges:true
 
 networks:
-  traefik-net:
+  proxy:
     external: true
-    name: traefik-net # reuse the externally managed Traefik network
