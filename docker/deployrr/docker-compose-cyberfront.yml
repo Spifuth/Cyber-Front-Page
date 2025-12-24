@@ -1,0 +1,53 @@
+# Cyber-Front-Page - Deployrr Integration
+# Add this service to your main docker-compose-Debian-homelab-Hetzner.yml
+# Or run standalone with: docker compose -f docker-compose-cyberfront.yml up -d
+
+services:
+  cyberfront:
+    container_name: cyberfront
+    image: ghcr.io/spifuth/cyber-front-page:latest
+    # Or build locally:
+    # build:
+    #   context: /home/nl/homelab/docker/appdata/cyberfront/repo
+    #   dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - t3_proxy
+    # No ports exposed - Traefik handles routing
+    # ports:
+    #   - "8090:80"
+    environment:
+      - TZ=${TZ:-Europe/Paris}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+    volumes:
+      # Optional: Custom data files
+      - ${DOCKERDIR:-/home/nl/homelab/docker}/appdata/cyberfront/data:/app/frontend/public/data:ro
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      # Traefik v3 labels - Deployrr pattern
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.cyberfront-rtr.entrypoints=websecure-external"
+      - "traefik.http.routers.cyberfront-rtr.rule=Host(`cyber.${DOMAINNAME:-nebulahost.tech}`)"
+      - "traefik.http.routers.cyberfront-rtr.tls=true"
+      ## Middlewares - Public (no auth) or use chain-authelia@file for protected
+      - "traefik.http.routers.cyberfront-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.cyberfront-rtr.service=cyberfront-svc"
+      - "traefik.http.services.cyberfront-svc.loadbalancer.server.port=80"
+      ## Homepage integration (optional)
+      - "homepage.group=Apps"
+      - "homepage.name=Cyber Front Page"
+      - "homepage.icon=mdi-web"
+      - "homepage.href=https://cyber.${DOMAINNAME:-nebulahost.tech}"
+      - "homepage.description=Portfolio & Terminal"
+
+networks:
+  t3_proxy:
+    external: true
