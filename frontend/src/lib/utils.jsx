@@ -1,17 +1,87 @@
 /**
+ * Utility functions for styling and formatting
+ */
+
+// ============================================================================
+// COLOR UTILITIES
+// ============================================================================
+
+/**
+ * Color palette for consistent theming across the app
+ */
+export const COLORS = {
+  green: {
+    text: 'text-green-400',
+    bg: 'bg-green-500',
+    bgLight: 'bg-green-500/10',
+    bgDark: 'bg-green-900',
+    border: 'border-green-400',
+    borderLight: 'border-green-500/30'
+  },
+  blue: {
+    text: 'text-blue-400',
+    bg: 'bg-blue-500',
+    bgLight: 'bg-blue-500/10',
+    bgDark: 'bg-blue-900',
+    border: 'border-blue-400',
+    borderLight: 'border-blue-500/30'
+  },
+  yellow: {
+    text: 'text-yellow-400',
+    bg: 'bg-yellow-500',
+    bgLight: 'bg-yellow-500/10',
+    bgDark: 'bg-yellow-900',
+    border: 'border-yellow-400',
+    borderLight: 'border-yellow-500/30'
+  },
+  orange: {
+    text: 'text-orange-400',
+    bg: 'bg-orange-500',
+    bgLight: 'bg-orange-500/10',
+    bgDark: 'bg-orange-900',
+    border: 'border-orange-400',
+    borderLight: 'border-orange-500/30'
+  },
+  red: {
+    text: 'text-red-400',
+    bg: 'bg-red-500',
+    bgLight: 'bg-red-500/10',
+    bgDark: 'bg-red-900',
+    border: 'border-red-400',
+    borderLight: 'border-red-500/30'
+  },
+  purple: {
+    text: 'text-purple-400',
+    bg: 'bg-purple-500',
+    bgLight: 'bg-purple-500/10',
+    bgDark: 'bg-purple-900',
+    border: 'border-purple-400',
+    borderLight: 'border-purple-500/30'
+  },
+  gray: {
+    text: 'text-gray-400',
+    bg: 'bg-gray-500',
+    bgLight: 'bg-gray-500/10',
+    bgDark: 'bg-gray-900',
+    border: 'border-gray-400',
+    borderLight: 'border-gray-500/30'
+  }
+};
+
+/**
  * Returns Tailwind classes for project/task status badges.
  * @param {string} status - Status identifier (active, completed, beta, etc.)
  * @returns {string} Tailwind CSS classes
  */
 export function getStatusColor(status) {
   const statusMap = {
-    active: 'text-green-400 border-green-500/30 bg-green-500/10',
-    completed: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
-    beta: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
-    in_development: 'text-orange-400 border-orange-500/30 bg-orange-500/10',
-    archived: 'text-gray-400 border-gray-500/30 bg-gray-500/10'
+    active: `${COLORS.green.text} ${COLORS.green.borderLight} ${COLORS.green.bgLight}`,
+    completed: `${COLORS.blue.text} ${COLORS.blue.borderLight} ${COLORS.blue.bgLight}`,
+    beta: `${COLORS.yellow.text} ${COLORS.yellow.borderLight} ${COLORS.yellow.bgLight}`,
+    in_development: `${COLORS.orange.text} ${COLORS.orange.borderLight} ${COLORS.orange.bgLight}`,
+    archived: `${COLORS.gray.text} ${COLORS.gray.borderLight} ${COLORS.gray.bgLight}`
   };
-  return statusMap[status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
+  return statusMap[status] || statusMap.archived;
 }
 
 /**
@@ -21,12 +91,12 @@ export function getStatusColor(status) {
  */
 export function getLogLevelColor(level) {
   const colors = {
-    INFO: 'text-green-400 bg-green-900',
-    WARN: 'text-yellow-400 bg-yellow-900',
-    ERROR: 'text-red-400 bg-red-900',
-    CRITICAL: 'text-red-400 bg-red-900 animate-pulse'
+    INFO: `${COLORS.green.text} ${COLORS.green.bgDark}`,
+    WARN: `${COLORS.yellow.text} ${COLORS.yellow.bgDark}`,
+    ERROR: `${COLORS.red.text} ${COLORS.red.bgDark}`,
+    CRITICAL: `${COLORS.red.text} ${COLORS.red.bgDark} animate-pulse`
   };
-  return colors[level] || 'text-gray-400 bg-gray-900';
+  return colors[level] || `${COLORS.gray.text} ${COLORS.gray.bgDark}`;
 }
 
 /**
@@ -36,12 +106,27 @@ export function getLogLevelColor(level) {
  */
 export function getSkillLevelColor(level) {
   const colors = {
-    Expert: 'bg-green-500',
-    Advanced: 'bg-blue-500',
-    Intermediate: 'bg-yellow-500',
-    Beginner: 'bg-gray-500'
+    Expert: COLORS.green.bg,
+    Advanced: COLORS.blue.bg,
+    Intermediate: COLORS.yellow.bg,
+    Beginner: COLORS.gray.bg
   };
-  return colors[level] || 'bg-gray-500';
+  return colors[level] || COLORS.gray.bg;
+}
+
+/**
+ * Returns full color object for skill level.
+ * @param {string} level - Skill level
+ * @returns {Object} Color object with text, bg, border classes
+ */
+export function getSkillLevelColorFull(level) {
+  const levelColors = {
+    Expert: COLORS.green,
+    Advanced: COLORS.blue,
+    Intermediate: COLORS.yellow,
+    Beginner: COLORS.gray
+  };
+  return levelColors[level] || COLORS.gray;
 }
 
 /**
@@ -51,10 +136,82 @@ export function getSkillLevelColor(level) {
  */
 export function getSeverityColor(severity) {
   const colors = {
-    LOW: 'text-blue-400 bg-blue-900',
-    MEDIUM: 'text-yellow-400 bg-yellow-900',
-    HIGH: 'text-orange-400 bg-orange-900',
-    CRITICAL: 'text-red-400 bg-red-900'
+    LOW: `${COLORS.blue.text} ${COLORS.blue.bgDark}`,
+    MEDIUM: `${COLORS.yellow.text} ${COLORS.yellow.bgDark}`,
+    HIGH: `${COLORS.orange.text} ${COLORS.orange.bgDark}`,
+    CRITICAL: `${COLORS.red.text} ${COLORS.red.bgDark}`
   };
-  return colors[severity] || 'text-gray-400 bg-gray-900';
+  return colors[severity] || `${COLORS.gray.text} ${COLORS.gray.bgDark}`;
+}
+
+// ============================================================================
+// FORMAT UTILITIES
+// ============================================================================
+
+/**
+ * Format a date string to localized format
+ * @param {string|Date} date - Date to format
+ * @param {string} [locale='fr-FR'] - Locale string
+ * @returns {string} Formatted date
+ */
+export function formatDate(date, locale = 'fr-FR') {
+  if (!date) return 'N/A';
+  try {
+    return new Date(date).toLocaleDateString(locale, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch {
+    return date;
+  }
+}
+
+/**
+ * Format time to HH:MM:SS
+ * @param {Date} date - Date object
+ * @returns {string} Formatted time
+ */
+export function formatTime(date) {
+  return date.toTimeString().slice(0, 8);
+}
+
+/**
+ * Capitalize first letter of each word
+ * @param {string} str - String to capitalize
+ * @returns {string} Capitalized string
+ */
+export function capitalizeWords(str) {
+  if (!str) return '';
+  return str.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+/**
+ * Truncate text with ellipsis
+ * @param {string} text - Text to truncate
+ * @param {number} [maxLength=100] - Maximum length
+ * @returns {string} Truncated text
+ */
+export function truncate(text, maxLength = 100) {
+  if (!text || text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}...`;
+}
+
+// ============================================================================
+// LEVEL/PROGRESS UTILITIES
+// ============================================================================
+
+/**
+ * Get progress percentage for skill level
+ * @param {string} level - Skill level
+ * @returns {number} Progress percentage (0-100)
+ */
+export function getLevelProgress(level) {
+  const progress = {
+    Expert: 100,
+    Advanced: 80,
+    Intermediate: 60,
+    Beginner: 30
+  };
+  return progress[level] || 0;
 }
