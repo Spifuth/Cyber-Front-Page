@@ -4,3 +4,5 @@ pydantic>=2.7.0,<3.0.0    # Indicative baseline; CI will pin exact version via p
 python-dotenv>=1.0.0,<2.0.0  # Indicative baseline; CI will pin exact version via pip-audit
 uvicorn[standard]>=0.32.0,<1.0.0  # Indicative baseline; CI will pin exact version via pip-audit
 httpx>=0.27.0,<1.0.0      # Indicative baseline; CI will pin exact version via pip-audit
+pytest>=8.0.0,<9.0.0      # Testing framework
+pytest-asyncio>=0.23.0,<1.0.0  # Async support for pytest
