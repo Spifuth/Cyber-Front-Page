@@ -117,11 +117,14 @@ def test_get_status_checks_returns_created():
 
 def test_memory_store_limit():
     """Test that in-memory store is limited to 100 items."""
-    # Create 110 status checks
+    # Create 110 status checks, clearing rate limit periodically to avoid 429
     for i in range(110):
+        # Clear rate limit store every 25 requests to avoid hitting the limit
+        if i % 25 == 0:
+            rate_limit_store.clear()
         payload = {"client_name": f"client-{i}"}
         response = client.post("/api/status", json=payload)
-        assert response.status_code == 201
+        assert response.status_code == 201, f"Request {i} failed with {response.status_code}"
     
     # Verify memory store is limited to 100
     assert len(memory_status_checks) == 100
