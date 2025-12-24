@@ -3,17 +3,23 @@ import os
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi.testclient import TestClient
-from backend.server import app, save_status, fetch_statuses, StatusCheck
+from backend.server import app, save_status, fetch_statuses, StatusCheck, memory_status_checks, rate_limit_store
 from datetime import datetime, timezone
 
 
 client = TestClient(app)
 
 
+def setup_function():
+    """Clear stores before each test."""
+    memory_status_checks.clear()
+    rate_limit_store.clear()
+
+
 @pytest.mark.asyncio
 async def test_save_status_to_memory():
     """Test saving status to in-memory store."""
-    from backend.server import memory_status_checks, status_collection
+    from backend.server import status_collection
     
     # Ensure we're using memory store
     original_collection = status_collection
@@ -22,7 +28,6 @@ async def test_save_status_to_memory():
         # Force memory mode
         import backend.server
         backend.server.status_collection = None
-        memory_status_checks.clear()
         
         status = StatusCheck(client_name="test-client")
         result = await save_status(status)
@@ -37,7 +42,6 @@ async def test_save_status_to_memory():
 @pytest.mark.asyncio
 async def test_fetch_statuses_from_memory():
     """Test fetching statuses from in-memory store."""
-    from backend.server import memory_status_checks
     import backend.server
     
     original_collection = backend.server.status_collection
@@ -45,7 +49,6 @@ async def test_fetch_statuses_from_memory():
     try:
         # Force memory mode
         backend.server.status_collection = None
-        memory_status_checks.clear()
         
         # Add test data
         status1 = StatusCheck(client_name="client-1")

@@ -2,11 +2,17 @@
 import os
 from datetime import datetime
 from fastapi.testclient import TestClient
-from backend.server import app, memory_status_checks
+from backend.server import app, memory_status_checks, rate_limit_store
 
 
 client = TestClient(app)
 TRUSTED_ORIGIN = os.getenv("TRUSTED_ORIGINS", "http://localhost:5173").split(",")[0].strip()
+
+
+def setup_function():
+    """Clear stores before each test."""
+    memory_status_checks.clear()
+    rate_limit_store.clear()
 
 
 def test_root_endpoint():
@@ -29,9 +35,6 @@ def test_healthcheck_endpoint():
 
 def test_create_status_check_success():
     """Test creating a valid status check."""
-    # Clear memory store before test
-    memory_status_checks.clear()
-    
     payload = {"client_name": "test-client"}
     response = client.post("/api/status", json=payload)
     
@@ -46,8 +49,6 @@ def test_create_status_check_success():
 
 def test_create_status_check_strips_whitespace():
     """Test that client_name whitespace is stripped."""
-    memory_status_checks.clear()
-    
     payload = {"client_name": "  test-client  "}
     response = client.post("/api/status", json=payload)
     
@@ -90,8 +91,6 @@ def test_create_status_check_missing_field():
 
 def test_get_status_checks_empty():
     """Test getting status checks when none exist."""
-    memory_status_checks.clear()
-    
     response = client.get("/api/status")
     assert response.status_code == 200
     data = response.json()
@@ -101,8 +100,6 @@ def test_get_status_checks_empty():
 
 def test_get_status_checks_returns_created():
     """Test that created status checks can be retrieved."""
-    memory_status_checks.clear()
-    
     # Create a status check
     payload = {"client_name": "test-client"}
     create_response = client.post("/api/status", json=payload)
@@ -120,8 +117,6 @@ def test_get_status_checks_returns_created():
 
 def test_memory_store_limit():
     """Test that in-memory store is limited to 100 items."""
-    memory_status_checks.clear()
-    
     # Create 110 status checks
     for i in range(110):
         payload = {"client_name": f"client-{i}"}
@@ -141,8 +136,6 @@ def test_memory_store_limit():
 
 def test_get_status_checks_order():
     """Test that status checks are returned in reverse chronological order."""
-    memory_status_checks.clear()
-    
     # Create multiple status checks
     for i in range(3):
         payload = {"client_name": f"client-{i}"}
@@ -163,8 +156,6 @@ def test_get_status_checks_order():
 
 def test_status_check_id_uniqueness():
     """Test that each status check gets a unique ID."""
-    memory_status_checks.clear()
-    
     ids = set()
     for i in range(10):
         payload = {"client_name": f"client-{i}"}
@@ -175,3 +166,60 @@ def test_status_check_id_uniqueness():
     
     # All IDs should be unique
     assert len(ids) == 10
+
+
+# Security tests
+
+def test_create_status_check_invalid_characters():
+    """Test that client_name with invalid characters is rejected."""
+    invalid_names = [
+        "<script>alert('xss')</script>",
+        "client;DROP TABLE users;",
+        "client$(whoami)",
+        "client`id`",
+        "client\x00null",
+    ]
+    for name in invalid_names:
+        payload = {"client_name": name}
+        response = client.post("/api/status", json=payload)
+        assert response.status_code == 422, f"Expected 422 for name: {name}"
+
+
+def test_create_status_check_valid_special_characters():
+    """Test that client_name with valid special characters is accepted."""
+    valid_names = [
+        "test-client",
+        "test_client",
+        "test.client",
+        "Test Client",
+        "client123",
+        "Ñoño Español",  # Unicode letters
+    ]
+    for name in valid_names:
+        payload = {"client_name": name}
+        response = client.post("/api/status", json=payload)
+        assert response.status_code == 201, f"Expected 201 for name: {name}"
+
+
+def test_rate_limiting():
+    """Test that rate limiting is enforced."""
+    from backend.server import RATE_LIMIT_REQUESTS
+    
+    # Make requests up to the limit
+    for i in range(RATE_LIMIT_REQUESTS):
+        payload = {"client_name": f"client-{i}"}
+        response = client.post("/api/status", json=payload)
+        assert response.status_code == 201, f"Request {i+1} should succeed"
+    
+    # Next request should be rate limited
+    payload = {"client_name": "one-too-many"}
+    response = client.post("/api/status", json=payload)
+    assert response.status_code == 429
+    assert "rate limit" in response.json()["detail"].lower()
+
+
+def test_cors_methods_restricted():
+    """Test that only allowed HTTP methods work."""
+    # DELETE should not be allowed (we only allow GET, POST, OPTIONS)
+    response = client.delete("/api/status")
+    assert response.status_code == 405  # Method Not Allowed
