@@ -7,7 +7,7 @@ http:
     cyberfront-rtr:
       entryPoints:
         - websecure-external
-      rule: "Host(`cyber.nebulahost.tech`)"
+      rule: "Host(`nebulahost.tech`) || Host(`www.nebulahost.tech`)"
       middlewares:
         - chain-no-auth
       service: cyberfront-svc

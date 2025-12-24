@@ -34,7 +34,7 @@ services:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.cyberfront-rtr.entrypoints=websecure-external"
-      - "traefik.http.routers.cyberfront-rtr.rule=Host(`cyber.${DOMAINNAME:-nebulahost.tech}`)"
+      - "traefik.http.routers.cyberfront-rtr.rule=Host(`${DOMAINNAME:-nebulahost.tech}`)"
       - "traefik.http.routers.cyberfront-rtr.tls=true"
       ## Middlewares - Public (no auth) or use chain-authelia@file for protected
       - "traefik.http.routers.cyberfront-rtr.middlewares=chain-no-auth@file"
@@ -45,7 +45,7 @@ services:
       - "homepage.group=Apps"
       - "homepage.name=Cyber Front Page"
       - "homepage.icon=mdi-web"
-      - "homepage.href=https://cyber.${DOMAINNAME:-nebulahost.tech}"
+      - "homepage.href=https://${DOMAINNAME:-nebulahost.tech}"
       - "homepage.description=Portfolio & Terminal"
 
 networks:

@@ -26,7 +26,7 @@
       - "traefik.enable=true"
       # Router - Public access (no auth)
       - "traefik.http.routers.cyberfront-rtr.entrypoints=websecure-external"
-      - "traefik.http.routers.cyberfront-rtr.rule=Host(`cyber.$DOMAINNAME`)"
+      - "traefik.http.routers.cyberfront-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
       - "traefik.http.routers.cyberfront-rtr.tls=true"
       - "traefik.http.routers.cyberfront-rtr.middlewares=chain-no-auth@file"
       - "traefik.http.routers.cyberfront-rtr.service=cyberfront-svc"
@@ -36,5 +36,5 @@
       - "homepage.group=Apps"
       - "homepage.name=Cyber Front Page"
       - "homepage.icon=mdi-web"
-      - "homepage.href=https://cyber.$DOMAINNAME"
+      - "homepage.href=https://$DOMAINNAME"
       - "homepage.description=Portfolio & Terminal"
