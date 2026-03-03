@@ -11,7 +11,7 @@
     "lint": "node -e \"console.log('Linting deferred to CI (configure ESLint once dependencies are available)')\""
   },
   "dependencies": {
-    "lucide-react": "0.507.0",
+    "lucide-react": "0.552.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-router-dom": "6.28.0"
