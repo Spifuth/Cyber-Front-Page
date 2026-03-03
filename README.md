@@ -2,8 +2,8 @@
 
 Cyber Front Page is a cyberpunk-themed portfolio web app built with Vite + React, served statically by Caddy and optionally backed by FastAPI.
 
-![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)
-![Release](https://github.com/<owner>/<repo>/actions/workflows/release.yml/badge.svg)
+![CI](https://github.com/Spifuth/Cyber-Front-Page/actions/workflows/ci.yml/badge.svg)
+![Release](https://github.com/Spifuth/Cyber-Front-Page/actions/workflows/release.yml/badge.svg)
 
 ## Overview
 
@@ -15,7 +15,7 @@ behind Caddy or Traefik, making the app easy to deploy across environments.
 
 ```bash
 # Clone the repository
-git clone https://github.com/<owner>/<repo>.git
+git clone https://github.com/Spifuth/Cyber-Front-Page.git
 cd Cyber-Front-Page
 
 # Install dependencies (frontend)
