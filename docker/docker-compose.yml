@@ -1,42 +1,27 @@
-version: "3.9"
+# docker-compose.yml – Deployrr compatible configuration
+# Deploy as homepage for nebulahost.tech
+#
+# Option 1: Use this file standalone with Traefik rules file
+# Option 2: Copy content to your Deployrr custom.yml
+#
+# Required in .env: CYBERFRONT_PORT=8090
 
 services:
+  # CyberFront - Cyber Portfolio Homepage
   cyberfront:
-    image: ${IMAGE_NAME:-cyber-front-page:dev}
+    image: ${IMAGE_NAME:-ghcr.io/your-username/cyber-front-page:latest}
+    container_name: cyberfront
     build:
       context: ..
       dockerfile: Dockerfile
-      args:
-        - NPM_REGISTRY=${NPM_REGISTRY:-https://registry.npmjs.org/}
-        - USE_LOCAL_DIST=${USE_LOCAL_DIST:-0}
-    env_file:
-      - ../.env
-    environment:
-      SITE_NAME: ${SITE_NAME:-Cyber Front Page}
-      SITE_THEME: ${SITE_THEME:-cyber}
-      SITE_DOMAIN: ${SITE_DOMAIN:-example.com}
-      SITE_TAGLINE: ${SITE_TAGLINE:-Offline-ready cyberpunk terminal}
-      TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-http://localhost:5173}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME:-cyberfront}.rule=${TRAEFIK_ROUTER_RULE:-Host(`example.com`)}"
-      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME:-cyberfront}.entrypoints=${TRAEFIK_ENTRYPOINT:-web}"
-      - "traefik.http.services.${TRAEFIK_SERVICE_NAME:-cyberfront}.loadbalancer.server.port=80"
-      - "traefik.http.middlewares.${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}.headers.customResponseHeaders.Content-Security-Policy=default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; connect-src 'self';"
-      - "traefik.http.middlewares.${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}.headers.customResponseHeaders.Strict-Transport-Security=max-age=63072000; includeSubDomains; preload"
-      - "traefik.http.middlewares.${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}.headers.customResponseHeaders.Referrer-Policy=strict-origin-when-cross-origin"
-      - "traefik.http.routers.${TRAEFIK_SERVICE_NAME:-cyberfront}.middlewares=${TRAEFIK_MIDDLEWARE_HEADERS:-cyberfront-headers}"
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/health || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
+    profiles: ["apps", "all"]
     networks:
-      - traefik-net
-
-networks:
-  traefik-net:
-    external: true
-    name: traefik-net
+      - default
+    ports:
+      - "$CYBERFRONT_PORT:80"
+    environment:
+      - TZ=$TZ
+    # DOCKER-LABELS-PLACEHOLDER

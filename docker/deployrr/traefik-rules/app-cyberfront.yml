@@ -1,0 +1,51 @@
+# Traefik File Provider Rule for Cyber-Front-Page
+# Copy to: /home/nl/homelab/docker/appdata/traefik3/rules/Debian-homelab-Hetzner/app-cyberfront.yml
+
+http:
+  routers:
+    # Main public router (no auth)
+    cyberfront-rtr:
+      entryPoints:
+        - websecure-external
+      rule: "Host(`nebulahost.tech`) || Host(`www.nebulahost.tech`)"
+      middlewares:
+        - chain-no-auth
+      service: cyberfront-svc
+      tls:
+        options: tls-opts@file
+        certResolver: dns-cloudflare
+        
+    # Optional: Internal router with auth (for admin features)
+    # cyberfront-internal-rtr:
+    #   entryPoints:
+    #     - websecure-internal
+    #   rule: "Host(`cyber-admin.nebulahost.tech`)"
+    #   middlewares:
+    #     - chain-authelia
+    #   service: cyberfront-svc
+    #   tls:
+    #     certResolver: cloudflare
+
+  services:
+    cyberfront-svc:
+      loadBalancer:
+        servers:
+          - url: "http://cyberfront:80"
+        healthCheck:
+          path: /health
+          interval: 30s
+          timeout: 5s
+
+  middlewares:
+    # Security headers for the frontend
+    cyberfront-headers:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        customFrameOptionsValue: "SAMEORIGIN"
+        customResponseHeaders:
+          X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex"

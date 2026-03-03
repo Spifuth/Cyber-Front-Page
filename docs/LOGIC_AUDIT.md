@@ -24,8 +24,11 @@
 | `frontend/src/contexts/ThemeContext.jsx` | Theme state management and root `<html>` class synchronisation. |
 | `frontend/src/lib/env.js` | Helpers to read Vite env vars, evaluate mock mode and safe external URLs. |
 | `frontend/src/lib/dataClient.js` | Abstraction over loading collections from mocks or static JSON files. |
-| `frontend/src/lib/utils.jsx` | Utility combinators (currently Tailwind class merger). |
+| `frontend/src/lib/utils.jsx` | Utility combinators, color palettes (COLORS), formatting functions. |
+| `frontend/src/lib/constants.js` | Application-wide constants and configuration values. |
 | `frontend/src/mocks/mockBackend.js` | Mock data fixtures and getters for offline mode. |
+| `frontend/src/components/shared/*` | Reusable UI components (PageLayout, GlitchEffects). |
+| `frontend/src/hooks/*` | Custom React hooks for data, animations, and interactions. |
 | `frontend/src/components/*` | Reusable visual sections (hero, projects grid, animated terminal/logs, background canvas, etc.). |
 | `frontend/src/pages/*` | Route-level screens orchestrating data loading and component composition. |
 | `backend/server.py` | FastAPI app exposing `/api/status` CRUD-like endpoints and `/health` check with optional MongoDB persistence. |
@@ -33,7 +36,52 @@
 
 ## 2. Function catalog
 
-### Frontend core & utilities
+### Frontend custom hooks
+
+| Hook | Location | Purpose | Inputs | Output | Notes |
+| --- | --- | --- | --- | --- | --- |
+| `useDataFetch` | `hooks/useDataFetch.js` | Generic data fetching with transform support | `collectionName`, `transform?`, `options?` | `{ data, setData, loading, error, refetch }` | Supports transform functions and setData for manual updates |
+| `useLocalStorage` | `hooks/useDataFetch.js` | Persist state to localStorage | `key`, `initialValue` | `[value, setValue]` | Handles JSON serialization |
+| `useFilter` | `hooks/useDataFetch.js` | Filter arrays with search | `items`, `searchKeys`, `initialSearch` | `{ filtered, search, setSearch }` | Case-insensitive matching |
+| `useToggle` | `hooks/useDataFetch.js` | Boolean toggle | `initialValue` | `[value, toggle, setTrue, setFalse]` | Memoized callbacks |
+| `useDebounce` | `hooks/useDataFetch.js` | Debounce value updates | `value`, `delay` | Debounced value | Cleanup on unmount |
+| `useCopyToClipboard` | `hooks/useDataFetch.js` | Clipboard with feedback | `resetDelay` | `{ copiedField, copyToClipboard }` | Auto-reset copied state |
+| `useForm` | `hooks/useDataFetch.js` | Form state management | `initialValues` | `{ values, handleChange, reset, setValues }` | Handles input changes |
+| `useSequentialLines` | `hooks/useAnimatedEffects.js` | Display lines sequentially | `lines[]`, `options` | `{ currentLine, visibleLines, isComplete, reset, start }` | Auto cleanup timers |
+| `useGlitchText` | `hooks/useAnimatedEffects.js` | Random glitch text effect | `originalText`, `options` | Glitched text string | Configurable probability |
+| `useDelayedState` | `hooks/useAnimatedEffects.js` | State with activation delay | `initialValue`, `delay` | `[value, trigger, reset]` | Safe timer management |
+| `useCountdown` | `hooks/useAnimatedEffects.js` | Countdown timer | `initialCount`, `options` | `{ count, isRunning, start, pause, reset }` | Callback on complete |
+| `useSafeTimers` | `hooks/useAnimatedEffects.js` | Memory-safe timers | None | `{ setTimeout, setInterval, clearTimeout, clearInterval, clearAll }` | Auto cleanup on unmount |
+| `useTypewriter` | `hooks/useTypewriter.js` | Typewriter text animation | `text`, `speed` | `{ displayText, isComplete }` | Cleans up intervals |
+| `useMazeControls` | `hooks/useMazeControls.js` | Maze canvas interactions | `options` | `{ color, opacity, isEnabled, setters... }` | Persists to localStorage |
+| `useTerminalCommands` | `hooks/useTerminalCommands.js` | Terminal command processing | `filesystem`, `navigate` | `{ processCommand, history }` | Supports multiple commands |
+
+### Frontend shared components
+
+| Component | Location | Purpose | Props | Notes |
+| --- | --- | --- | --- | --- |
+| `PageLayout` | `components/shared/PageLayout.jsx` | Base layout wrapper | `children`, `className` | Provides consistent styling |
+| `PageHeader` | `components/shared/PageLayout.jsx` | Page header with back button | `title`, `subtitle`, `backPath`, `backText` | Auto-prefixes title with ► |
+| `PageContent` | `components/shared/PageLayout.jsx` | Centered content container | `children`, `maxWidth` | Configurable max-width |
+| `LoadingSpinner` | `components/shared/PageLayout.jsx` | Loading state | `icon`, `message` | Animated spinner |
+| `SectionCard` | `components/shared/PageLayout.jsx` | Card with border | `children`, `borderColor`, `className` | Customizable border |
+| `FilterButton` | `components/shared/PageLayout.jsx` | Filter/tab button | `active`, `onClick`, `children` | Active state styling |
+| `SkillBadge` | `components/shared/PageLayout.jsx` | Tag badge | `children`, `variant` | Multiple color variants |
+| `ServiceCard` | `components/shared/PageLayout.jsx` | Service display | `name`, `description`, `status`, `tags`, `borderColor`, `badgeVariant` | With status indicator |
+| `SectionTitle` | `components/shared/PageLayout.jsx` | Section heading | `children`, `color`, `className` | Consistent styling |
+| `StatBox` | `components/shared/PageLayout.jsx` | Stats display | `value`, `label`, `color` | Centered layout |
+| `CopyButton` | `components/shared/PageLayout.jsx` | Copy to clipboard | `text`, `copied`, `onCopy`, `color` | Feedback state |
+| `ErrorState` | `components/shared/PageLayout.jsx` | Error display | `message` | Centered error message |
+| `Scanlines` | `components/shared/GlitchEffects.jsx` | Animated scan lines | `count`, `color`, `intense` | Overlay effect |
+| `GlitchOverlay` | `components/shared/GlitchEffects.jsx` | Full screen glitch | `active`, `pattern`, `color` | Conditional rendering |
+| `CyberBackground` | `components/shared/GlitchEffects.jsx` | Gradient background | `variant`, `showScanlines`, `glitching` | Multiple variants |
+| `TerminalWindow` | `components/shared/GlitchEffects.jsx` | Terminal container | `prompt`, `command`, `shaking`, `borderColor`, `statusIndicator` | Styled terminal UI |
+| `AnimatedLine` | `components/shared/GlitchEffects.jsx` | Terminal line | `text`, `type`, `showCursor`, `icon` | Multiple line types |
+| `BackButton` | `components/shared/GlitchEffects.jsx` | Back navigation | `onClick`, `text`, `icon` | Hover animation |
+| `StatusBadge` | `components/shared/GlitchEffects.jsx` | Connection status | `connected`, `connectedText`, `disconnectedText` | Animated indicator |
+| `GlitchTitle` | `components/shared/GlitchEffects.jsx` | Glitching title | `text`, `className` | Gradient text effect |
+
+### Frontend core utilities
 
 | Export | Location | Purpose | Inputs | Output | Side effects / Error handling / Invariants |
 | --- | --- | --- | --- | --- | --- |
@@ -63,19 +111,19 @@
 
 | Page | Purpose | Data dependencies | Notes |
 | --- | --- | --- | --- |
-| `HomePage` | Landing hub composing hero/about/projects plus navigation cards and terminal modal. | Projects load via `loadCollection`; Terminal nested. | Handles accessibility for modal, background toggles.
-| `UndergroundPage` | Secure zone narrative with CTA. | Static content. | Provides navigation back to home.
-| `KrbtgtPage` | Kerberoasting-themed interactive instructions. | Static content; uses timer/effects. | Navigates on actions.
-| `SelfDestructPage` | Dramatic self-destruct countdown and effects. | Static timers/intervals. | Plays audio/visual cues (needs caution for performance).
-| `ResumePage` | Aggregated resume built from timeline/stack/certs collections. | `timeline`, `stack`, `certs`. | Filters by type/status; handles loading fallback.
-| `TimelinePage` | Visual timeline of events. | `timeline` collection. | Renders categories, ensures fallback arrays.
-| `StackPage` | Technology stack cards. | `stack` collection. | Displays categories/technologies.
-| `SkillsPage` | Radar/skill badges. | `skills` collection. | Renders radar-style layout, ensures arrays.
-| `InfraPage` | Infrastructure overview. | `infra` collection. | Renders nested lists; handles missing data gracefully.
-| `CertsPage` | Certifications list. | `certs` collection. | Filters by status icons.
-| `ContactPage` | Contact and availability info. | `mockBackend` + env overrides (`VITE_CONTACT_*`). | Respects mock links.
-| `LearningPage` | Learning resources. | `learning` collection. | Shows categories; handles offline mode messaging.
-| `LogsPage` | Log archive screen. | `logs` collection. | Provides filtering/search.
+| `HomePage` | Landing hub composing hero/about/projects plus navigation cards and terminal modal. | Projects load via `loadCollection`; Terminal nested. | Uses `NavigationCard` component; handles accessibility for modal, background toggles. |
+| `UndergroundPage` | Secure zone narrative with CTA. | Static content. | Uses shared `CyberBackground`, `GlitchTitle`, `StatusBadge`, `BackButton` components; `useGlitchText` hook for title effect. |
+| `KrbtgtPage` | Kerberoasting-themed interactive instructions. | Static content; uses timer/effects. | Refactored with `useSequentialLines`, `useSafeTimers` hooks; uses `TerminalWindow`, `AnimatedLine` components. |
+| `SelfDestructPage` | Dramatic self-destruct countdown and effects. | Static timers/intervals. | Refactored with `useCountdown`, `useSequentialLines`, `useSafeTimers` hooks; proper timer cleanup. |
+| `ResumePage` | Aggregated resume built from timeline/stack/certs collections. | `timeline`, `stack`, `certs`. | Uses `PageLayout`, `SectionCard`, `SectionTitle`, `SkillBadge` shared components. |
+| `TimelinePage` | Visual timeline of events. | `timeline` collection. | Uses `useDataFetch` hook and `PageLayout` components. |
+| `StackPage` | Technology stack cards. | `stack` collection. | Uses `useDataFetch` hook and `PageLayout` components. |
+| `SkillsPage` | Radar/skill badges. | `skills` collection. | Uses `useDataFetch` hook and `PageLayout` components. |
+| `InfraPage` | Infrastructure overview. | `infra` collection. | Uses `ServiceCard`, `SectionCard`, `SectionTitle` shared components. |
+| `CertsPage` | Certifications list. | `certs` collection. | Uses `useDataFetch` hook and `PageLayout` components. |
+| `ContactPage` | Contact and availability info. | `mockBackend` + env overrides (`VITE_CONTACT_*`). | Uses `useCopyToClipboard`, `useForm`, `useToggle` hooks; `CopyButton` component. |
+| `LearningPage` | Learning resources. | `learning` collection. | Uses `useDataFetch` hook and `PageLayout` components. |
+| `LogsPage` | Log archive screen. | `logs` collection. | Uses `useDataFetch` with `setData` for live mode; `FilterButton`, `StatBox` components. |
 
 ### Backend exports
 
@@ -102,7 +150,7 @@
 **Fragile areas:**
 
 - Components assume browser APIs exist (e.g., `window.document`, canvas context). No SSR support.
-- Several pages use multiple timers/intervals (Terminal, SelfDestructPage) that need consistent cleanup; `SelfDestructPage` should be reviewed for possible timer leaks.
+- ~~Several pages use multiple timers/intervals (Terminal, SelfDestructPage) that need consistent cleanup~~ **Resolved**: `useSafeTimers` hook now manages all timers with automatic cleanup.
 - `Projects` and other data-driven components assume JSON schema fields exist; missing keys default to empty arrays but type mismatches could break rendering.
 - `Terminal` executes asynchronous `loadCollection('filesystem')`; failure sets `filesystem` to `null`, yet some commands may expect data. More validation may be needed.
 - Large animation effects (CyberMaze canvas, Terminal logs, SelfDestruct countdown) can trigger re-render storms on low-powered devices.
@@ -111,8 +159,11 @@
 
 | Item | Status | Recommendation |
 | --- | --- | --- |
-| `frontend/src/hooks/use-toast.jsx` | **Removed in this audit** (unused). | N/A — deletion reduces bundle size. |
-| Repeated status color maps in `Projects` | Duplicated between card and list functions. | Refactor into shared helper if future changes required. |
+| `frontend/src/hooks/use-toast.jsx` | **Removed in previous audit** (unused). | N/A — deletion reduces bundle size. |
+| Repeated loading/error patterns | **Resolved** — refactored into `useDataFetch` hook. | Shared hook used across all data pages. |
+| Repeated page layout code | **Resolved** — extracted to `PageLayout` components. | Shared components in `components/shared/`. |
+| Repeated glitch/animation code | **Resolved** — extracted to `GlitchEffects` components and `useAnimatedEffects` hooks. | Consistent effects across special pages. |
+| Repeated timer management | **Resolved** — `useSafeTimers` hook handles cleanup. | Prevents memory leaks in animated pages. |
 | JSON fixtures vs env overrides | Slight duplication between mock data and `.env` overrides. | Acceptable but document to avoid drift. |
 
 ## 5. Error & edge cases
@@ -145,11 +196,52 @@
 
 | ID | Title | Area | Priority | Effort | Files | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- | --- |
-| F1 | Document lightbox accessibility requirements | Frontend UX | P2 | S | `frontend/src/components/Projects.jsx` | Lightbox traps focus and exposes keyboard shortcuts.
-| F2 | Pause high-frequency animations when tab hidden | Frontend perf | P1 | M | `components/AnimatedLogsFeed.jsx`, `components/CyberMaze.jsx`, `components/Terminal.jsx` | Animations respect `document.visibilityState` to reduce CPU usage.
-| F3 | Improve error messaging for data loads | Frontend DX | P2 | S | Various pages/components | Users see contextual alerts when fetch fails (not only console errors).
-| F4 | Harden SelfDestruct timers cleanup | Frontend stability | P1 | S | `pages/SelfDestructPage.jsx` | All intervals/timeouts cleared on unmount; add unit/integration test.
-| F5 | Optional backend auth guard | Backend security | P3 | M | `backend/server.py` | API rejects unauthorised requests (token or API key) when env flag set.
-| CI1 | Cache yarn/pip installs | DevOps | P2 | M | `.github/workflows/ci.yml` | CI uses caches to reduce install times while respecting immutable installs.
-| DOC1 | Keep mock JSON schema documented | Docs | P3 | XS | `docs/README.md` or new schema doc | Document expected keys for each collection to simplify maintenance.
+| F1 | Document lightbox accessibility requirements | Frontend UX | P2 | S | `frontend/src/components/Projects.jsx` | Lightbox traps focus and exposes keyboard shortcuts. |
+| F2 | ~~Pause high-frequency animations when tab hidden~~ | ~~Frontend perf~~ | ~~P1~~ | ~~M~~ | — | **Partially addressed** in CyberMaze; consider extending to other animations. |
+| F3 | Improve error messaging for data loads | Frontend DX | P2 | S | Various pages/components | Users see contextual alerts when fetch fails (not only console errors). |
+| ~~F4~~ | ~~Harden SelfDestruct timers cleanup~~ | ~~Frontend stability~~ | ~~P1~~ | ~~S~~ | — | **✅ RESOLVED** — `useSafeTimers` hook now handles all timer cleanup. |
+| F5 | Optional backend auth guard | Backend security | P3 | M | `backend/server.py` | API rejects unauthorised requests (token or API key) when env flag set. |
+| CI1 | Cache yarn/pip installs | DevOps | P2 | M | `.github/workflows/ci.yml` | CI uses caches to reduce install times while respecting immutable installs. |
+| DOC1 | Keep mock JSON schema documented | Docs | P3 | XS | `docs/README.md` or new schema doc | Document expected keys for each collection to simplify maintenance. |
+
+## 9. Recent Refactoring Summary (Dec 2024)
+
+### Phase 1: Core Component Restructuring
+- Fixed `main.jsx` React 18 compatibility bug
+- Created `NavigationCard` component for consistent nav styling
+- Modularized Terminal component into `Terminal/index.jsx` and `Terminal/TerminalUI.jsx`
+- Created custom hooks: `useTypewriter`, `useMazeControls`, `useTerminalCommands`
+- Added `lib/constants.js` for app-wide configuration
+
+### Phase 2: Shared Page Components
+- Created `components/shared/PageLayout.jsx` with 7 exported components
+- Created `hooks/useDataFetch.js` with 5+ hooks for data/state management
+- Enhanced `lib/utils.jsx` with `COLORS` palette and formatting utilities
+- Refactored: CertsPage, SkillsPage, StackPage, TimelinePage, LearningPage
+
+### Phase 3: Extended Shared Components
+- Added to PageLayout: `ServiceCard`, `SectionTitle`, `StatBox`, `CopyButton`, `ErrorState`
+- Added hooks: `useCopyToClipboard`, `useForm`
+- Enhanced `useDataFetch` with `setData` and transform function support
+- Refactored: InfraPage, LogsPage, ContactPage, ResumePage
+
+### Phase 4: Animation & Effects System
+- Created `components/shared/GlitchEffects.jsx` with 9 exported components
+- Created `hooks/useAnimatedEffects.js` with 5 specialized hooks
+- Refactored: UndergroundPage (-26%), KrbtgtPage (-52%), SelfDestructPage (-50%)
+- Resolved timer memory leak issues with `useSafeTimers` hook
+
+### Code Reduction Metrics
+| Page | Before | After | Reduction |
+|------|--------|-------|-----------|
+| HomePage | 455 lines | ~280 lines | -38% |
+| KrbtgtPage | 363 lines | 175 lines | -52% |
+| SelfDestructPage | 389 lines | 195 lines | -50% |
+| InfraPage | 152 lines | 104 lines | -32% |
+| UndergroundPage | 197 lines | 145 lines | -26% |
+| ContactPage | 271 lines | 220 lines | -19% |
+| CertsPage | 114 lines | 92 lines | -19% |
+| TimelinePage | 107 lines | 88 lines | -18% |
+| LogsPage | 212 lines | 179 lines | -16% |
+| LearningPage | 347 lines | 295 lines | -15% |
 

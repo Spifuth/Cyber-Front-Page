@@ -1,0 +1,23 @@
+## CyberFront - Cyber Portfolio Homepage
+## Traefik dynamic configuration for nebulahost.tech
+## Place this file in: $DOCKERDIR/appdata/traefik3/rules/$HOSTNAME/
+
+http:
+  routers:
+    cyberfront-rtr:
+      rule: "Host(`{{env "DOMAINNAME_1"}}`) || Host(`www.{{env "DOMAINNAME_1"}}`)"
+      entryPoints:
+        - websecure-external
+        - websecure-internal
+      middlewares:
+        - chain-no-auth
+      service: cyberfront-svc
+      tls:
+        certResolver: dns-cloudflare
+        options: tls-opts@file
+
+  services:
+    cyberfront-svc:
+      loadBalancer:
+        servers:
+          - url: "http://cyberfront:80"
