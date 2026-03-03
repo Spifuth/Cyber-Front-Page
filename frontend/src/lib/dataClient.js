@@ -27,7 +27,9 @@ const fetchJson = async (path) => {
   if (!response.ok) {
     throw new Error(`Failed to fetch ${path}: ${response.status}`);
   }
-  return response.json();
+  return response.json().catch(() => {
+    throw new Error(`Invalid JSON response from ${path}`);
+  });
 };
 
 /**

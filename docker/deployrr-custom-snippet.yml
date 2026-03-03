@@ -1,0 +1,30 @@
+# CyberFront - Custom Docker Compose snippet for Deployrr
+# Add this to your custom.yml or include it separately
+#
+# Required environment variables in your .env:
+#   CYBERFRONT_PORT=8090 (or any available port)
+#
+# After adding, run: dcup cyberfront
+
+services:
+  # CyberFront - Cyber Portfolio Homepage
+  cyberfront:
+    image: ghcr.io/your-username/cyber-front-page:latest
+    container_name: cyberfront
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    networks:
+      - t3_proxy
+    ports:
+      - "$CYBERFRONT_PORT:80"
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.cyberfront-rtr.entrypoints=websecure-external,websecure-internal"
+      - "traefik.http.routers.cyberfront-rtr.rule=Host(`$DOMAINNAME_1`) || Host(`www.$DOMAINNAME_1`)"
+      ## Middlewares
+      - "traefik.http.routers.cyberfront-rtr.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.cyberfront-rtr.service=cyberfront-svc"
+      - "traefik.http.services.cyberfront-svc.loadbalancer.server.port=80"
