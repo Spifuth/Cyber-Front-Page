@@ -1,4 +1,4 @@
-fastapi>=0.116.0,<1.0.0  # Indicative baseline; CI will pin exact version via pip-audit (e.g. fastapi==0.116.0)
+fastapi>=0.136.1,<1.0.0  # Indicative baseline; CI will pin exact version via pip-audit (e.g. fastapi==0.116.0)
 motor>=3.4.0,<4.0.0       # Indicative baseline; CI will pin exact version via pip-audit
 pydantic>=2.7.0,<3.0.0    # Indicative baseline; CI will pin exact version via pip-audit
 python-dotenv>=1.0.0,<2.0.0  # Indicative baseline; CI will pin exact version via pip-audit
